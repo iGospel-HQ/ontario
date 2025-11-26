@@ -20,7 +20,7 @@ export function Navbar() {
     <nav className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex items-center justify-between px-4 py-4 md:px-8">
         <Link href="/" className="text-xl font-bold tracking-wider">
-          SYNC
+          <img src="/logo.png" alt="logo" className="w-full h-7" />
         </Link>
 
         {/* Desktop Navigation */}

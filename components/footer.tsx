@@ -1,5 +1,5 @@
-import Link from "next/link"
-import { Mail, Github, Twitter, Instagram } from "lucide-react"
+import Link from "next/link";
+import { Mail, Github, Twitter, Instagram } from "lucide-react";
 
 export function Footer() {
   return (
@@ -8,8 +8,12 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Brand */}
           <div>
-            <h3 className="text-lg font-bold mb-4">SYNC</h3>
-            <p className="text-sm text-muted-foreground">Discover music, read stories, explore artists.</p>
+            <Link href="/" className="text-xl font-bold tracking-wider mb-4">
+              <img src="/logo.png" alt="logo" className="w-auto h-9" />
+            </Link>
+            <p className="text-sm text-muted-foreground">
+              Discover music, read stories, explore artists.
+            </p>
           </div>
 
           {/* Links */}
@@ -77,9 +81,9 @@ export function Footer() {
         </div>
 
         <div className="mt-8 border-t border-border pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; 2025 SYNC. All rights reserved.</p>
+          <p>&copy; 2025 iGospel. All rights reserved.</p>
         </div>
       </div>
     </footer>
-  )
+  );
 }

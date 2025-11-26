@@ -1,35 +1,37 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useQuery } from "@tanstack/react-query"
-import { motion } from "framer-motion"
-import { fetchBlogPosts } from "@/lib/api-client"
-import { Navbar } from "@/components/navbar"
-import { Footer } from "@/components/footer"
-import Link from "next/link"
-import { format } from "date-fns"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
+import { fetchBlogPosts } from "@/lib/api-client";
+import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
+import Link from "next/link";
+import { format } from "date-fns";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function BlogPageClient() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const {
-    data,
-    isLoading,
-    error,
-  } = useQuery({
+  const [searchQuery, setSearchQuery] = useState("");
+  const { data, isLoading, error } = useQuery({
     queryKey: ["blogPosts"],
-    queryFn: ()=> fetchBlogPosts(),
-  })
+    queryFn: () => fetchBlogPosts(),
+  });
 
   const filteredPosts = data?.posts?.filter(
     (post) =>
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.content.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
+      post.content.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  if (isLoading) return <p>Loading...</p>
-  if (error) return <p>Error loading posts</p>
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error loading posts</p>;
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100">
@@ -40,7 +42,7 @@ export function BlogPageClient() {
           transition={{ duration: 0.5 }}
           className="text-5xl font-bold text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
         >
-          Sync Insights
+          iGospel Insights
         </motion.h1>
 
         <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
@@ -82,7 +84,9 @@ export function BlogPageClient() {
                   <h2 className="text-2xl font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-teal-400">
                     {post.title}
                   </h2>
-                  <p className="text-gray-400 mb-4 line-clamp-3">{post.excerpt}</p>
+                  <p className="text-gray-400 mb-4 line-clamp-3">
+                    {post.excerpt}
+                  </p>
                   <div className="flex justify-between items-center text-sm text-gray-500">
                     <span>{format(new Date(post.date), "MMMM dd, yyyy")}</span>
                     <span>{post.author}</span>
@@ -94,5 +98,5 @@ export function BlogPageClient() {
         </div>
       </main>
     </div>
-  )
+  );
 }
