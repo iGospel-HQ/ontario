@@ -1,0 +1,85 @@
+import Link from "next/link"
+import { Mail, Github, Twitter, Instagram } from "lucide-react"
+
+export function Footer() {
+  return (
+    <footer className="border-t border-border bg-secondary py-12">
+      <div className="px-4 md:px-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
+          {/* Brand */}
+          <div>
+            <h3 className="text-lg font-bold mb-4">SYNC</h3>
+            <p className="text-sm text-muted-foreground">Discover music, read stories, explore artists.</p>
+          </div>
+
+          {/* Links */}
+          <div>
+            <h4 className="font-semibold mb-4">Explore</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="/blog" className="hover:text-accent">
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link href="/music" className="hover:text-accent">
+                  Music
+                </Link>
+              </li>
+              <li>
+                <Link href="/charts" className="hover:text-accent">
+                  Charts
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h4 className="font-semibold mb-4">Legal</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="#" className="hover:text-accent">
+                  Privacy
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:text-accent">
+                  Terms
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:text-accent">
+                  Contact
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Social */}
+          <div>
+            <h4 className="font-semibold mb-4">Follow</h4>
+            <div className="flex gap-4">
+              <a href="#" className="hover:text-accent">
+                <Twitter className="h-5 w-5" />
+              </a>
+              <a href="#" className="hover:text-accent">
+                <Instagram className="h-5 w-5" />
+              </a>
+              <a href="#" className="hover:text-accent">
+                <Github className="h-5 w-5" />
+              </a>
+              <a href="#" className="hover:text-accent">
+                <Mail className="h-5 w-5" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 border-t border-border pt-8 text-center text-sm text-muted-foreground">
+          <p>&copy; 2025 SYNC. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  )
+}
