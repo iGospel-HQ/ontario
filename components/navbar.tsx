@@ -12,13 +12,13 @@ export function Navbar() {
   const navigation = [
     { name: "Blog", href: "/blog" },
     { name: "Music", href: "/music" },
-    { name: "Charts", href: "/charts" },
-    { name: "Artists", href: "/music/artists" },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
   ]
 
   return (
     <nav className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex items-center justify-between px-4 py-4 md:px-8">
+      <div className="flex items-center justify-between  max-w-5xl mx-auto px-4 py-4 md:px-10">
         <Link href="/" className="text-xl font-bold tracking-wider">
           <img src="/logo.png" alt="logo" className="w-full h-7" />
         </Link>
