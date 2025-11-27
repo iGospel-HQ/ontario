@@ -4,12 +4,37 @@ import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { motion } from "framer-motion"
 import { searchContent } from "@/lib/api-client"
-import { Navbar } from "@/components/navbar"
-import { Footer } from "@/components/footer"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { Music, Disc3, Users, FileText } from "lucide-react"
 import { useSearchParams } from "next/navigation"
+
+const dummyData = [
+  {
+    id: "song1",
+    type: "song",
+    name: "Amazing Grace",
+    description: "Classic gospel worship song",
+  },
+  {
+    id: "artist1",
+    type: "artist",
+    name: "Sinach",
+    description: "Award-winning gospel artist",
+  },
+  {
+    id: "playlist1",
+    type: "playlist",
+    name: "African Worship Mix",
+    description: "30+ powerful songs",
+  },
+  {
+    id: "post1",
+    type: "post",
+    name: "The Evolution of African Gospel",
+    description: "Article • 4 min read",
+  },
+]
 
 const getIcon = (type: string) => {
   switch (type) {
@@ -33,10 +58,12 @@ export function SearchPageClient() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["search", query],
     queryFn: () => searchContent(query),
-    enabled: query.length > 0,
+    enabled: query.length > 0, // ⬅️ only fetch when user searches
   })
 
   const [searchTerm, setSearchTerm] = useState(query)
+
+  const results = dummyData
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -85,51 +112,51 @@ export function SearchPageClient() {
           </div>
         </div>
 
-        {isLoading && (
+        {/* Show loading ONLY when user typed something */}
+        {query.length > 0 && isLoading && (
           <div className="flex flex-1 items-center justify-center">
             <p>Loading...</p>
           </div>
         )}
 
-        {isError && (
+        {query.length > 0 && isError && (
           <div className="flex flex-1 items-center justify-center">
             <p>Something went wrong. Please try again.</p>
           </div>
         )}
 
-        {data && data.length === 0 && query.length > 0 && (
+        {query.length > 0 && data && data.length === 0 && (
           <div className="flex flex-1 items-center justify-center">
             <p>No results found for "{query}".</p>
           </div>
         )}
 
-        {data && data.length > 0 && (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {data.map((item: any) => (
-              <Link
-                key={item.id}
-                href={
-                  item.type === "song"
-                    ? `/songs/${item.id}`
-                    : item.type === "playlist"
-                      ? `/playlists/${item.id}`
-                      : item.type === "artist"
-                        ? `/artists/${item.id}`
-                        : item.type === "post"
-                          ? `/articles/${item.id}`
-                          : "#"
-                }
-                className="flex items-center space-x-4 rounded-lg border p-4 hover:bg-accent"
-              >
-                {getIcon(item.type)}
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium leading-none">{item.name}</p>
-                  <p className="text-sm text-muted-foreground">{item.description}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
+        {/* Results (dummy or real) */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {results.map((item: any) => (
+            <Link
+              key={item.id}
+              href={
+                item.type === "song"
+                  ? `/songs/${item.id}`
+                  : item.type === "playlist"
+                  ? `/playlists/${item.id}`
+                  : item.type === "artist"
+                  ? `/artists/${item.id}`
+                  : item.type === "post"
+                  ? `/articles/${item.id}`
+                  : "#"
+              }
+              className="flex items-center space-x-4 rounded-lg border p-4 hover:bg-accent"
+            >
+              {getIcon(item.type)}
+              <div className="flex-1 space-y-1">
+                <p className="text-sm font-medium leading-none">{item.name}</p>
+                <p className="text-sm text-muted-foreground">{item.description}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
       </main>
     </div>
   )

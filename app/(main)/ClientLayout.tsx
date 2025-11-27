@@ -17,10 +17,12 @@ export default function ClientLayout({
   return (
     <>
       <Navbar />
-      <div className="max-w-6xl mx-auto px-4 md:px-8">
-        <div onClick={() => {}} className="cursor-pointer">
+      <div className="grid grid-cols-1 md:grid-cols-12  px-4 md:px-8">
+        <div className="lg:col-span-2  md:block"></div>
+        <div onClick={() => {}} className="md:col-span-8 mx-auto">
           {children}
         </div>
+        <div className="lg:col-span-2  md:block"></div>
         <AudioPlayer isOpen={playerOpen} onClose={() => setPlayerOpen(false)} />
       </div>
       <Footer />

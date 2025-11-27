@@ -57,45 +57,46 @@ export function BlogPageClient() {
   return (
     <>
       {/* Hero */}
-      <section className="relative h-96 bg-gradient-to-br from-red-950 via-black to-orange-950 flex items-center justify-center text-center overflow-hidden">
-        <div className="absolute inset-0 bg-black/70" />
+      <section className="relative h-96 bg-gradient-to-br from-accent/20 via-background to-accent/10 flex items-center justify-center text-center overflow-hidden">
+        <div className="absolute inset-0 bg-background/60" />
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           className="relative z-10 px-6"
         >
-          <h1 className="text-5xl md:text-7xl font-black text-white mb-4">
+          <h1 className="text-5xl md:text-7xl font-black text-foreground mb-4">
             Gospel{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent/70">
               Insights
             </span>
           </h1>
-          <p className="text-xl md:text-2xl text-gray-300">
+          <p className="text-xl md:text-2xl text-muted-foreground">
             Deep truths. Real worship. African fire.
           </p>
         </motion.div>
       </section>
 
       {/* Main Content + Sidebar */}
-      <section className="py-16 bg-black text-white">
+      <section className="py-16 text-foreground bg-background">
         <div className="max-w-7xl mx-auto px-6">
           {/* Search & Sort */}
-          <div className="mx-auto mb-12 flex items-center flex-col md:flex-row gap-4 md:gap-8">
+          <div className="mx-auto mb-12 flex items-center flex-col md:flex-row gap-4">
             <div className="relative w-9/12">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-accent" />
               <Input
                 placeholder="Search articles, authors, topics..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 h-14 border-accent text-lg"
+                className="pl-12 h-14 border-border text-foreground bg-card"
               />
             </div>
-            <div className="flex justify-center mt-4">
+
+            <div className="flex justify-center mt-4 w-3/12">
               <Select value={sortBy} onValueChange={(v: any) => setSortBy(v)}>
-                <SelectTrigger className="w-3/12 h-14 focus:border-red-600 text-lg">
+                <SelectTrigger className="h-20 w-full text-foreground border-border bg-card">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="h-20 bg-popover text-popover-foreground">
                   <SelectItem value="date">Latest First</SelectItem>
                   <SelectItem value="title">Title A–Z</SelectItem>
                 </SelectContent>
@@ -110,19 +111,19 @@ export function BlogPageClient() {
               {isLoading ? (
                 <div className="grid gap-8 md:grid-cols-2">
                   {[...Array(6)].map((_, i) => (
-                    <Card key={i} className="bg-gray-900 border-gray-800">
-                      <Skeleton className="h-56 w-full rounded-t-lg" />
+                    <Card key={i} className="bg-card border-border">
+                      <Skeleton className="h-56 w-full rounded-t-lg bg-muted" />
                       <CardContent className="p-6 space-y-3">
-                        <Skeleton className="h-6 w-4/5" />
-                        <Skeleton className="h-4 w-full" />
-                        <Skeleton className="h-4 w-3/4" />
+                        <Skeleton className="h-6 w-4/5 bg-muted" />
+                        <Skeleton className="h-4 w-full bg-muted" />
+                        <Skeleton className="h-4 w-3/4 bg-muted" />
                       </CardContent>
                     </Card>
                   ))}
                 </div>
               ) : filteredPosts.length === 0 ? (
                 <div className="text-center py-20">
-                  <p className="text-2xl text-gray-400">
+                  <p className="text-2xl text-muted-foreground">
                     No articles found. Try another search.
                   </p>
                 </div>
@@ -136,7 +137,7 @@ export function BlogPageClient() {
                       transition={{ delay: i * 0.1 }}
                     >
                       <Link href={`/blog/${post.slug}`}>
-                        <Card className=" hover:border-red-700 transition-all duration-300 overflow-hidden group h-full pt-0">
+                        <Card className="hover:border-accent transition-all duration-300 overflow-hidden group h-full pt-0 bg-card border-border">
                           <div className="relative h-56">
                             <Image
                               src={post.imageUrl || "/placeholder-gospel.jpg"}
@@ -144,19 +145,19 @@ export function BlogPageClient() {
                               fill
                               className="object-cover"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                            <span className="absolute bottom-3 left-3 bg-red-600 text-white text-xs px-3 py-1 rounded-full font-bold">
+                            <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+                            <span className="absolute bottom-3 left-3 bg-accent text-accent-foreground text-xs px-3 py-1 rounded-full font-bold">
                               {post.category || "Gospel"}
                             </span>
                           </div>
                           <CardContent className="p-6">
-                            <h2 className="text-xl font-bold mb-3 group-hover:text-red-400 transition line-clamp-2">
+                            <h2 className="text-xl font-bold mb-3 group-hover:text-accent transition line-clamp-2">
                               {post.title}
                             </h2>
-                            <p className="text-gray-400 text-sm line-clamp-3 mb-4">
+                            <p className="text-muted-foreground text-sm line-clamp-3 mb-4">
                               {post.excerpt}
                             </p>
-                            <div className="flex items-center justify-between text-xs text-gray-500">
+                            <div className="flex items-center justify-between text-xs text-muted-foreground">
                               <div className="flex items-center gap-2">
                                 <Calendar className="w-4 h-4" />
                                 {format(new Date(post.date), "MMM dd, yyyy")}

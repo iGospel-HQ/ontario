@@ -48,7 +48,7 @@ export function HeroSection() {
   // }, []);
 
   return (
-    <section className="relative bg-black text-white">
+    <section className="relative bg-background text-white">
       <AnimatePresence mode="wait">
         <motion.div
           initial={{ opacity: 0 }}
@@ -87,7 +87,7 @@ export function HeroSection() {
           </div>
 
           {/* Compact 3-Card Grid */}
-          <div className="max-w-7xl mx-auto px-6 py-10 -mt-12 relative z-10">
+          <div className="py-10 relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {slide.cards.map((card, i) => (
                 <motion.div
@@ -95,9 +95,9 @@ export function HeroSection() {
                   initial={{ y: 40, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: i * 0.15 }}
-                  className="bg-gray-900 rounded-xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-red-900/30 transition group cursor-pointer border border-gray-800"
+                  className=" rounded-xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-red-900/30 transition group cursor-pointer border border-gray-800"
                 >
-                  <div className="h-48 bg-gradient-to-br from-gray-800 to-gray-950 relative overflow-hidden">
+                  <div className="h-48 bg-gradient-to-br relative overflow-hidden">
                     <div className="absolute inset-0 bg-gray-700/50 backdrop-blur-sm flex items-center justify-center">
                       <div className="text-5xl text-gray-600 group-hover:text-red-500 transition">
                         ▶
