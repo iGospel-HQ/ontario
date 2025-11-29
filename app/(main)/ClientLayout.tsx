@@ -18,11 +18,11 @@ export default function ClientLayout({
     <>
       <Navbar />
       <div className="grid grid-cols-1 md:grid-cols-12  px-4 md:px-8">
-        <div className="lg:col-span-2  md:block"></div>
-        <div onClick={() => {}} className="md:col-span-8 mx-auto">
+        <div className="lg:col-span-2"></div>
+        <div onClick={() => {}} className="md:col-span-8 bg-white px-5">
           {children}
         </div>
-        <div className="lg:col-span-2  md:block"></div>
+        <div className="lg:col-span-2"></div>
         <AudioPlayer isOpen={playerOpen} onClose={() => setPlayerOpen(false)} />
       </div>
       <Footer />

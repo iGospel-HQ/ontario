@@ -30,7 +30,7 @@ export default function AboutPage() {
 
       {/* Mission */}
       <section className="py-16 bg-white text-gray-900">
-        <div className="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-10 items-center">
+        <div className="mx-auto px-6 grid md:grid-cols-2 gap-10 items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -86,7 +86,7 @@ export default function AboutPage() {
 
       {/* Team */}
       <section className="py-16 bg-gray-50 text-gray-900">
-        <div className="max-w-5xl mx-auto px-6 text-center">
+        <div className="mx-auto px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-10">Meet the Team</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {[
@@ -114,7 +114,7 @@ export default function AboutPage() {
 
       {/* Values */}
       <section className="py-16 bg-white">
-        <div className="max-w-5xl mx-auto px-6 text-center">
+        <div className="mx-auto px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-10">Our Values</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {[
@@ -133,7 +133,7 @@ export default function AboutPage() {
 
       {/* CTA */}
       <section className="py-16 bg-gradient-to-r from-orange-200 to-red-200 text-center">
-        <div className="max-w-3xl mx-auto px-6">
+        <div className="mx-auto px-6">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">Join the Movement</h2>
           <p className="text-lg text-gray-700 mb-8">
             Artists · Worship Leaders · Music Lovers — This is home.

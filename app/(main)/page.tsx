@@ -7,6 +7,7 @@ import { FeaturedSongs } from "@/components/featured-songs";
 import { FeaturedPlaylists } from "@/components/featured-playlists";
 import { LatestBlog } from "@/components/latest-blog";
 import { FeaturedCarousel } from "@/components/featured-carousel";
+import HomeInfoSection from "@/components/hero-info-section";
 
 export const metadata: Metadata = {
   title: "iGospel - Blog & Music Platform",
@@ -19,11 +20,12 @@ export default function HomePage() {
     <>
       <main className="min-h-screen">
         <HeroSection />
-        <FeaturedCarousel />
+        {/* <FeaturedCarousel /> */}
         <QuickLinks />
-        <FeaturedPlaylists />
+        <HomeInfoSection />
+        {/* <FeaturedPlaylists /> */}
         <FeaturedSongs />
-        <LatestBlog />
+        {/* <LatestBlog /> */}
       </main>
     </>
   );

@@ -36,7 +36,7 @@ export async function fetchBlogPost(slug: string) {
 export async function fetchSongs(page = 1, limit = 20) {
   await new Promise((resolve) => setTimeout(resolve, 300))
   return {
-    songs: Array.from({ length: limit }).map((_, i) => ({
+    songs: Array.from({ length: limit }).map((index, i) => ({
       id: `song-${page * limit + i}`,
       title: `Track Title ${page * limit + i + 1}`,
       artist: "Artist Name",
@@ -44,7 +44,7 @@ export async function fetchSongs(page = 1, limit = 20) {
       duration: "3:45",
       genre: ["Electronic", "Hip-Hop", "Indie", "Pop"][Math.floor(Math.random() * 4)],
       streamUrl: "/dummy/track.mp3",
-      cover: `/placeholder.svg?height=200&width=200&query=album cover`,
+      cover: `https://picsum.photos/300?random=${index}`,
     })),
     total: 500,
   }

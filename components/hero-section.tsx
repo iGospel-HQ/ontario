@@ -87,7 +87,7 @@ export function HeroSection() {
           </div>
 
           {/* Compact 3-Card Grid */}
-          <div className="py-10 relative z-10">
+          {/* <div className="py-10 relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {slide.cards.map((card, i) => (
                 <motion.div
@@ -117,7 +117,7 @@ export function HeroSection() {
                 </motion.div>
               ))}
             </div>
-          </div>
+          </div> */}
         </motion.div>
       </AnimatePresence>
 

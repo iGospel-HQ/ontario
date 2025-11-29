@@ -53,7 +53,7 @@ export default function ContactPage() {
   return (
     <>
       {/* HERO */}
-      <section className="relative h-80 md:h-96 bg-gradient-to-br from-red-200 via-orange-100 to-pink-100 flex items-center justify-center text-center">
+      <section className="relative w-full h-80 md:h-96 bg-gradient-to-br from-red-200 via-orange-100 to-pink-100 flex items-center justify-center text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
