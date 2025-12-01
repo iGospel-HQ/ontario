@@ -4,7 +4,7 @@ import { Mail, Github, Twitter, Instagram } from "lucide-react";
 export function Footer() {
   return (
     <footer className="border-t border-border bg-secondary py-12">
-      <div className="px-4 md:px-8 max-w-5xl mx-auto">
+      <div className="px-4 md:px-12 max-w-5xl mx-auto">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Brand */}
           <div>

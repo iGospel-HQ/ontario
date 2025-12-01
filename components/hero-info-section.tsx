@@ -31,18 +31,53 @@ export default function HomeInfoSection() {
       title:
         "The God In Me – John Cando Ft. Steven Sax & Unlimited Favour Voices",
       date: "Nov 12",
+      author: "Just That tesingguy"
     },
     {
       title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
       date: "Nov 10",
+      author: "Just That tesingguy"
     },
     {
       title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
       date: "Nov 10",
+      author: "Just That tesingguy"
     },
     {
       title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
       date: "Nov 10",
+      author: "Just That tesingguy"
+    },
+    {
+      title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
+      date: "Nov 10",
+      author: "Just That tesingguy"
+    },
+    {
+      title:
+        "The God In Me – John Cando Ft. Steven Sax & Unlimited Favour Voices",
+      date: "Nov 12",
+      author: "Just That tesingguy"
+    },
+    {
+      title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
+      date: "Nov 10",
+      author: "Just That tesingguy"
+    },
+    {
+      title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
+      date: "Nov 10",
+      author: "Just That tesingguy"
+    },
+    {
+      title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
+      date: "Nov 10",
+      author: "Just That tesingguy"
+    },
+    {
+      title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
+      date: "Nov 10",
+      author: "Just That tesingguy"
     },
     // Add more...
   ];
@@ -121,25 +156,26 @@ export default function HomeInfoSection() {
 
       {/* MAIN CONTENT + SIDEBAR */}
       <section className="max-w-7xl mx-auto px-4 py-10">
-        <div className="grid lg:grid-cols-5 gap-24">
+        <div className="grid lg:grid-cols-5 gap-14">
           {/* LEFT: Latest Posts */}
-          <div className="lg:col-span-3 space-y-8">
+          <div className="lg:col-span-3 grid md:grid-cols-2 gap-12 h-fit">
             {latestPosts.map((post, i) => (
               <article
                 key={i}
-                className="flex gap-6 border-b pb-8 last:border-0"
+                className=""
               >
-                <div className="w-32 h-32 flex-shrink-0 bg-gray-200 border-2 border-dashed rounded-xl" />
-                <div className="flex-1">
+                {/* <div className="w-32 h-32 flex-shrink-0 bg-gray-200 border-2 border-dashed rounded-xl" /> */}
+                {/* <div className=""> */}
                   <h3 className="text-xl font-bold hover:text-red-600 transition line-clamp-2">
                     <Link href="#">{post.title}</Link>
                   </h3>
                   <p className="text-sm text-gray-600 mt-2">{post.date}</p>
+                  <p className="text-sm text-gray-600 mt-2">Publish By: {post.author}</p>
                   <p className="text-gray-700 mt-3 line-clamp-3">
                     Lorem ipsum dolor sit amet, consec tetur adipiscing elit.
                     Sed do eiusmod tempor...
                   </p>
-                </div>
+                {/* </div> */}
               </article>
             ))}
           </div>
