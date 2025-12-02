@@ -31,53 +31,82 @@ export default function HomeInfoSection() {
       title:
         "The God In Me – John Cando Ft. Steven Sax & Unlimited Favour Voices",
       date: "Nov 12",
-      author: "Just That tesingguy"
+      author: "Just That tesingguy",
     },
     {
       title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
       date: "Nov 10",
-      author: "Just That tesingguy"
+      author: "Just That tesingguy",
     },
     {
       title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
       date: "Nov 10",
-      author: "Just That tesingguy"
+      author: "Just That tesingguy",
     },
     {
       title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
       date: "Nov 10",
-      author: "Just That tesingguy"
+      author: "Just That tesingguy",
     },
     {
       title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
       date: "Nov 10",
-      author: "Just That tesingguy"
+      author: "Just That tesingguy",
     },
     {
       title:
         "The God In Me – John Cando Ft. Steven Sax & Unlimited Favour Voices",
       date: "Nov 12",
-      author: "Just That tesingguy"
+      author: "Just That tesingguy",
     },
     {
       title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
       date: "Nov 10",
-      author: "Just That tesingguy"
+      author: "Just That tesingguy",
     },
     {
       title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
       date: "Nov 10",
-      author: "Just That tesingguy"
+      author: "Just That tesingguy",
     },
     {
       title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
       date: "Nov 10",
-      author: "Just That tesingguy"
+      author: "Just That tesingguy",
     },
     {
       title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
       date: "Nov 10",
-      author: "Just That tesingguy"
+      author: "Just That tesingguy",
+    },
+    // Add more...
+  ];
+  const latestPosts2 = [
+    {
+      title:
+        "The God In Me – John Cando Ft. Steven Sax & Unlimited Favour Voices",
+      date: "Nov 12",
+      author: "Just That tesingguy",
+    },
+    {
+      title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
+      date: "Nov 10",
+      author: "Just That tesingguy",
+    },
+    {
+      title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
+      date: "Nov 10",
+      author: "Just That tesingguy",
+    },
+    {
+      title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
+      date: "Nov 10",
+      author: "Just That tesingguy",
+    },
+    {
+      title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
+      date: "Nov 10",
+      author: "Just That tesingguy",
     },
     // Add more...
   ];
@@ -132,7 +161,7 @@ export default function HomeInfoSection() {
               <Link key={i} href="#" className="group">
                 <div className="relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition">
                   <Image
-                    src={post.image+ `?random=${i}`}
+                    src={post.image + `?random=${i}`}
                     alt={post.title}
                     width={600}
                     height={400}
@@ -156,28 +185,49 @@ export default function HomeInfoSection() {
 
       {/* MAIN CONTENT + SIDEBAR */}
       <section className="max-w-7xl mx-auto px-4 py-10">
-        <div className="grid lg:grid-cols-5 gap-14">
+        <div className="grid lg:grid-cols-5 place-items-start gap-14">
           {/* LEFT: Latest Posts */}
-          <div className="lg:col-span-3 grid md:grid-cols-2 gap-12 h-fit">
-            {latestPosts.map((post, i) => (
-              <article
-                key={i}
-                className=""
-              >
-                {/* <div className="w-32 h-32 flex-shrink-0 bg-gray-200 border-2 border-dashed rounded-xl" /> */}
-                {/* <div className=""> */}
-                  <h3 className="text-xl font-bold hover:text-red-600 transition line-clamp-2">
-                    <Link href="#">{post.title}</Link>
+          <div className="lg:col-span-3 space-y-12">
+            <div className="grid md:grid-cols-2 gap-12 h-fit">
+              {latestPosts.map((post, i) => (
+                <article key={i} className="">
+                  {/* <div className="w-32 h-32 flex-shrink-0 bg-gray-200 border-2 border-dashed rounded-xl" /> */}
+                  {/* <div className=""> */}
+                  <h3 className="text-xl font-bold text-red-600 hover:text-black transition line-clamp-2">
+                    <Link href="/blog/test-blog">{post.title}</Link>
                   </h3>
                   <p className="text-sm text-gray-600 mt-2">{post.date}</p>
-                  <p className="text-sm text-gray-600 mt-2">Publish By: {post.author}</p>
+                  <p className="text-sm text-gray-600 mt-2">
+                    <span className="bg-black rounded-lg text-xs text-white p-1">Publish By</span>: {post.author}
+                  </p>
                   <p className="text-gray-700 mt-3 line-clamp-3">
                     Lorem ipsum dolor sit amet, consec tetur adipiscing elit.
                     Sed do eiusmod tempor...
                   </p>
-                {/* </div> */}
-              </article>
-            ))}
+                  {/* </div> */}
+                </article>
+              ))}
+            </div>
+            <div className="grid gap-12 h-fit">
+              {latestPosts2.map((post, i) => (
+                <article key={i} className="">
+                  {/* <div className="w-32 h-32 flex-shrink-0 bg-gray-200 border-2 border-dashed rounded-xl" /> */}
+                  {/* <div className=""> */}
+                  <h3 className="text-xl font-bold text-red-600 hover:text-black transition line-clamp-2">
+                    <Link href="#">{post.title}</Link>
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-2">{post.date}</p>
+                  <p className="text-sm text-gray-600 mt-2">
+                    <span className="bg-black rounded-lg text-xs text-white p-1">Publish By</span>: {post.author}
+                  </p>
+                  <p className="text-gray-700 mt-3 line-clamp-3">
+                    Lorem ipsum dolor sit amet, consec tetur adipiscing elit.
+                    Sed do eiusmod tempor...
+                  </p>
+                  {/* </div> */}
+                </article>
+              ))}
+            </div>
           </div>
 
           {/* RIGHT: Sidebar */}
