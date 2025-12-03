@@ -1,7 +1,7 @@
 // app/page.tsx  (or components/Homepage.tsx)
 import Link from "next/link";
 import Image from "next/image";
-import { Play, Search, Music, Download, AudioLines } from "lucide-react";
+import { Play, AudioLines } from "lucide-react";
 
 export default function HomeInfoSection() {
   const featured = [
@@ -10,19 +10,19 @@ export default function HomeInfoSection() {
         "Ugandan Gospel Music Minister, Israel Ssali Releases New Single “Holy One”",
       author: "Gospel Force",
       date: "November 20, 2025",
-      image: "https://picsum.photos/300",
+      image: "https://picsum.photos/800/600?random=1",
     },
     {
       title: "Gospel Force Releases New Single “Oluwa Ti Segun”",
       author: "Gospel Force",
       date: "November 14, 2025",
-      image: "https://picsum.photos/300",
+      image: "https://picsum.photos/800/600?random=2",
     },
     {
       title: "Joe Praize Releases “Thank You Jesus” Official Video Out Now",
       author: "Gospel Force",
       date: "November 13, 2025",
-      image: "https://picsum.photos/300",
+      image: "https://picsum.photos/800/600?random=3",
     },
   ];
 
@@ -32,83 +32,95 @@ export default function HomeInfoSection() {
         "The God In Me – John Cando Ft. Steven Sax & Unlimited Favour Voices",
       date: "Nov 12",
       author: "Just That tesingguy",
+      image: "https://picsum.photos/600/400?random=10",
     },
     {
       title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
       date: "Nov 10",
       author: "Just That tesingguy",
+      image: "https://picsum.photos/600/400?random=11",
     },
     {
-      title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
+      title: "Mercy Chinwo Releases Powerful New Worship Single “Obinasom”",
       date: "Nov 10",
       author: "Just That tesingguy",
+      image: "https://picsum.photos/600/400?random=12",
     },
     {
-      title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
+      title: "Nathaniel Bassey Drops “Yeshua Hamashiach” Live Version",
       date: "Nov 10",
       author: "Just That tesingguy",
+      image: "https://picsum.photos/600/400?random=13",
     },
     {
-      title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
+      title: "Eben Releases “No One Like You” Featuring Nathaniel Bassey",
       date: "Nov 10",
       author: "Just That tesingguy",
+      image: "https://picsum.photos/600/400?random=14",
     },
     {
-      title:
-        "The God In Me – John Cando Ft. Steven Sax & Unlimited Favour Voices",
+      title: "Sinach Drops New Single “Peace In The Storm”",
       date: "Nov 12",
       author: "Just That tesingguy",
+      image: "https://picsum.photos/600/400?random=15",
     },
     {
-      title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
+      title: "Frank Edwards Releases “Believers Anthem” Remix",
       date: "Nov 10",
       author: "Just That tesingguy",
+      image: "https://picsum.photos/600/400?random=16",
     },
     {
-      title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
+      title: "Prospa Ochimana – “Ekwueme” Hits 100M Views",
       date: "Nov 10",
       author: "Just That tesingguy",
+      image: "https://picsum.photos/600/400?random=17",
     },
     {
-      title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
+      title: "Moses Bliss Announces New Album “Too Faithful”",
       date: "Nov 10",
       author: "Just That tesingguy",
+      image: "https://picsum.photos/600/400?random=18",
     },
     {
-      title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
+      title: "Ada Ehi Drops “Fix My Gaze” Official Video",
       date: "Nov 10",
       author: "Just That tesingguy",
+      image: "https://picsum.photos/600/400?random=19",
     },
-    // Add more...
   ];
+
   const latestPosts2 = [
     {
-      title:
-        "The God In Me – John Cando Ft. Steven Sax & Unlimited Favour Voices",
+      title: "Judikay Releases “Idinma” Live Worship Session",
       date: "Nov 12",
       author: "Just That tesingguy",
+      image: "https://picsum.photos/600/400?random=20",
     },
     {
-      title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
+      title: "Steve Crown Drops “You Are Yahweh” Acoustic Version",
       date: "Nov 10",
       author: "Just That tesingguy",
+      image: "https://picsum.photos/600/400?random=21",
     },
     {
-      title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
+      title: "Tim Godfrey – “Nara” Featuring Travis Greene",
       date: "Nov 10",
       author: "Just That tesingguy",
+      image: "https://picsum.photos/600/400?random=22",
     },
     {
-      title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
+      title: "Dunsin Oyekan Releases “Fragrance To Fire” Live",
       date: "Nov 10",
       author: "Just That tesingguy",
+      image: "https://picsum.photos/600/400?random=23",
     },
     {
-      title: "UK Based Nigerian Gospel Minister, John Doe Releases New Single",
+      title: "GUC – “All That Matters” Hits 50 Million Streams",
       date: "Nov 10",
       author: "Just That tesingguy",
+      image: "https://picsum.photos/600/400?random=24",
     },
-    // Add more...
   ];
 
   const trendingSongs = [
@@ -137,18 +149,8 @@ export default function HomeInfoSection() {
       artist: "Mercy Chinwo",
       duration: "5:44",
     },
-    {
-      rank: 6,
-      title: "You Are Holy",
-      artist: "Mercy Chinwo",
-      duration: "5:44",
-    },
-    {
-      rank: 7,
-      title: "You Are Holy",
-      artist: "Mercy Chinwo",
-      duration: "5:44",
-    },
+    { rank: 6, title: "Imela", artist: "Nathaniel Bassey", duration: "6:30" },
+    { rank: 7, title: "Excess Love", artist: "Mercy Chinwo", duration: "5:44" },
   ];
 
   return (
@@ -156,12 +158,13 @@ export default function HomeInfoSection() {
       {/* HERO: 3 Featured Posts */}
       <section className="border-b">
         <div className="max-w-7xl mx-auto px-4 py-8">
+          <h2 className="text-2xl font-bold mb-4">Featured Posts</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {featured.map((post, i) => (
               <Link key={i} href="#" className="group">
                 <div className="relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition">
                   <Image
-                    src={post.image + `?random=${i}`}
+                    src={post.image}
                     alt={post.title}
                     width={600}
                     height={400}
@@ -185,46 +188,74 @@ export default function HomeInfoSection() {
 
       {/* MAIN CONTENT + SIDEBAR */}
       <section className="max-w-7xl mx-auto px-4 py-10">
-        <div className="grid lg:grid-cols-5 place-items-start gap-14">
+        <div className="grid lg:grid-cols-5 place-items-start gap-5">
           {/* LEFT: Latest Posts */}
           <div className="lg:col-span-3 space-y-12">
-            <div className="grid md:grid-cols-2 gap-12 h-fit">
+            <h2 className="text-2xl font-bold mb-4">Latest Posts</h2>
+            <div className="grid md:grid-cols-2 gap-5 h-fit">
               {latestPosts.map((post, i) => (
-                <article key={i} className="">
-                  {/* <div className="w-32 h-32 flex-shrink-0 bg-gray-200 border-2 border-dashed rounded-xl" /> */}
-                  {/* <div className=""> */}
-                  <h3 className="text-xl font-bold text-red-600 hover:text-black transition line-clamp-2">
-                    <Link href="/blog/test-blog">{post.title}</Link>
-                  </h3>
-                  <p className="text-sm text-gray-600 mt-2">{post.date}</p>
-                  <p className="text-sm text-gray-600 mt-2">
-                    <span className="bg-black rounded-lg text-xs text-white p-1">Publish By</span>: {post.author}
-                  </p>
-                  <p className="text-gray-700 mt-3 line-clamp-3">
-                    Lorem ipsum dolor sit amet, consec tetur adipiscing elit.
-                    Sed do eiusmod tempor...
-                  </p>
-                  {/* </div> */}
+                <article
+                  key={i}
+                  className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition"
+                >
+                  {/* Image at the top */}
+                  <Image
+                    src={post.image}
+                    alt={post.title}
+                    width={600}
+                    height={400}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="p-5">
+                    <h3 className="text-xl font-bold text-red-600 hover:text-black transition line-clamp-2">
+                      <Link href="/blog/test-blog">{post.title}</Link>
+                    </h3>
+                    <p className="text-sm text-gray-600 mt-2">{post.date}</p>
+                    <p className="text-gray-600 mt-2">
+                      <span className="bg-black rounded text-xs text-white p-1">
+                        Published By
+                      </span>
+                      : <span className="text-xs">{post.author}</span>
+                    </p>
+                    <p className="text-gray-700 mt-3 line-clamp-3">
+                      Lorem ipsum dolor sit amet, consec tetur adipiscing elit.
+                      Sed do eiusmod tempor...
+                    </p>
+                  </div>
                 </article>
               ))}
             </div>
-            <div className="grid gap-12 h-fit">
+            <h2 className="text-2xl font-bold mb-4">Other Posts</h2>
+            <div className="grid gap-5 h-fit">
               {latestPosts2.map((post, i) => (
-                <article key={i} className="">
-                  {/* <div className="w-32 h-32 flex-shrink-0 bg-gray-200 border-2 border-dashed rounded-xl" /> */}
-                  {/* <div className=""> */}
-                  <h3 className="text-xl font-bold text-red-600 hover:text-black transition line-clamp-2">
-                    <Link href="#">{post.title}</Link>
-                  </h3>
-                  <p className="text-sm text-gray-600 mt-2">{post.date}</p>
-                  <p className="text-sm text-gray-600 mt-2">
-                    <span className="bg-black rounded-lg text-xs text-white p-1">Publish By</span>: {post.author}
-                  </p>
-                  <p className="text-gray-700 mt-3 line-clamp-3">
-                    Lorem ipsum dolor sit amet, consec tetur adipiscing elit.
-                    Sed do eiusmod tempor...
-                  </p>
-                  {/* </div> */}
+                <article
+                  key={i}
+                  className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition"
+                >
+                  {/* Image at the top */}
+                  <Image
+                    src={post.image}
+                    alt={post.title}
+                    width={600}
+                    height={400}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="p-5">
+                    <h3 className="text-xl font-bold text-red-600 hover:text-black transition line-clamp-2">
+                      <Link href="#">{post.title}</Link>
+                    </h3>
+                    <p className="text-sm text-gray-600 mt-2">{post.date}</p>
+                    <p className="text-gray-600 mt-2">
+                      <span className="bg-black rounded text-xs text-white p-1">
+                        Published By
+                      </span>
+                      : <span className="text-xs">{post.author}</span>
+                    </p>
+                    <p className="text-gray-700 mt-3 line-clamp-3">
+                      Lorem ipsum dolor sit amet, consec tetur adipiscing elit.
+                      Sed do eiusmod tempor...
+                    </p>
+                  </div>
                 </article>
               ))}
             </div>
@@ -232,16 +263,6 @@ export default function HomeInfoSection() {
 
           {/* RIGHT: Sidebar */}
           <aside className="space-y-8 lg:col-span-2">
-            {/* Search */}
-            {/* <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-              <input
-                type="text"
-                placeholder="Search..."
-                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:border-red-500 focus:outline-none"
-              />
-            </div> */}
-
             {/* Trending Songs Chart */}
             <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
               <div className="bg-accent text-white px-5 py-3 font-bold text-lg">
@@ -276,7 +297,7 @@ export default function HomeInfoSection() {
             {/* Promoted Album Spotlight */}
             <div className="relative overflow-hidden rounded-xl shadow-lg">
               <Image
-                src="https://picsum.photos/seed/picsum/600/600"
+                src="https://picsum.photos/seed/sovereign/600/600"
                 alt="SOVEREIGN GOD Album"
                 width={600}
                 height={600}
