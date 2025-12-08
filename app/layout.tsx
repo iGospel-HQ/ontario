@@ -3,6 +3,8 @@ import type React from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ReactQueryProvider } from "@/lib/react-query";
+import { AudioProvider } from "@/providers/audio-provider";
+import { FloatingAudioButtons } from "@/components/floating-audio-button";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 const geistMono = Geist_Mono({
@@ -31,7 +33,11 @@ export default function RootLayout({
       className={`${geist.variable} ${geistMono.variable}`}
     >
       <body className="font-sans antialiased">
-        <ReactQueryProvider>{children}</ReactQueryProvider>
+        <ReactQueryProvider>
+          <AudioProvider />
+          <FloatingAudioButtons />
+          {children}
+        </ReactQueryProvider>
       </body>
     </html>
   );

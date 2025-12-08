@@ -10,8 +10,8 @@ type Post = {
   slug: string;
   title: string;
   excerpt: string;
-  imageUrl?: string;
-  date: string;
+  featured_image?: string;
+  publish_date: string;
   author: string;
   category?: string;
 };
@@ -42,11 +42,11 @@ export function BlogSidebar({
             <Link
               key={post.id}
               href={`/blog/${post.slug}`}
-              className="flex gap-4 group hover:bg-gray-800/50 p-3 -m-3 rounded-lg transition"
+              className="flex gap-4 group hover:bg-gray-100/50 p-3 -m-3 rounded-lg transition"
             >
               <div className="relative w-20 h-20 flex-shrink-0 overflow-hidden rounded-lg">
                 <Image
-                  src={post.imageUrl || "/placeholder-gospel.jpg"}
+                  src={post.featured_image || "/placeholder.svg"}
                   alt={post.title}
                   fill
                   className="object-cover group-hover:scale-110 transition"
@@ -57,7 +57,7 @@ export function BlogSidebar({
                   {post.title}
                 </h4>
                 <p className="text-xs text-gray-500 mt-1">
-                  {format(new Date(post.date), "MMM dd, yyyy")}
+                  {format(new Date(post.publish_date), "MMM dd, yyyy")}
                 </p>
               </div>
             </Link>

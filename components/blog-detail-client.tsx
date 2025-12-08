@@ -2,14 +2,16 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { fetchBlogPost, fetchBlogPosts } from "@/lib/api-client";
+import api, { fetchBlogPost, fetchBlogPosts } from "@/lib/api-client";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import Link from "next/link";
 import { format } from "date-fns";
-import { Share2, ChevronRight } from "lucide-react";
+import { Share2, ChevronRight, Play } from "lucide-react";
 import { use } from "react";
 import { BlogSidebar } from "./blog-side-section";
+import BlogSkeleton from "./blogpage-loader";
+import { useAudioPlayer } from "@/store/use-audio-player";
 
 export function BlogDetailClient({
   params,
@@ -17,29 +19,39 @@ export function BlogDetailClient({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
+  const playTrack = useAudioPlayer((s) => s.playTrack);
 
-  const { data: post } = useQuery({
+  const { data: post, isPending } = useQuery({
     queryKey: ["blog-post", slug],
-    queryFn: () => fetchBlogPost(slug),
+    queryFn: async () => {
+      const res = await api.get(`/blog/posts/${slug}/`);
+      return res.data;
+    },
   });
 
-  const { data: allPosts } = useQuery({
-    queryKey: ["blog-posts-related", 1],
-    queryFn: () => fetchBlogPosts(1, 6),
-  });
+  // const { data: allPosts } = useQuery({
+  //   queryKey: ["blog-posts-related", 1],
+  //   queryFn: () => fetchBlogPosts(1, 6),
+  // });
 
   const { data } = useQuery({
-    queryKey: ["blogPosts"],
-    queryFn: () => fetchBlogPosts(),
+    queryKey: ["latest_post", slug],
+    queryFn: async () => {
+      const res = await api.get("/blog/homepage/");
+      return res.data;
+    },
   });
 
-  // Latest posts for sidebar
-  const latestPosts = [...(data?.posts || [])].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
+  if (isPending) {
+    return <BlogSkeleton />;
+  }
 
-  const relatedPosts =
-    allPosts?.posts.filter((p) => p.slug !== slug).slice(0, 3) || [];
+  // Latest posts for sidebar
+  const latestPosts = data?.latest_posts || [];
+  const artists = post?.artists.map((artist: any) => artist.name).join(", ");
+
+  // const relatedPosts =
+  //   allPosts?.posts.filter((p) => p.slug !== slug).slice(0, 3) || [];
 
   return (
     <main className=" min-h-screen ">
@@ -48,18 +60,19 @@ export function BlogDetailClient({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="relative h-96 md:h-[500px] overflow-hidden"
+          className="relative h-96 md:h-[500px] overflow-hidden mb-5"
         >
+          <h1 className="text-4xl md:text-5xl font-bold my-8">{post?.title}</h1>
           <img
-            src={post.image || "/placeholder.svg"}
+            src={post.featured_image || "/placeholder.svg"}
             alt={post.title}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+          {/* <div className="absolute inset-0 bg-gradient-to-t from-background/50 via-background/50 to-transparent" /> */}
         </motion.div>
       )}
-      <div className="grid lg:grid-cols-5 gap-10">
-        <div className="px-4 lg:col-span-3 md:px-8 py-12">
+      <div className="grid 2xl:grid-cols-5 gap-10">
+        <div className="px-4 2xl:col-span-3 md:px-8 py-12">
           <div className="max-w-3xl mx-auto">
             {/* Breadcrumb */}
             <motion.div
@@ -71,7 +84,7 @@ export function BlogDetailClient({
                 Blog
               </Link>
               <ChevronRight className="h-4 w-4" />
-              <span className="text-foreground">{post?.category}</span>
+              <span className="text-foreground">{post?.genres[0].name}</span>
             </motion.div>
 
             {/* Title Section */}
@@ -81,16 +94,13 @@ export function BlogDetailClient({
               transition={{ delay: 0.1 }}
               className="mb-8"
             >
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                {post?.title}
-              </h1>
-
               <div className="flex items-center justify-between border-b border-border pb-6">
                 <div className="flex items-center gap-4">
                   <div>
-                    <p className="font-semibold">{post?.author}</p>
+                    <p className="font-semibold">{post?.author_name}</p>
                     <p className="text-sm text-muted-foreground">
-                      {post && format(new Date(post.date), "MMMM d, yyyy")}
+                      {post &&
+                        format(new Date(post.publish_date), "MMMM d, yyyy")}
                     </p>
                   </div>
                 </div>
@@ -99,6 +109,35 @@ export function BlogDetailClient({
                 </button>
               </div>
             </motion.div>
+
+            <div className="mb-8 p-6 bg-secondary rounded-lg">
+              {post.tracks.map((song: any, i: number) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-4 hover:bg-gray-50 p-2 -m-2 rounded transition group cursor-pointer "
+                  onClick={() =>
+                    playTrack({
+                      id: song.id,
+                      title: song.title,
+                      artist: song.artist || artists,
+                      cover: song.image || "/placeholder.svg",
+                      audioUrl: song.mp3_file,
+                    })
+                  }
+                >
+                  <button className="relative w-6 h-6 bg-accent rounded-full flex items-center justify-center group-hover:bg-red-700 transition">
+                    <Play className="w-3 h-3 text-white" fill="white" />
+                  </button>
+                  <div className="flex-1">
+                    <p className="font-semibold text-sm truncate">
+                      {song.title}
+                    </p>
+                    <p className="text-xs text-gray-600">{song.artist}</p>
+                  </div>
+                  <span className="text-xs text-gray-500">{song.duration}</span>
+                </div>
+              ))}
+            </div>
 
             {/* Content */}
             <motion.div
@@ -115,7 +154,7 @@ export function BlogDetailClient({
             </motion.div>
 
             {/* Related Articles */}
-            {relatedPosts.length > 0 && (
+            {/* {relatedPosts.length > 0 && (
               <motion.section
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -145,10 +184,10 @@ export function BlogDetailClient({
                   ))}
                 </div>
               </motion.section>
-            )}
+            )} */}
           </div>
         </div>
-        <div className="lg:col-span-2">
+        <div className="2xl:col-span-2">
           <BlogSidebar latestPosts={latestPosts} />
         </div>
       </div>

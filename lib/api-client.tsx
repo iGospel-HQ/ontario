@@ -1,6 +1,8 @@
 // API client for fetching dummy data
 // In a real app, this would make actual API calls
 
+import axios from "axios"
+
 export async function fetchBlogPosts(page = 1, limit = 10) {
   await new Promise((resolve) => setTimeout(resolve, 300))
   return {
@@ -128,3 +130,15 @@ export async function searchContent(query: string) {
     })),
   }
 }
+
+
+
+
+
+const api = axios.create({
+  baseURL: "https://api.igospels.com.ng/v1",
+  timeout: 10000,
+})
+
+
+export default api

@@ -20,39 +20,51 @@ import {
 } from "@/components/ui/select";
 import { Search, Calendar, User } from "lucide-react";
 
-import { fetchBlogPosts } from "@/lib/api-client";
+import api, { fetchBlogPosts } from "@/lib/api-client";
 import { BlogSidebar } from "./blog-side-section";
 
 export function BlogPageClient() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<"date" | "title">("date");
 
-  const { data, isLoading } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ["blogPosts"],
-    queryFn: () => fetchBlogPosts(),
+    queryFn: async () => {
+      const res = await api.get("/blog/posts/");
+      return res.data;
+    },
   });
 
-  const allPosts = data?.posts || [];
+  const { data: postData } = useQuery({
+    queryKey: ["latest_post_all_blogs"],
+    queryFn: async () => {
+      const res = await api.get("/blog/homepage/");
+      return res.data;
+    },
+  });
+
+  const allPosts = data || [];
 
   // Filter & Sort
   const filteredPosts = allPosts
-    .filter((post) =>
-      [post.title, post.excerpt, post.content, post.author]
+    .filter((post: any) =>
+      [post.title, post.excerpt, post.content, post.author_name]
         .join(" ")
         .toLowerCase()
         .includes(searchQuery.toLowerCase())
     )
-    .sort((a, b) => {
+    .sort((a: any, b: any) => {
       if (sortBy === "date") {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
+        return (
+          new Date(b.publish_date).getTime() -
+          new Date(a.publish_date).getTime()
+        );
       }
       return a.title.localeCompare(b.title);
     });
 
   // Latest posts for sidebar
-  const latestPosts = [...allPosts].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
+  const latestPosts = postData?.latest_posts || [];
 
   return (
     <>
@@ -105,10 +117,10 @@ export function BlogPageClient() {
           </div>
 
           {/* Layout: Main + Sidebar */}
-          <div className="grid lg:grid-cols-7 gap-10">
+          <div className="grid 2xl:grid-cols-7 gap-10">
             {/* Main Blog Posts */}
-            <div className="lg:col-span-5 space-y-8">
-              {isLoading ? (
+            <div className="2xl:col-span-5 space-y-8">
+              {isPending ? (
                 <div className="grid gap-8 md:grid-cols-2">
                   {[...Array(6)].map((_, i) => (
                     <Card key={i} className="bg-card border-border">
@@ -129,7 +141,7 @@ export function BlogPageClient() {
                 </div>
               ) : (
                 <div className="grid gap-8 md:grid-cols-2">
-                  {filteredPosts.map((post, i) => (
+                  {filteredPosts.map((post: any, i: number) => (
                     <motion.article
                       key={post.id}
                       initial={{ opacity: 0, y: 20 }}
@@ -140,14 +152,14 @@ export function BlogPageClient() {
                         <Card className="hover:border-accent transition-all duration-300 overflow-hidden group h-full pt-0 bg-card border-border">
                           <div className="relative h-56">
                             <Image
-                              src={post.imageUrl || "/placeholder-gospel.jpg"}
+                              src={post.featured_image || "/placeholder.svg"}
                               alt={post.title}
                               fill
                               className="object-cover"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
                             <span className="absolute bottom-3 left-3 bg-accent text-accent-foreground text-xs px-3 py-1 rounded-full font-bold">
-                              {post.category || "Gospel"}
+                              {post.genres[0].name || "Gospel"}
                             </span>
                           </div>
                           <CardContent className="p-6">
@@ -160,11 +172,14 @@ export function BlogPageClient() {
                             <div className="flex items-center justify-between text-xs text-muted-foreground">
                               <div className="flex items-center gap-2">
                                 <Calendar className="w-4 h-4" />
-                                {format(new Date(post.date), "MMM dd, yyyy")}
+                                {format(
+                                  new Date(post.publish_date),
+                                  "MMM dd, yyyy"
+                                )}
                               </div>
                               <div className="flex items-center gap-2">
                                 <User className="w-4 h-4" />
-                                {post.author}
+                                {post.author_name}
                               </div>
                             </div>
                           </CardContent>
@@ -177,7 +192,7 @@ export function BlogPageClient() {
             </div>
 
             {/* Sidebar */}
-            <div className="lg:col-span-2">
+            <div className="2xl:col-span-2">
               <BlogSidebar latestPosts={latestPosts} />
             </div>
           </div>
