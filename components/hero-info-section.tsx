@@ -1,8 +1,9 @@
 // app/page.tsx  (or components/Homepage.tsx)
 import Link from "next/link";
 import Image from "next/image";
-import { Play, AudioLines } from "lucide-react";
+import { Play, AudioLines, Pause } from "lucide-react";
 import { useAudioPlayer } from "@/store/use-audio-player";
+import { cn } from "@/lib/utils";
 
 export default function HomeInfoSection({
   latestPosts,
@@ -11,6 +12,8 @@ export default function HomeInfoSection({
   playlists,
 }: Record<string, Array<any>>) {
   const playTrack = useAudioPlayer((s) => s.playTrack);
+  const togglePlay = useAudioPlayer((s) => s.togglePlay);
+  const currentTrack = useAudioPlayer((s) => s.currentTrack);
 
   return (
     <>
@@ -33,11 +36,14 @@ export default function HomeInfoSection({
                   <div className="absolute bottom-0 p-5 text-white">
                     <span className="text-xs uppercase tracking-wider opacity-90 mb-2 block">
                       {post.author} •{" "}
-                      {new Date(post.publish_date).toLocaleDateString(undefined, {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
+                      {new Date(post.publish_date).toLocaleDateString(
+                        undefined,
+                        {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        }
+                      )}
                     </span>
                     <h3 className="text-lg font-bold leading-tight line-clamp-3 group-hover:text-red-400 transition">
                       {post.title}
@@ -52,9 +58,9 @@ export default function HomeInfoSection({
 
       {/* MAIN CONTENT + SIDEBAR */}
       <section className="max-w-7xl mx-auto px-4 py-10">
-        <div className="grid lg:grid-cols-5 place-items-start gap-5">
+        <div className="grid xl:grid-cols-5 place-items-start gap-5">
           {/* LEFT: Latest Posts */}
-          <div className="lg:col-span-3 space-y-12">
+          <div className="xl:col-span-3 space-y-12">
             <h2 className="text-2xl font-bold mb-4">Latest Posts</h2>
             <div className="grid md:grid-cols-2 gap-5 h-fit">
               {latestPosts.map((post, i) => (
@@ -75,11 +81,14 @@ export default function HomeInfoSection({
                       <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                     </h3>
                     <p className="text-sm text-gray-600 mt-2">
-                      {new Date(post.publish_date).toLocaleDateString(undefined, {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
+                      {new Date(post.publish_date).toLocaleDateString(
+                        undefined,
+                        {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        }
+                      )}
                     </p>
                     <p className="text-gray-600 mt-2">
                       <span className="bg-black rounded text-xs text-white p-1">
@@ -114,11 +123,14 @@ export default function HomeInfoSection({
                       <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                     </h3>
                     <p className="text-sm text-gray-600 mt-2">
-                      {new Date(post.publish_date).toLocaleDateString(undefined, {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
+                      {new Date(post.publish_date).toLocaleDateString(
+                        undefined,
+                        {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        }
+                      )}
                     </p>
                     <p className="text-gray-600 mt-2">
                       <span className="bg-black rounded text-xs text-white p-1">
@@ -136,32 +148,45 @@ export default function HomeInfoSection({
           </div>
 
           {/* RIGHT: Sidebar */}
-          <aside className="space-y-8 lg:col-span-2">
+          <aside className="space-y-8 xl:col-span-2">
             {/* Trending Songs Chart */}
             <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
               <div className="bg-accent text-white px-5 py-3 font-bold text-lg">
-                Trending Gospel Songs
+                Playlist
               </div>
               <div className="p-4 space-y-3 max-h-[400px] overflow-y-auto">
                 {playlists.map((song, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-4 hover:bg-gray-50 p-2 -m-2 rounded transition group cursor-pointer "
-                    onClick={() =>
-                      playTrack({
-                        id: song.id,
-                        title: song.title,
-                        artist: song.artist,
-                        cover: song.image || "/placeholder.svg",
-                        audioUrl: song.mp3_file,
-                      })
-                    }
+                    className={cn(
+                      "flex items-center gap-4  p-2 -m-2 rounded transition group cursor-pointer",
+                      currentTrack?.id === song.id
+                        ? "bg-gray-50"
+                        : "hover:bg-gray-50"
+                    )}
+                    onClick={() => {
+                      if (currentTrack?.id === song.id) {
+                        togglePlay();
+                      } else {
+                        playTrack({
+                          id: song.id,
+                          title: song.title,
+                          artist: song.artist,
+                          cover: song.image || "/placeholder.svg",
+                          audioUrl: song.mp3_file,
+                        });
+                      }
+                    }}
                   >
                     <div className="text-md font-black text-gray-300">
                       {i + 1}
                     </div>
                     <button className="relative w-6 h-6 bg-accent rounded-full flex items-center justify-center group-hover:bg-red-700 transition">
-                      <Play className="w-3 h-3 text-white" fill="white" />
+                      {currentTrack?.id === song.id ? (
+                        <Pause className="w-3 h-3 text-white" fill="white" />
+                      ) : (
+                        <Play className="w-3 h-3 text-white" fill="white" />
+                      )}
                     </button>
                     <div className="flex-1">
                       <p className="font-semibold text-sm truncate">

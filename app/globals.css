@@ -76,3 +76,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.post-content p a, .post-content p strong{
+  color: var(--accent) !important;
+}

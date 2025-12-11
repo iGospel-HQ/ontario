@@ -37,7 +37,7 @@ export default function HomePage() {
   return (
     <>
       <main className="min-h-screen">
-        <HeroSection />
+        <HeroSection post={featuredPosts[0]}/>
         {/* <FeaturedCarousel /> */}
         <QuickLinks />
         <HomeInfoSection latestPosts={latestPosts} featuredPosts={featuredPosts} randomPosts={randomPosts} playlists={playlists} />
