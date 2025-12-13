@@ -82,7 +82,7 @@ export function CommentSection({ comments = [], postId, slug }: { comments: any[
                 className="flex gap-3 p-4 bg-secondary rounded-xl border border-border/40"
               >
                 <Avatar>
-                  <AvatarImage src={item.author_avatar} />
+                  <AvatarImage src={item.author_avatar || undefined} />
                   <AvatarFallback>
                     {item.name?.charAt(0)?.toUpperCase()}
                   </AvatarFallback>
