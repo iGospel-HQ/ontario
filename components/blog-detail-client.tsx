@@ -283,7 +283,7 @@ export function BlogDetailClient({
               ))}
             </div>
 
-            <CommentSection comments={comments} postId={post?.id}/>
+            <CommentSection comments={comments} postId={post?.id} slug={slug}/>
 
             {/* Related Articles */}
             {/* {relatedPosts.length > 0 && (

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export function CommentSection({ comments = [], postId }: { comments: any[]; postId: string }) {
+export function CommentSection({ comments = [], postId, slug }: { comments: any[]; postId: string, slug: string }) {
   const queryClient = useQueryClient();
 
   
@@ -31,7 +31,7 @@ export function CommentSection({ comments = [], postId }: { comments: any[]; pos
     onSuccess: () => {
       setName("");
       setComment("");
-      queryClient.invalidateQueries({ queryKey: ["comments", postId] });
+      queryClient.invalidateQueries({ queryKey: ["blog-post", slug] });
     },
   });
 
