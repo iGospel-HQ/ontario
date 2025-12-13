@@ -77,6 +77,6 @@
   }
 }
 
-.post-content p a, .post-content p strong{
+.post-content p a{
   color: var(--accent) !important;
 }

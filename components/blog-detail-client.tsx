@@ -15,11 +15,11 @@ import { useAudioPlayer } from "@/store/use-audio-player";
 import { CommentSection } from "./blogpost-comment-section";
 
 export function BlogDetailClient({
-  params,
+  slug,
 }: {
-  params: Promise<{ slug: string }>;
+  slug: string;
 }) {
-  const { slug } = use(params);
+
   const playTrack = useAudioPlayer((s) => s.playTrack);
   const togglePlay = useAudioPlayer((s) => s.togglePlay);
   const currentTrack = useAudioPlayer((s) => s.currentTrack);
@@ -52,6 +52,7 @@ export function BlogDetailClient({
   // Latest posts for sidebar
   const latestPosts = data?.latest_posts || [];
   const artists = post?.artists.map((artist: any) => artist.name).join(", ");
+  const comments = post?.comments
 
   // const relatedPosts =
   //   allPosts?.posts.filter((p) => p.slug !== slug).slice(0, 3) || [];
@@ -65,7 +66,7 @@ export function BlogDetailClient({
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="relative h-96 md:h-[500px] overflow-hidden mb-5"
+              className="relative   mb-5"
             >
               <h1 className="text-4xl md:text-5xl font-bold my-8">
                 {post?.title}
@@ -135,7 +136,7 @@ export function BlogDetailClient({
               <img
                 src={post.featured_image || "/placeholder.svg"}
                 alt={post.title}
-                className="w-full h-full"
+                className="w-full md:h-[400px] object-cover"
               />
               {/* <div className="absolute inset-0 bg-gradient-to-t from-background/50 via-background/50 to-transparent" /> */}
             </motion.div>
@@ -282,7 +283,7 @@ export function BlogDetailClient({
               ))}
             </div>
 
-            <CommentSection postId={post.id} />
+            <CommentSection comments={comments} postId={post?.id}/>
 
             {/* Related Articles */}
             {/* {relatedPosts.length > 0 && (
