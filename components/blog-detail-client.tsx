@@ -13,13 +13,10 @@ import { BlogSidebar } from "./blog-side-section";
 import BlogSkeleton from "./blogpage-loader";
 import { useAudioPlayer } from "@/store/use-audio-player";
 import { CommentSection } from "./blogpost-comment-section";
+import { TelegramCTA } from "./telegram-cta";
+import { BlogStats } from "./blog-stats";
 
-export function BlogDetailClient({
-  slug,
-}: {
-  slug: string;
-}) {
-
+export function BlogDetailClient({ slug }: { slug: string }) {
   const playTrack = useAudioPlayer((s) => s.playTrack);
   const togglePlay = useAudioPlayer((s) => s.togglePlay);
   const currentTrack = useAudioPlayer((s) => s.currentTrack);
@@ -52,13 +49,26 @@ export function BlogDetailClient({
   // Latest posts for sidebar
   const latestPosts = data?.latest_posts || [];
   const artists = post?.artists.map((artist: any) => artist.name).join(", ");
-  const comments = post?.comments
+  const comments = post?.comments;
+  const headerAd = post?.ads?.content_ads.find(
+    (ad: any) => ad.position === "header"
+  );
+  const sidebarAd = post?.ads?.content_ads.find(
+    (ad: any) => ad.position === "sidebar"
+  );
 
   // const relatedPosts =
   //   allPosts?.posts.filter((p) => p.slug !== slug).slice(0, 3) || [];
 
   return (
     <main className=" min-h-screen ">
+      <a href={headerAd.link}>
+        <img
+          src={headerAd.image}
+          alt={headerAd.title}
+          className="w-full md:h-[100px] object-cover"
+        />
+      </a>
       <div className="grid 2xl:grid-cols-5 gap-10">
         <div className="px-4 2xl:col-span-3 md:px-4 py-12">
           {/* Hero Image */}
@@ -176,6 +186,14 @@ export function BlogDetailClient({
                   <Share2 className="h-5 w-5" />
                 </button>
               </div>
+              <BlogStats
+                totalVisitors={post.total_visitors}
+                totalViews={post.total_views}
+                todayVisitors={post.today_visitors}
+                todayViews={post.today_views}
+              />
+
+              <TelegramCTA />
             </motion.div>
 
             {/* Content */}
@@ -192,6 +210,7 @@ export function BlogDetailClient({
                     dangerouslySetInnerHTML={{ __html: post.content }}
                   />
                 )}
+                <TelegramCTA />
               </div>
             </motion.div>
 
@@ -283,7 +302,7 @@ export function BlogDetailClient({
               ))}
             </div>
 
-            <CommentSection comments={comments} postId={post?.id} slug={slug}/>
+            <CommentSection comments={comments} postId={post?.id} slug={slug} />
 
             {/* Related Articles */}
             {/* {relatedPosts.length > 0 && (
