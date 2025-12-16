@@ -19,18 +19,20 @@ type Post = {
 type BlogSidebarProps = {
   latestPosts: Post[];
   relatedPosts?: Post[]; // optional – used on single post page
+  ads?: any[];
 };
 
 export function BlogSidebar({
   latestPosts,
   relatedPosts = [],
+  ads,
 }: BlogSidebarProps) {
   const postsToShow = relatedPosts.length > 0 ? relatedPosts : latestPosts;
 
   return (
     <aside className="space-y-8">
       {/* Latest Posts */}
-      <Card >
+      <Card>
         <CardHeader>
           <CardTitle className="text-xl font-bold flex items-center gap-2">
             <Music className="w-5 h-5 text-red-500" />
@@ -79,6 +81,19 @@ export function BlogSidebar({
           </button>
         </CardContent>
       </Card>
+      <div className="grid gap-5">
+        {ads &&
+          ads.length > 0 &&
+          ads?.map((ad: any, i: number) => (
+            <a href={ad.link} key={i} title={ad.title}>
+              <img
+                src={ad.image}
+                alt={ad.title}
+                className="w-full h-[400px]"
+              />
+            </a>
+          ))}
+      </div>
     </aside>
   );
 }

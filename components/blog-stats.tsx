@@ -15,7 +15,7 @@ export function BlogStats({
     <div className="my-8">
       <div
         className="
-          grid grid-cols-2 md:grid-cols-4 gap-4
+          grid grid-cols-2 md:grid-cols-2 gap-4
           p-6
         "
       >

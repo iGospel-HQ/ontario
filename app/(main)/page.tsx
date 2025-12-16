@@ -42,7 +42,7 @@ export default function HomePage() {
         <QuickLinks />
         <HomeInfoSection latestPosts={latestPosts} featuredPosts={featuredPosts} randomPosts={randomPosts} playlists={playlists} />
         {/* <FeaturedPlaylists /> */}
-        <FeaturedSongs />
+        {/* <FeaturedSongs /> */}
         {/* <LatestBlog /> */}
       </main>
     </>

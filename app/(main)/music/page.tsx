@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { MusicPageClient } from "@/components/music-page-client";
+import { MusicPostsPage } from "@/components/music-page-client";
 
 export const metadata: Metadata = {
   title: "Music - iGospel",
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function MusicPage() {
-  return <MusicPageClient />;
+  return <MusicPostsPage />;
 }
