@@ -18,12 +18,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import api from "@/lib/api-client";
 
 // Validation Schema
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email"),
-  subject: z.string().min(5, "Subject too short"),
+  phone: z.string().min(11, "Subject too short"),
   message: z.string().min(10, "Message must be at least 10 characters"),
 });
 
@@ -40,7 +41,7 @@ export default function ContactPage() {
   } = useForm<ContactFormData>({ resolver: zodResolver(contactSchema) });
 
   const onSubmit = async (data: ContactFormData) => {
-    await new Promise((res) => setTimeout(res, 1000));
+    await api.post("/support/contact/create/", { ...data, contact_me: true });
 
     toast({
       title: "Message Sent!",
@@ -90,10 +91,10 @@ export default function ContactPage() {
                   <div>
                     <p className="font-semibold">Email</p>
                     <a
-                      href="mailto:hello@gospelforce.com"
+                      href="mailto:igospelmediaconnect@gmail.com"
                       className="text-sm text-muted-foreground"
                     >
-                      hello@gospelforce.com
+                      igospelmediaconnect@gmail.com
                     </a>
                   </div>
                 </CardContent>
@@ -107,10 +108,10 @@ export default function ContactPage() {
                   <div>
                     <p className="font-semibold">WhatsApp</p>
                     <a
-                      href="https://wa.me/2348123456789"
+                      href="https://wa.me/+2348068535646"
                       className="text-sm text-muted-foreground"
                     >
-                      +234 812 345 6789
+                      +234 806 853 5646
                     </a>
                   </div>
                 </CardContent>
@@ -198,14 +199,14 @@ export default function ContactPage() {
                   </div>
 
                   <div>
-                    <Label>Subject</Label>
+                    <Label>Phone No</Label>
                     <Input
-                      placeholder="Song submission, partnership, etc."
-                      {...register("subject")}
+                      placeholder="090******34"
+                      {...register("phone")}
                     />
-                    {errors.subject && (
+                    {errors.phone && (
                       <p className="text-red-500 text-sm">
-                        {errors.subject.message}
+                        {errors.phone.message}
                       </p>
                     )}
                   </div>

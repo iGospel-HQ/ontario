@@ -170,13 +170,12 @@ export function BlogDetailClient({ slug }: { slug: string }) {
               transition={{ delay: 0.2 }}
               className="prose prose-lg max-w-none dark:prose-invert"
             >
-              
+
               <TelegramCTA />
               <div
                 className="post-content text-base sm:text-lg"
                 dangerouslySetInnerHTML={{ __html: post.content }}
               />
-
               <TelegramCTA />
 
               {/* In-Post Ad */}

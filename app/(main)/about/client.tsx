@@ -2,156 +2,194 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Music, Radio, Users, Heart, Mic, Globe, Sparkles, Mail } from "lucide-react";
+import { Heart, Globe, Sparkles, Cross, Users, Radio, Mail } from "lucide-react";
 import Image from "next/image";
 
 export default function AboutPage() {
   return (
     <>
-      {/* Light Hero */}
-      <section className="relative h-96 md:h-[500px] bg-gradient-to-br from-orange-200 via-white to-red-100 flex items-center justify-center text-center">
-        <div className="absolute inset-0 bg-white/40" />
+      {/* Hero Section */}
+      <section className="relative h-96 md:h-[500px] bg-gradient-to-br from-red-100 via-white to-orange-100 flex items-center justify-center text-center overflow-hidden">
+        <div className="absolute inset-0 bg-white/50" />
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative z-10 px-6"
+          transition={{ duration: 0.8 }}
+          className="relative z-10 px-6 max-w-4xl"
         >
-          <h1 className="text-4xl md:text-6xl font-black text-gray-900 mb-3">
+          <h1 className="text-4xl md:text-6xl font-black text-gray-900 mb-4">
             About{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-600">
               iGospel
             </span>
           </h1>
-          <p className="text-lg md:text-xl text-gray-700">
-            Spreading African Gospel Fire Since 2019
+          <p className="text-lg md:text-xl text-gray-700 max-w-2xl mx-auto">
+            Spreading the Gospel of Jesus Christ Through Digital Media Since 2018
           </p>
         </motion.div>
       </section>
 
-      {/* Mission */}
-      <section className="py-16 bg-white text-gray-900">
-        <div className="mx-auto px-6 grid md:grid-cols-2 gap-10 items-center">
+      {/* Who We Are */}
+      <section className="py-16 bg-white">
+        <div className="max-w-5xl mx-auto px-6 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="space-y-6"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Who We Are</h2>
+            <p className="text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto">
+              iGospel Media Connect is a digital gospel platform founded in <strong>2018</strong> with a mission to spread the Gospel of our Lord Jesus Christ through edifying and spirit-filled content.
+            </p>
+            <p className="text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto">
+              We provide access to gospel music, sermons, devotionals, and other inspirational resources designed to build faith and transform lives. We exist to leverage technology as a tool for ministry: connecting people across the world to Christ-centered content that inspires worship, strengthens faith, and nurtures spiritual growth.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Mission & Vision Grid */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12">
+          {/* Our Mission */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
+            className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-5 bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
-              Our Mission
-            </h2>
-            <p className="text-gray-700 leading-relaxed">
-              We amplify anointed African gospel voices, connect believers through powerful worship music, and preserve the rich heritage of praise across the continent and beyond.
+            <div className="flex items-center gap-4 mb-6">
+              <div className="p-3 bg-red-100 rounded-full">
+                <Heart className="w-8 h-8 text-red-600" />
+              </div>
+              <h2 className="text-3xl font-bold text-gray-900">Our Mission</h2>
+            </div>
+            <p className="text-lg text-gray-700 leading-relaxed">
+              Our mission is to advance the Gospel of Jesus Christ through digital media, making sound, uplifting, and faith-building content easily accessible to believers everywhere.
             </p>
-            <p className="text-gray-500 mt-4 text-sm">
-              Latest releases • Lyrics • Downloads • Exclusive interviews • Free downloads — all in one place.
+            <p className="text-gray-600 mt-4">
+              Through music, teachings, and devotional resources, we aim to encourage spiritual growth and deepen personal relationships with God.
             </p>
           </motion.div>
 
+          {/* Our Vision */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="relative h-64 md:h-80 rounded-xl overflow-hidden shadow-md"
+            className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100"
           >
-            <Image
-              src="/about-mission.jpg"
-              alt="Worship"
-              fill
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+            <div className="flex items-center gap-4 mb-6">
+              <div className="p-3 bg-orange-100 rounded-full">
+                <Globe className="w-8 h-8 text-orange-600" />
+              </div>
+              <h2 className="text-3xl font-bold text-gray-900">Our Vision</h2>
+            </div>
+            <p className="text-lg text-gray-700 leading-relaxed">
+              Our vision is to become a leading digital gospel platform that impacts lives globally, fosters true worship, and supports the growth of the Christian faith through technology.
+            </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-12 bg-gradient-to-r from-orange-100 to-red-100">
-        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center px-6">
-          {[
-            { icon: Music, value: "12K+", label: "Songs" },
-            { icon: Radio, value: "200K+", label: "Listeners" },
-            { icon: Users, value: "1M+", label: "Visitors" },
-            { icon: Heart, value: "∞", label: "Lives Touched" },
-          ].map((stat, i) => (
-            <div key={i} className="text-gray-900">
-              <stat.icon className="w-10 h-10 mx-auto mb-3 text-red-500" />
-              <p className="text-3xl font-bold">{stat.value}</p>
-              <p className="text-xs uppercase tracking-wider opacity-80">
-                {stat.label}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* Core Values */}
+      <section className="py-16 bg-white">
+        <div className="max-w-6xl mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Core Values</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Everything we do is guided by these foundational principles
+            </p>
+          </motion.div>
 
-      {/* Team */}
-      <section className="py-16 bg-gray-50 text-gray-900">
-        <div className="mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-10">Meet the Team</h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { name: "Pastor Michael", role: "Founder", img: "/team1.jpg" },
-              { name: "Grace Adebayo", role: "Content Lead", img: "/team2.jpg" },
-              { name: "David Ike", role: "Tech & Design", img: "/team3.jpg" },
-            ].map((member, i) => (
+              { icon: Cross, title: "Christ-Centered Content", desc: "Jesus Christ remains the focus of everything we do" },
+              { icon: Sparkles, title: "Edification", desc: "Content that builds faith and strengthens spiritual lives" },
+              { icon: Heart, title: "Integrity", desc: "Upholding godly values in ministry and media" },
+              { icon: Globe, title: "Global Reach", desc: "Using technology to reach lives beyond borders" },
+            ].map((value, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm"
+                viewport={{ once: true }}
+                className="text-center p-6 bg-gradient-to-br from-red-50 to-orange-50 rounded-2xl border border-gray-200"
               >
-                <div className="relative w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden ring-4 ring-red-400/20">
-                  <Image src={member.img} alt={member.name} fill className="object-cover" />
+                <div className="p-4 bg-white rounded-full w-16 h-16 mx-auto mb-4 shadow-md">
+                  <value.icon className="w-8 h-8 mx-auto text-red-600" />
                 </div>
-                <h3 className="font-bold text-lg">{member.name}</h3>
-                <p className="text-red-500 text-sm">{member.role}</p>
+                <h3 className="font-bold text-lg text-gray-900 mb-2">{value.title}</h3>
+                <p className="text-sm text-gray-600">{value.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Values */}
-      <section className="py-16 bg-white">
-        <div className="mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-10">Our Values</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { icon: Sparkles, title: "Anointing First" },
-              { icon: Globe, title: "Global Family" },
-              { icon: Mic, title: "Pure Worship" },
-            ].map((v, i) => (
-              <div key={i} className="p-6 bg-gray-50 rounded-xl border border-gray-200 shadow-sm">
-                <v.icon className="w-12 h-12 mx-auto mb-4 text-red-500" />
-                <h3 className="font-bold text-lg">{v.title}</h3>
-              </div>
-            ))}
-          </div>
+      {/* Stats */}
+      <section className="py-16 bg-gradient-to-r from-red-100 to-orange-100">
+        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center px-6">
+          {[
+            { icon: Radio, value: "Global", label: "Reach" },
+            { icon: Users, value: "Millions", label: "Lives Impacted" },
+            { icon: Heart, value: "7+ Years", label: "Of Ministry" },
+            { icon: Globe, value: "Worldwide", label: "Community" },
+          ].map((stat, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="text-gray-900"
+            >
+              <stat.icon className="w-10 h-10 mx-auto mb-4 text-red-600" />
+              <p className="text-2xl md:text-3xl font-bold">{stat.value}</p>
+              <p className="text-sm uppercase tracking-wider opacity-80 mt-2">
+                {stat.label}
+              </p>
+            </motion.div>
+          ))}
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-16 bg-gradient-to-r from-orange-200 to-red-200 text-center">
-        <div className="mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">Join the Movement</h2>
-          <p className="text-lg text-gray-700 mb-8">
-            Artists · Worship Leaders · Music Lovers — This is home.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="/upload"
-              className="px-8 py-3 bg-red-600 text-white rounded-full font-bold hover:bg-red-700 transition flex items-center justify-center gap-2"
-            >
-              <Mic className="w-5 h-5" /> Submit Music
-            </a>
-            <a
-              href="mailto:hello@gospelforce.com"
-              className="px-8 py-3 border-2 border-red-600 text-red-600 rounded-full font-bold hover:bg-red-600 hover:text-white transition flex items-center justify-center gap-2"
-            >
-              <Mail className="w-5 h-5" /> Contact Us
-            </a>
-          </div>
+      <section className="py-20 bg-gradient-to-br from-red-600 to-orange-600 text-white text-center">
+        <div className="max-w-4xl mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl md:text-5xl font-black mb-6">
+              Partner With Us In Spreading The Gospel
+            </h2>
+            <p className="text-xl mb-10 opacity-90">
+              Join thousands of believers experiencing spiritual growth through Christ-centered digital content.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <a
+                href="/contact"
+                className="px-10 py-4 bg-white text-red-600 rounded-full font-bold text-lg hover:bg-gray-100 transition flex items-center gap-3"
+              >
+                <Mail className="w-6 h-6" />
+                Get In Touch
+              </a>
+              <a
+                href="/blog"
+                className="px-10 py-4 border-2 border-white text-white rounded-full font-bold text-lg hover:bg-white/10 transition"
+              >
+                Explore Content
+              </a>
+            </div>
+          </motion.div>
         </div>
       </section>
     </>
