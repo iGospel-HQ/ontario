@@ -11,7 +11,7 @@ export function TelegramCTA() {
         flex items-center justify-center gap-3
         w-full
         mx-auto my-3
-        px-6 py-4
+        px-6 py-2
         rounded-lg
         bg-[#2AABEE]
         text-white

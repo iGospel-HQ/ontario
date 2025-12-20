@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ReactQueryProvider } from "@/lib/react-query";
 import { AudioProvider } from "@/providers/audio-provider";
 import { FloatingAudioButtons } from "@/components/floating-audio-button";
+import { Toaster } from "@/components/ui/sonner";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 const geistMono = Geist_Mono({
@@ -33,6 +34,7 @@ export default function RootLayout({
       className={`${geist.variable} ${geistMono.variable}`}
     >
       <body className="font-sans antialiased">
+        <Toaster position="top-center"/>
         <ReactQueryProvider>
           <AudioProvider />
           <FloatingAudioButtons />

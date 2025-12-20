@@ -17,21 +17,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 import api from "@/lib/api-client";
+import { toast } from "sonner";
 
 // Validation Schema
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email"),
-  phone: z.string().min(11, "Subject too short"),
+  phone: z.string().min(11, "Phone number too short"),
   message: z.string().min(10, "Message must be at least 10 characters"),
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
 
 export default function ContactPage() {
-  const { toast } = useToast();
 
   const {
     register,
@@ -43,8 +42,7 @@ export default function ContactPage() {
   const onSubmit = async (data: ContactFormData) => {
     await api.post("/support/contact/create/", { ...data, contact_me: true });
 
-    toast({
-      title: "Message Sent!",
+    toast.success("Message Sent!",{
       description: "We’ll get back to you within 24 hours.",
     });
 
@@ -125,7 +123,7 @@ export default function ContactPage() {
                   <div>
                     <p className="font-semibold">Location</p>
                     <p className="text-sm text-muted-foreground">
-                      Lagos, Nigeria • Global Ministry
+                      Lagos, Nigeria
                     </p>
                   </div>
                 </CardContent>
@@ -133,7 +131,7 @@ export default function ContactPage() {
             </div>
 
             {/* SOCIALS */}
-            <div className="flex gap-4 mt-10">
+           {/* <div className="flex gap-4 mt-10">
               {["Instagram", "YouTube", "TikTok", "Facebook"].map(
                 (platform) => (
                   <Button
@@ -152,7 +150,7 @@ export default function ContactPage() {
                   </Button>
                 )
               )}
-            </div>
+            </div>*/}
           </motion.div>
 
           {/* CONTACT FORM */}
@@ -174,9 +172,9 @@ export default function ContactPage() {
 
               <CardContent>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                  <div>
+                  <div className="space-y-3">
                     <Label>Name</Label>
-                    <Input placeholder="John Doe" {...register("name")} />
+                    <Input className="border-accent" placeholder="John Doe" {...register("name")} />
                     {errors.name && (
                       <p className="text-red-500 text-sm">
                         {errors.name.message}
@@ -184,9 +182,9 @@ export default function ContactPage() {
                     )}
                   </div>
 
-                  <div>
+                  <div className="space-y-3">
                     <Label>Email</Label>
-                    <Input
+                    <Input className="border-accent"
                       type="email"
                       placeholder="john@example.com"
                       {...register("email")}
@@ -198,9 +196,9 @@ export default function ContactPage() {
                     )}
                   </div>
 
-                  <div>
+                  <div className="space-y-3">
                     <Label>Phone No</Label>
-                    <Input
+                    <Input className="border-accent"
                       placeholder="090******34"
                       {...register("phone")}
                     />
@@ -211,9 +209,9 @@ export default function ContactPage() {
                     )}
                   </div>
 
-                  <div>
+                  <div className="space-y-3">
                     <Label>Message</Label>
-                    <Textarea
+                    <Textarea className="border-accent"
                       rows={6}
                       placeholder="Write your message..."
                       {...register("message")}

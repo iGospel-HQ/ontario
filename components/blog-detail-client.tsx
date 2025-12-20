@@ -68,51 +68,86 @@ export function BlogDetailClient({ slug }: { slug: string }) {
         <div className="grid lg:grid-cols-3 gap-8 xl:gap-12">
           {/* Main Content Area */}
           <article className="lg:col-span-2 space-y-8">
-            {/* Hero Section */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-6"
-            >
+            {/* Top Section – Matches the screenshot exactly */}
+            <div className="space-y-6">
+              {/* Breadcrumb */}
+              <nav className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Link href="/" className="hover:text-foreground">Home</Link>
+                <span className="text-muted-foreground">›</span>
+                <span className="text-foreground">{post.title}</span>
+              </nav>
+
+              {/* Category Badge */}
+              {/* <div className="inline-block px-3 py-1 bg-red-600 text-white text-sm font-semibold rounded">
+                GOSPEL MUSIC
+              </div> */}
+
               {/* Title */}
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-gray-900">
                 {post.title}
               </h1>
 
-              {/* Breadcrumb */}
-              <nav className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Link href="/blog" className="hover:text-foreground">Blog</Link>
-                <ChevronRight className="h-4 w-4" />
-                <span className="text-foreground">
-                  {post.genres?.[0]?.name || "Uncategorized"}
-                </span>
-              </nav>
-
-              {/* Author, Date, Stats */}
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4 border-b">
-                <div className="flex items-center gap-4">
-                  <div>
-                    <p className="font-semibold">{post.author_name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {format(new Date(post.publish_date), "MMMM d, yyyy")}
-                    </p>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm">
-                  <Share2 className="h-4 w-4 mr-2" />
-                  Share
-                </Button>
+              {/* Author & Date */}
+              <div className="flex items-center gap-4">
+                <p className="font-semibold text-gray-800">
+                  {post.author_name}
+                </p>
+                <span className="text-gray-500">•</span>
+                <p className="text-sm text-gray-500">
+                  {format(new Date(post.publish_date), "MMMM d, yyyy")}
+                </p>
               </div>
 
-              <BlogStats
-                totalVisitors={post.total_visitors}
-                totalViews={post.total_views}
-                todayVisitors={post.today_visitors}
-                todayViews={post.today_views}
-              />
+              {/* Social Icons – Exact layout & colors from screenshot */}
+              <div className="flex items-center gap-3">
+                <a
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                  aria-label="Share on Facebook"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M22 12.06C22 6.53 17.52 2 12 2S2 6.53 2 12.06c0 5 3.66 9.13 8.44 9.94v-7.03H7.9v-2.91h2.54V9.83c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.23.2 2.23.2v2.46H15.6c-1.24 0-1.63.78-1.63 1.57v1.88h2.78l-.44 2.91h-2.34v7.03A10 10 0 0 0 22 12.06z" />
+                  </svg>
+                </a>
+                <a
+                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareTitle)}&url=${encodeURIComponent(shareUrl)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center w-10 h-10 bg-black text-white rounded hover:bg-gray-800 transition"
+                  aria-label="Share on X"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26L23.25 21.75h-6.484l-5.062-6.617-5.806 6.617H2.59l7.73-8.81L1.125 2.25H7.75l4.537 5.993zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                  </svg>
+                </a>
+                <a
+                  href={`https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(shareUrl)}&media=${encodeURIComponent(post.featured_image)}&description=${encodeURIComponent(shareTitle)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center w-10 h-10 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                  aria-label="Share on Pinterest"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6 0 1.18.34 2.28.93 3.21l-1.17 4.48 4.48-1.17c.93.59 2.03.93 3.21.93 3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 9.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+                  </svg>
+                </a>
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent(shareTitle + " - " + shareUrl)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center w-10 h-10 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                  aria-label="Share on WhatsApp"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.472-.148-.67.148-.198.297-.768.966-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.626.712.227 1.36.195 1.872.118.571-.085 1.758-.718 2.006-1.413.248-.695.248-1.29.173-1.413-.074-.124-.272-.198-.57-.347z" />
+                  </svg>
+                </a>
+              </div>
 
-              {/* Featured Image */}
-              <div className="relative aspect-video sm:aspect-[16/9] md:aspect-[2/1] overflow-hidden rounded-xl">
+              {/* Featured Image – Full width below social icons */}
+              <div className="relative aspect-[1/1] overflow-hidden rounded-xl">
                 <Image
                   src={post.featured_image || "/placeholder.svg"}
                   alt={post.title}
@@ -121,47 +156,15 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                   priority
                 />
               </div>
+            </div>
 
-              {/* Social Share Buttons - Mobile Friendly */}
-              <div className="flex justify-center gap-3 py-4">
-                <a
-                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 bg-gray-100 rounded-full hover:bg-gray-200 transition"
-                  aria-label="Share on Facebook"
-                >
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M22 12.06C22 6.53 17.52 2 12 2S2 6.53 2 12.06c0 5 3.66 9.13 8.44 9.94v-7.03H7.9v-2.91h2.54V9.83c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.23.2 2.23.2v2.46H15.6c-1.24 0-1.63.78-1.63 1.57v1.88h2.78l-.44 2.91h-2.34v7.03A10 10 0 0 0 22 12.06z" />
-                  </svg>
-                </a>
-
-                <a
-                  href={`https://wa.me/?text=${encodeURIComponent(shareTitle + " - " + shareUrl)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 bg-gray-100 rounded-full hover:bg-gray-200 transition"
-                  aria-label="Share on WhatsApp"
-                >
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.472-.148-.67.148-.198.297-.768.966-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.626.712.227 1.36.195 1.872.118.571-.085 1.758-.718 2.006-1.413.248-.695.248-1.29.173-1.413-.074-.124-.272-.198-.57-.347z" />
-                    <path d="M20.52 3.48A11.958 11.958 0 0 0 12 0C5.373 0 0 5.373 0 12c0 2.11.547 4.173 1.584 5.98L0 24l6.208-1.584A11.952 11.952 0 0 0 12 24c6.627 0 12-5.373 12-12 0-3.19-1.242-6.188-3.48-8.52zM12 22.08c-1.993 0-3.93-.53-5.616-1.545l-.402-.239-3.684.94.98-3.59-.261-.413A9.969 9.969 0 0 1 2.04 12C2.04 6.627 6.627 2.04 12 2.04c2.664 0 5.184 1.04 7.07 2.93A9.926 9.926 0 0 1 21.96 12c0 5.373-4.588 10.04-9.96 10.04z" />
-                  </svg>
-                </a>
-
-                <a
-                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareTitle)}&url=${encodeURIComponent(shareUrl)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 bg-gray-100 rounded-full hover:bg-gray-200 transition"
-                  aria-label="Share on X"
-                >
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M18.244 2.25h3.308l-7.227 8.26L23.25 21.75h-6.484l-5.062-6.617-5.806 6.617H2.59l7.73-8.81L1.125 2.25H7.75l4.537 5.993zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                  </svg>
-                </a>
-              </div>
-            </motion.div>
+            {/* Rest of the content remains unchanged */}
+            <BlogStats
+              totalVisitors={post.total_visitors}
+              totalViews={post.total_views}
+              todayVisitors={post.today_visitors}
+              todayViews={post.today_views}
+            />
 
             {/* Post Content */}
             <motion.div
@@ -170,7 +173,6 @@ export function BlogDetailClient({ slug }: { slug: string }) {
               transition={{ delay: 0.2 }}
               className="prose prose-lg max-w-none dark:prose-invert"
             >
-
               <TelegramCTA />
               <div
                 className="post-content text-base sm:text-lg"
