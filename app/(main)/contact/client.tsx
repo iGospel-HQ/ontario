@@ -19,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import api from "@/lib/api-client";
 import { toast } from "sonner";
+import Link from "next/link";
 
 // Validation Schema
 const contactSchema = z.object({
@@ -31,7 +32,6 @@ const contactSchema = z.object({
 type ContactFormData = z.infer<typeof contactSchema>;
 
 export default function ContactPage() {
-
   const {
     register,
     handleSubmit,
@@ -42,7 +42,7 @@ export default function ContactPage() {
   const onSubmit = async (data: ContactFormData) => {
     await api.post("/support/contact/create/", { ...data, contact_me: true });
 
-    toast.success("Message Sent!",{
+    toast.success("Message Sent!", {
       description: "We’ll get back to you within 24 hours.",
     });
 
@@ -131,7 +131,7 @@ export default function ContactPage() {
             </div>
 
             {/* SOCIALS */}
-           {/* <div className="flex gap-4 mt-10">
+            {/* <div className="flex gap-4 mt-10">
               {["Instagram", "YouTube", "TikTok", "Facebook"].map(
                 (platform) => (
                   <Button
@@ -165,16 +165,20 @@ export default function ContactPage() {
                   <Send className="w-7 h-7 text-red-500" />
                   Send Us a Message
                 </CardTitle>
-                <CardDescription>
+                {/* <CardDescription>
                   Music submission, partnership, prayer — we're here.
-                </CardDescription>
+                </CardDescription> */}
               </CardHeader>
 
               <CardContent>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                   <div className="space-y-3">
                     <Label>Name</Label>
-                    <Input className="border-accent" placeholder="John Doe" {...register("name")} />
+                    <Input
+                      className="border-"
+                      placeholder="John Doe"
+                      {...register("name")}
+                    />
                     {errors.name && (
                       <p className="text-red-500 text-sm">
                         {errors.name.message}
@@ -184,7 +188,8 @@ export default function ContactPage() {
 
                   <div className="space-y-3">
                     <Label>Email</Label>
-                    <Input className="border-accent"
+                    <Input
+                      className="border-"
                       type="email"
                       placeholder="john@example.com"
                       {...register("email")}
@@ -198,7 +203,8 @@ export default function ContactPage() {
 
                   <div className="space-y-3">
                     <Label>Phone No</Label>
-                    <Input className="border-accent"
+                    <Input
+                      className="border-"
                       placeholder="090******34"
                       {...register("phone")}
                     />
@@ -211,7 +217,8 @@ export default function ContactPage() {
 
                   <div className="space-y-3">
                     <Label>Message</Label>
-                    <Textarea className="border-accent"
+                    <Textarea
+                      className="border-"
                       rows={6}
                       placeholder="Write your message..."
                       {...register("message")}
@@ -239,7 +246,12 @@ export default function ContactPage() {
 
       {/* FOOTER */}
       <div className="py-20 bg-gradient-to-r from-red-200 to-orange-200 text-center">
-        <Music className="w-16 h-16 mx-auto text-red-500 mb-4" />
+        <Link
+          href="/"
+          className="text-xl font-bold tracking-wider bg-black p-2 rounded-md mx-auto  block w-fit mb-3"
+        >
+          <img src="/logo.png" alt="logo" className="w-full h-10" />
+        </Link>
         <p className="text-2xl font-bold">The Gospel Never Sleeps</p>
         <p className="text-muted-foreground mt-2">
           We’re here 24/7 for the Kingdom

@@ -1,8 +1,8 @@
-"use client"
+// app/components/AudioPlayer.tsx
+"use client";
 
-import type React from "react"
-import { useState, useRef, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Play,
   Pause,
@@ -11,79 +11,34 @@ import {
   Volume2,
   VolumeX,
   X,
-} from "lucide-react" // << Updated icon
-import { useAudioPlayer } from "@/store/use-audio-player"
+} from "lucide-react";
+import { useAudioPlayer } from "@/store/use-audio-player";
 
 export function AudioPlayer() {
   const {
     isOpen,
     currentTrack,
-    audioRef,
     isPlaying,
+    progress,
+    currentTime,
+    duration,
+    volume,
+    isMuted,
     togglePlay,
+    seek,
+    setVolume,
+    toggleMute,
     closePlayer,
-  } = useAudioPlayer()
-
-  const [progress, setProgress] = useState(0)
-  const [duration, setDuration] = useState(0)
-  const [volume, setVolume] = useState(1)
-  const [isMuted, setIsMuted] = useState(false)
-
-  useEffect(() => {
-    if (!audioRef) return
-
-    const updateProgress = () => {
-      setProgress((audioRef.currentTime / audioRef.duration) * 100 || 0)
-    }
-
-    const updateDuration = () => {
-      setDuration(audioRef.duration)
-    }
-
-    audioRef.addEventListener("timeupdate", updateProgress)
-    audioRef.addEventListener("loadedmetadata", updateDuration)
-
-    return () => {
-      audioRef.removeEventListener("timeupdate", updateProgress)
-      audioRef.removeEventListener("loadedmetadata", updateDuration)
-    }
-  }, [audioRef])
-
-  const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newProgress = Number.parseFloat(e.target.value)
-    if (audioRef) {
-      audioRef.currentTime = (newProgress / 100) * duration
-      setProgress(newProgress)
-    }
-  }
-
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = Number.parseFloat(e.target.value)
-    setVolume(newVolume)
-    if (audioRef) audioRef.volume = newVolume
-    if (newVolume > 0) setIsMuted(false)
-  }
-
-  const toggleMute = () => {
-    if (!audioRef) return
-
-    if (isMuted) {
-      audioRef.volume = volume
-      setIsMuted(false)
-    } else {
-      audioRef.volume = 0
-      setIsMuted(true)
-    }
-  }
+  } = useAudioPlayer();
 
   const formatTime = (seconds: number) => {
-    if (!seconds || isNaN(seconds)) return "0:00"
-    const mins = Math.floor(seconds / 60)
-    const secs = Math.floor(seconds % 60)
-    return `${mins}:${secs.toString().padStart(2, "0")}`
-  }
+    if (isNaN(seconds)) return "0:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
 
-  if (!isOpen || !currentTrack) return null
+  if (!isOpen || !currentTrack) return null;
 
   return (
     <AnimatePresence>
@@ -91,97 +46,100 @@ export function AudioPlayer() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 20 }}
-        className="fixed bottom-0 left-0 right-0 bg-secondary border-t border-border"
+        className="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-800 shadow-2xl z-50"
       >
-        <div className="max-w-7xl relative mx-auto px-4 md:px-6 py-2"> {/* Reduced vertical padding */}
+        <div className="max-w-7xl mx-auto px-4 py-2 relative">
+          {/* Close Button – Top Right Corner */}
+          <button
+            onClick={closePlayer}
+            className="absolute -top-3 right-4 bg-gray-900/80 hover:bg-gray-800 text-white rounded-full p-1.5 shadow-lg transition"
+            aria-label="Close player"
+          >
+            <X className="w-4 h-4" />
+          </button>
 
           {/* Progress Bar */}
-          <div className="mb-2"> {/* Reduced margin */}
+          <div className="mb-2">
             <input
               type="range"
               min="0"
               max="100"
               value={progress}
-              onChange={handleProgressChange}
-              className="w-full h-1 bg-muted rounded-full cursor-pointer appearance-none"
+              onChange={(e) => {
+                const newProgress = Number(e.target.value);
+                seek((newProgress / 100) * duration);
+              }}
+              className="w-full h-1 bg-gray-700 rounded-full cursor-pointer appearance-none"
               style={{
-                background: `linear-gradient(to right, var(--accent) 0%, var(--accent) ${progress}%, var(--muted) ${progress}%, var(--muted) 100%)`,
+                background: `linear-gradient(to right, #ef4444 ${progress}%, #374151 ${progress}%)`,
               }}
             />
-            <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
-              {/* Smaller text */}
-              <span>{formatTime((progress / 100) * duration)}</span>
+            <div className="flex justify-between text-xs text-gray-400 mt-1">
+              <span>{formatTime(currentTime)}</span>
               <span>{formatTime(duration)}</span>
             </div>
           </div>
 
-          {/* Player Controls */}
-          <div className="flex items-center justify-between gap-3"> {/* Reduced gap */}
-
-            {/* Song Info */}
-            <div className="flex items-center gap-3 flex-1 min-w-0"> {/* Reduced gap */}
+          {/* Controls – Smaller & Responsive */}
+          <div className="flex items-center justify-between gap-3">
+            {/* Track Info – Compact */}
+            <div className="flex items-center gap-3 flex-1 min-w-0">
               <img
                 src={currentTrack.cover || "/placeholder.svg"}
-                className="w-10 h-10 rounded object-cover" // Reduced artwork size
+                alt={currentTrack.title}
+                className="w-10 h-10 rounded object-cover"
               />
               <div className="truncate">
-                <p className="font-medium truncate text-xs">{currentTrack.title}</p> {/* Smaller text */}
-                <p className="text-[10px] text-muted-foreground truncate">
+                <p className="font-semibold text-white text-sm truncate">
+                  {currentTrack.title}
+                </p>
+                <p className="text-xs text-gray-400 truncate">
                   {currentTrack.artist}
                 </p>
               </div>
             </div>
 
-            {/* Playback Controls */}
-            <div className="flex items-center gap-3"> {/* Smaller gap */}
-              <button className="hover:text-accent transition-colors">
-                <SkipBack className="h-4 w-4" />
+            {/* Playback Controls – Smaller buttons */}
+            <div className="flex items-center gap-2">
+              <button className="text-gray-400 hover:text-white transition hidden sm:block">
+                <SkipBack className="w-5 h-5" />
               </button>
 
-              <motion.button
-                whileTap={{ scale: 0.95 }}
+              <button
                 onClick={togglePlay}
-                className="p-1.5 rounded-full bg-accent text-accent-foreground hover:bg-accent/90 transition-colors"
+                className="p-2 rounded-full bg-red-600 text-white hover:bg-red-700 transition"
               >
                 {isPlaying ? (
-                  <Pause className="h-4 w-4" />
+                  <Pause className="w-5 h-5" />
                 ) : (
-                  <Play className="h-4 w-4" />
+                  <Play className="w-5 h-5" />
                 )}
-              </motion.button>
+              </button>
 
-              <button className="hover:text-accent transition-colors">
-                <SkipForward className="h-4 w-4" />
+              <button className="text-gray-400 hover:text-white transition hidden sm:block">
+                <SkipForward className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Volume */}
-            <div className="flex items-center gap-2 md:w-28"> {/* Smaller width */}
-              <button onClick={toggleMute} className="hover:text-accent transition-colors">
-                {isMuted ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+            {/* Volume & Close */}
+            <div className="flex items-center gap-2 md:gap-3">
+              <button onClick={toggleMute} className="text-gray-400 hover:text-white">
+                {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
               </button>
+
               <input
                 type="range"
                 min="0"
                 max="1"
                 step="0.01"
                 value={isMuted ? 0 : volume}
-                onChange={handleVolumeChange}
-                className="flex-1 h-1 bg-muted rounded-full cursor-pointer appearance-none hidden md:block"
+                onChange={(e) => setVolume(Number(e.target.value))}
+                className="w-20 md:w-24 h-1 bg-gray-700 rounded-full cursor-pointer hidden sm:block"
               />
             </div>
-
-            {/* Close Button (More Noticeable) */}
-            <button
-              onClick={closePlayer}
-              className="p-2 rounded-full absolute -top-6 right-9 bg-muted hover:bg-muted/70 transition-colors"
-            >
-              <X className="h-5 w-5" /> {/* Bigger icon & more obvious */}
-            </button>
-
           </div>
         </div>
       </motion.div>
     </AnimatePresence>
-  )
+  );
 }

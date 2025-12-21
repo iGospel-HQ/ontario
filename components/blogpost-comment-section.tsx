@@ -44,6 +44,7 @@ export function CommentSection({ comments = [], postId, slug }: { comments: any[
 
         <div className="space-y-4">
           <Input
+          className="border-accent"
             placeholder="Your name"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -51,7 +52,7 @@ export function CommentSection({ comments = [], postId, slug }: { comments: any[
 
           <Textarea
             placeholder="Your comment..."
-            className="min-h-[120px]"
+            className="min-h-[120px] border-accent"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
           />

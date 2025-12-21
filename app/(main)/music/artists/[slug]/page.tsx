@@ -1,18 +1,21 @@
-"use client"
+"use client";
+
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Play, Pause } from 'lucide-react';
+import { Play, Pause, Calendar, User } from 'lucide-react';
+import { format } from 'date-fns';
 import { useAudioPlayer } from '@/store/use-audio-player';
 import { cn } from '@/lib/utils';
 import api from '@/lib/api-client';
 
-// Type definition based on provided artist data
+// Type definition for Artist
 interface Artist {
   id: string;
   name: string;
@@ -34,13 +37,29 @@ interface Artist {
     image: string;
     genre_name: string | null;
   }>;
-  latest_album: any | null; // Expand if needed
+  latest_album: any | null;
   created_at: string;
 }
 
-// Fetch function
+// Type definition for Blog Post (simplified)
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  author_name: string;
+  excerpt: string;
+  featured_image: string;
+  publish_date: string;
+  genres?: Array<{ name: string }>;
+}
+
 const fetchArtist = async (slug: string): Promise<Artist> => {
-  const response = await api.get(`/music/artists/${slug}/`); // Replace with actual API endpoint
+  const response = await api.get(`/music/artists/${slug}/`);
+  return response.data;
+};
+
+const fetchArtistPosts = async (slug: string): Promise<BlogPost[]> => {
+  const response = await api.get(`/music/artists/${slug}/posts/`);
   return response.data;
 };
 
@@ -48,15 +67,23 @@ export default function ArtistPage() {
   const params = useParams();
   const slug = params?.slug as string;
 
-  const { data: artist, isLoading, error } = useQuery({
+  const { data: artist, isLoading: artistLoading, error: artistError } = useQuery({
     queryKey: ['artist', slug],
     queryFn: () => fetchArtist(slug),
+  });
+
+  const { data: posts = [], isLoading: postsLoading, error: postsError } = useQuery({
+    queryKey: ['artist-posts', slug],
+    queryFn: () => fetchArtistPosts(slug),
   });
 
   const playTrack = useAudioPlayer((s) => s.playTrack);
   const togglePlay = useAudioPlayer((s) => s.togglePlay);
   const currentTrack = useAudioPlayer((s) => s.currentTrack);
   const isPlaying = useAudioPlayer((s) => s.isPlaying);
+
+  const isLoading = artistLoading || postsLoading;
+  const error = artistError || postsError;
 
   if (error) {
     return (
@@ -74,14 +101,13 @@ export default function ArtistPage() {
           <div className="space-y-4 w-full">
             <Skeleton className="h-10 w-3/4" />
             <Skeleton className="h-4 w-1/2" />
-            <Skeleton className="h-4 w-1/4" />
           </div>
         </div>
         <div className="space-y-6">
           <Skeleton className="h-8 w-1/4" />
-          <div className="grid grid-cols-1 gap-4">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton key={i} className="h-16 w-full" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} className="h-96 w-full" />
             ))}
           </div>
         </div>
@@ -101,7 +127,7 @@ export default function ArtistPage() {
     <section className="max-w-7xl mx-auto px-4 py-8 sm:py-12">
       {/* Artist Header */}
       <div className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-12">
-        <div className="relative w-48 h-48 flex-shrink-0">
+        <div className="relative w-48 h-48 md:w-56 md:h-56 flex-shrink-0">
           <Image
             src={artist.image}
             alt={artist.name}
@@ -111,9 +137,9 @@ export default function ArtistPage() {
           />
         </div>
         <div className="text-center md:text-left">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-2">{artist.name}</h1>
-          <p className="text-gray-600 mb-4">{artist.bio || 'No bio available.'}</p>
-          <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold mb-3">{artist.name}</h1>
+          <p className="text-lg md:text-xl text-gray-600 mb-6">{artist.bio || 'No bio available.'}</p>
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-6">
             {artist.website && (
               <Button variant="outline" asChild>
                 <Link href={artist.website} target="_blank" rel="noopener noreferrer">
@@ -121,21 +147,23 @@ export default function ArtistPage() {
                 </Link>
               </Button>
             )}
-            <Badge variant="secondary">{artist.followers_count} Followers</Badge>
-            <Button variant={artist.is_following ? 'secondary' : 'default'}>
+            <Badge variant="secondary" className="text-base px-4 py-1">
+              {artist.followers_count} Followers
+            </Badge>
+            <Button variant={artist.is_following ? 'secondary' : 'default'} size="lg">
               {artist.is_following ? 'Following' : 'Follow'}
             </Button>
           </div>
-          <p className="text-sm text-gray-500">
+          <p className="text-base text-gray-600">
             {artist.album_count} Albums • {artist.track_count} Tracks
           </p>
         </div>
       </div>
 
       {/* Top Tracks */}
-      <Card>
+      {/* <Card className="mb-12">
         <CardHeader>
-          <CardTitle>Top Tracks</CardTitle>
+          <CardTitle className="text-2xl">Top Tracks</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="divide-y">
@@ -144,9 +172,21 @@ export default function ArtistPage() {
                 key={track.id}
                 className={cn(
                   'flex items-center gap-4 p-4 cursor-pointer transition-colors',
-                  currentTrack?.id === track.id ? 'bg-gray-100' : 'hover:bg-gray-50'
+                  currentTrack?.id === track.id ? 'bg-accent/10' : 'hover:bg-muted/50'
                 )}
-                
+                onClick={() => {
+                  if (currentTrack?.id === track.id) {
+                    togglePlay();
+                  } else {
+                    playTrack({
+                      id: track.id,
+                      title: track.title,
+                      artist: track.artist_name,
+                      cover: track.image,
+                      audioUrl: track.mp3_file,
+                    });
+                  }
+                }}
               >
                 <div className="text-lg font-bold text-gray-300 w-6 text-center">
                   {i + 1}
@@ -165,24 +205,27 @@ export default function ArtistPage() {
                     {track.artist_name} {track.genre_name ? `• ${track.genre_name}` : ''}
                   </p>
                 </div>
-                <span className="text-sm text-gray-500">{track.duration}</span>
+                <span className="text-sm text-gray-500 hidden sm:block">
+                  {track.duration}
+                </span>
                 <Button
                   variant="ghost"
                   size="icon"
                   className="flex-shrink-0"
-                  onClick={() => {
-                  if (currentTrack?.id === track.id) {
-                    togglePlay();
-                  } else {
-                    playTrack({
-                      id: track.id,
-                      title: track.title,
-                      artist: track.artist_name,
-                      cover: track.image,
-                      audioUrl: track.mp3_file,
-                    });
-                  }
-                }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (currentTrack?.id === track.id) {
+                      togglePlay();
+                    } else {
+                      playTrack({
+                        id: track.id,
+                        title: track.title,
+                        artist: track.artist_name,
+                        cover: track.image,
+                        audioUrl: track.mp3_file,
+                      });
+                    }
+                  }}
                 >
                   {currentTrack?.id === track.id && isPlaying ? (
                     <Pause className="w-5 h-5" />
@@ -197,17 +240,76 @@ export default function ArtistPage() {
             <p className="p-4 text-center text-gray-600">No tracks available.</p>
           )}
         </CardContent>
+      </Card> */}
+
+      {/* Blog Posts Featuring This Artist – Grid Layout */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl">Blog Posts Featuring {artist.name}</CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          {posts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {posts.map((post, i) => (
+                <motion.article
+                  key={post.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                >
+                  <Link href={`/blog/${post.slug}`}>
+                    <Card className="hover:border-accent transition-all duration-300 overflow-hidden group h-full pt-0 bg-card border-border">
+                      <div className="relative h-56">
+                        <Image
+                          src={post.featured_image || "/placeholder.svg"}
+                          alt={post.title}
+                          fill
+                          className="object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+                        <span className="absolute bottom-3 left-3 bg-accent text-accent-foreground text-xs px-3 py-1 rounded-full font-bold">
+                          {post.genres?.[0]?.name || "Gospel"}
+                        </span>
+                      </div>
+                      <CardContent className="p-6">
+                        <h2 className="text-xl font-bold mb-3 group-hover:text-accent transition line-clamp-2">
+                          {post.title}
+                        </h2>
+                        <p className="text-muted-foreground text-sm line-clamp-3 mb-4">
+                          {post.excerpt}
+                        </p>
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                          <div className="flex items-center gap-2">
+                            <Calendar className="w-4 h-4" />
+                            {format(new Date(post.publish_date), "MMM dd, yyyy")}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <User className="w-4 h-4" />
+                            {post.author_name}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                </motion.article>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-gray-600 py-8">
+              No blog posts found featuring this artist.
+            </p>
+          )}
+        </CardContent>
       </Card>
 
-      {/* Latest Album - If available */}
+      {/* Latest Album (if available) */}
       {artist.latest_album && (
-        <Card className="mt-8">
+        <Card className="mt-12">
           <CardHeader>
-            <CardTitle>Latest Album</CardTitle>
+            <CardTitle className="text-2xl">Latest Album</CardTitle>
           </CardHeader>
           <CardContent>
-            {/* Render album details here */}
-            <p>Coming soon...</p> {/* Placeholder; expand based on data */}
+            <p className="text-gray-700">Album details coming soon...</p>
           </CardContent>
         </Card>
       )}

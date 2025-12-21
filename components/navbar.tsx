@@ -5,10 +5,12 @@ import Link from "next/link";
 import { Search, Menu, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ModeToggle } from "./theme-toggler";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -22,7 +24,10 @@ export function Navbar() {
   return (
     <nav className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex items-center justify-between  max-w-5xl mx-auto px-4 py-4 md:px-10">
-        <Link href="/" className="text-xl font-bold tracking-wider bg-black p-2 rounded-md">
+        <Link
+          href="/"
+          className="text-xl font-bold tracking-wider bg-black p-2 rounded-md"
+        >
           <img src="/logo.png" alt="logo" className="w-full h-5" />
         </Link>
 
@@ -32,7 +37,10 @@ export function Navbar() {
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm font-medium hover:text-accent transition-colors"
+              className={cn(
+                pathname === item.href ? "text-accent" : "hover:text-accent",
+                "text-sm font-medium transition-colors"
+              )}
             >
               {item.name}
             </Link>
@@ -87,7 +95,10 @@ export function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="block py-2 text-sm font-medium hover:text-accent transition-colors"
+                className={cn(
+                  pathname === item.href ? "text-accent" : "hover:text-accent",
+                  "block py-2 text-sm font-medium transition-colors"
+                )}
               >
                 {item.name}
               </Link>

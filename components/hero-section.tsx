@@ -44,7 +44,7 @@ export function HeroSection({post}: any) {
               </p>
               <Link href={`/blog/${post.slug}`} className="flex items-center w-fit gap-3 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 px-7 py-3.5 rounded-full font-bold uppercase text-sm tracking-wider transition">
                 <ArrowRight className="w-5 h-5" />
-                See More
+                View
               </Link>
             </div>
           </div>
