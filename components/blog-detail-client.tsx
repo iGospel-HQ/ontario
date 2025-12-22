@@ -94,7 +94,9 @@ export function BlogDetailClient({ slug }: { slug: string }) {
           {/* Main Content */}
           <article className="lg:col-span-2 space-y-8">
             {/* Top Section */}
+            {/* Top Section – Matches the screenshot exactly */}
             <div className="space-y-6">
+              {/* Breadcrumb */}
               <nav className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Link href="/" className="hover:text-foreground">
                   Home
@@ -103,10 +105,17 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                 <span className="text-foreground">{post.title}</span>
               </nav>
 
+              {/* Category Badge */}
+              {/* <div className="inline-block px-3 py-1 bg-red-600 text-white text-sm font-semibold rounded">
+                GOSPEL MUSIC
+              </div> */}
+
+              {/* Title */}
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-gray-900">
                 {post.title}
               </h1>
 
+              {/* Author & Date */}
               <div className="flex items-center gap-4">
                 <p className="font-semibold text-gray-800">
                   {post.author_name}
@@ -117,13 +126,89 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                 </p>
               </div>
 
-              {/* Social Icons */}
+              {/* Social Icons – Exact layout & colors from screenshot */}
               <div className="flex items-center gap-3">
-                {/* Facebook, X, WhatsApp, LinkedIn icons as before */}
-                {/* ... (keep your existing social share icons) */}
+                <a
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                    shareUrl
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded hover:bg-blue-700 transition ml-3"
+                  aria-label="Share on Facebook"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M22 12.06C22 6.53 17.52 2 12 2S2 6.53 2 12.06c0 5 3.66 9.13 8.44 9.94v-7.03H7.9v-2.91h2.54V9.83c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.23.2 2.23.2v2.46H15.6c-1.24 0-1.63.78-1.63 1.57v1.88h2.78l-.44 2.91h-2.34v7.03A10 10 0 0 0 22 12.06z" />
+                  </svg>
+                </a>
+                <a
+                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                    shareTitle
+                  )}&url=${encodeURIComponent(shareUrl)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center w-10 h-10 bg-black text-white rounded hover:bg-gray-800 transition ml-3"
+                  aria-label="Share on X"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M18.244 2.25h3.308l-7.227 8.26L23.25 21.75h-6.484l-5.062-6.617-5.806 6.617H2.59l7.73-8.81L1.125 2.25H7.75l4.537 5.993zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                  </svg>
+                </a>
+                {/* <a
+                  href={`https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(
+                    shareUrl
+                  )}&media=${encodeURIComponent(
+                    post.featured_image
+                  )}&description=${encodeURIComponent(shareTitle)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center w-10 h-10 bg-red-600 text-white rounded hover:bg-red-700 transition ml-3"
+                  aria-label="Share on Pinterest"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6 0 1.18.34 2.28.93 3.21l-1.17 4.48 4.48-1.17c.93.59 2.03.93 3.21.93 3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 9.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z" />
+                  </svg>
+                </a> */}
+                <a
+                  href={`https://www.facebook.com/igospelmediaconnect`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center w-11 h-11 transition ml-3"
+                  aria-label="Share on WhatsApp"
+                >
+                  <img
+                    src="/whatsapp-icon.png"
+                    alt="whatsapp"
+                    className="h-full w-full"
+                  />
+                </a>
+                <a
+                  href={`https://www.linkedin.com/company/igospelmediaconnect`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center w-18 h-18 transition -mr-3"
+                >
+                  <img
+                    src="/linkedin-icon.png"
+                    alt="linkedin"
+                    className="w-full"
+                  />
+                </a>
               </div>
 
-              {/* Featured Image */}
+              {/* Featured Image – Full width below social icons */}
               <div className="relative aspect-[1/1] overflow-hidden rounded-xl">
                 <Image
                   src={post.featured_image || "/placeholder.svg"}

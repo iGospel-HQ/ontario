@@ -252,9 +252,9 @@ export default function ContactPage() {
         >
           <img src="/logo.png" alt="logo" className="w-full h-10" />
         </Link>
-        <p className="text-2xl font-bold">The Gospel Never Sleeps</p>
+        <p className="text-2xl font-bold">iGospel Media Connect</p>
         <p className="text-muted-foreground mt-2">
-          We’re here 24/7 for the Kingdom
+          Music, Ministry. Always on.
         </p>
       </div>
     </>
