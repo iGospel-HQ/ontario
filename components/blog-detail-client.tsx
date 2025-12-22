@@ -182,7 +182,7 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                   </svg>
                 </a> */}
                 <a
-                  href={`https://www.facebook.com/igospelmediaconnect`}
+                  href={`https://wa.me/?text=${shareTitle}%20${shareUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center w-11 h-11 transition ml-3"
@@ -195,7 +195,7 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                   />
                 </a>
                 <a
-                  href={`https://www.linkedin.com/company/igospelmediaconnect`}
+                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center w-18 h-18 transition -mr-3"
@@ -379,10 +379,10 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="text-white hover:text-red-400"
+                              className="text-white cursor-pointer"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                window.open(track.download_url, "_blank");
+                                window.open(track.download_url);
                               }}
                             >
                               <Download className="w-5 h-5 mr-2" />
