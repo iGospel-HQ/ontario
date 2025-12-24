@@ -122,15 +122,23 @@ export function BlogDetailClient({ slug }: { slug: string }) {
         setName("");
         setPhone("");
         setAmount("");
-        const name = "SupportPayment";
-        const specs =
-          "width=400,height=400,resizable=yes,scrollbars=yes,status=yes";
+        const width = 600;
+        const height = 750;
+        const left = (window.screen.width - width) / 2;
+        const top = (window.screen.height - height) / 2 - 50; // Slightly higher than center
 
-        const newWindow = window.open(payment_url, name, specs);
+        const specs = `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=no,menubar=no,toolbar=no,location=no`;
 
-        // Optional: Focus the new window if it successfully opens
+        const newWindow = window.open(payment_url, "SupportPayment", specs);
+
         if (newWindow) {
           newWindow.focus();
+        } else {
+          // Fallback if popup blocked
+          alert(
+            "Popup blocked. Please allow popups for this site to complete payment."
+          );
+          window.location.href = payment_url;
         }
       }
     } catch (err) {
@@ -448,6 +456,7 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                 id="amount"
                 type="number"
                 placeholder="Enter amount"
+                className="border-"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 min="100"
@@ -465,6 +474,7 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                 id="name"
                 type="text"
                 placeholder="Your name (optional)"
+                className="border-"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
@@ -481,6 +491,7 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                 id="phone"
                 type="tel"
                 placeholder="e.g. 08012345678 (optional)"
+                className="border-"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />
@@ -497,6 +508,7 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                 id="email"
                 type="email"
                 placeholder="your@email.com (optional)"
+                className="border-"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
