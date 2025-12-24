@@ -122,7 +122,16 @@ export function BlogDetailClient({ slug }: { slug: string }) {
         setName("");
         setPhone("");
         setAmount("");
-        window.location.href = payment_url;
+        const name = "SupportPayment";
+        const specs =
+          "width=400,height=400,resizable=yes,scrollbars=yes,status=yes";
+
+        const newWindow = window.open(payment_url, name, specs);
+
+        // Optional: Focus the new window if it successfully opens
+        if (newWindow) {
+          newWindow.focus();
+        }
       }
     } catch (err) {
       console.error("Payment initiation failed:", err);
