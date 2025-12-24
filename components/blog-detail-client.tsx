@@ -48,6 +48,8 @@ export function BlogDetailClient({ slug }: { slug: string }) {
   } = useAudioPlayer();
 
   const [supportOpen, setSupportOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
@@ -104,12 +106,21 @@ export function BlogDetailClient({ slug }: { slug: string }) {
         email: email.trim() || "igospelmediaconnect@gmail.com",
       };
 
+      await api.post("/wallet/givings/", {
+        artist: post.artists[0].id,
+        name: name || "Anonymous",
+        amount: payload.amount,
+        phone: phone || "N/A",
+        email: payload.email,
+      });
       const res = await api.post("/transaction/payment/initiate/", payload);
       const { payment_url } = res.data;
 
       if (payment_url) {
         setSupportOpen(false);
         setEmail("");
+        setName("");
+        setPhone("");
         setAmount("");
         window.open(payment_url, "_blank");
       }
@@ -407,6 +418,7 @@ export function BlogDetailClient({ slug }: { slug: string }) {
       </div>
 
       {/* Support Dialog */}
+      {/* // Support Dialog – Updated with Name & Phone (optional) */}
       <Dialog open={supportOpen} onOpenChange={setSupportOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -415,7 +427,7 @@ export function BlogDetailClient({ slug }: { slug: string }) {
               Your support helps us continue sharing powerful gospel content.
               <br />
               <span className="font-medium mt-3 text-sm block">
-                You can remain anonymous by leaving the email field empty.
+                You can remain anonymous by leaving the fields below empty.
               </span>
             </DialogDescription>
           </DialogHeader>
@@ -427,10 +439,41 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                 id="amount"
                 type="number"
                 placeholder="Enter amount"
-                className="border-"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 min="100"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="name">
+                Name{" "}
+                <span className="text-muted-foreground text-sm">
+                  (Optional)
+                </span>
+              </Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="Your name (optional)"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="phone">
+                Phone Number{" "}
+                <span className="text-muted-foreground text-sm">
+                  (Optional)
+                </span>
+              </Label>
+              <Input
+                id="phone"
+                type="tel"
+                placeholder="e.g. 08012345678 (optional)"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
               />
             </div>
 
@@ -445,7 +488,6 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                 id="email"
                 type="email"
                 placeholder="your@email.com (optional)"
-                className="border-"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
