@@ -122,7 +122,7 @@ export function BlogDetailClient({ slug }: { slug: string }) {
         setName("");
         setPhone("");
         setAmount("");
-        window.open(payment_url, "_blank");
+        window.location.href = payment_url;
       }
     } catch (err) {
       console.error("Payment initiation failed:", err);
