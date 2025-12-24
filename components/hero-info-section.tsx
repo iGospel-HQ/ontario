@@ -86,19 +86,22 @@ export default function HomeInfoSection({
                       <h3 className="text-xl font-bold text-red-600 hover:text-black transition-colors line-clamp-2">
                         <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                       </h3>
-                      <p className="text-sm text-gray-600 mt-2">
-                        {new Date(post.publish_date).toLocaleDateString(
-                          undefined,
-                          {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          }
-                        )}
-                      </p>
-                      <div className="flex items-center gap-2 text-sm my-3">
-                        <User className="w-4 h-4" />
-                        {post.author}
+                      <div className="flex items-center gap-2 my-3">
+                        <p className="text-xs text-gray-600">
+                          {new Date(post.publish_date).toLocaleDateString(
+                            undefined,
+                            {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            }
+                          )}
+                        </p>
+                        |
+                        <div className="flex items-center gap-2 text-xs">
+                          <User className="w-4 h-4" />
+                          {post.author}
+                        </div>
                       </div>
                       <p className="text-gray-700 mt-3 line-clamp-3 flex-1">
                         {post.excerpt}
@@ -131,19 +134,22 @@ export default function HomeInfoSection({
                       <h3 className="text-xl font-bold text-red-600 hover:text-black transition-colors line-clamp-2">
                         <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                       </h3>
-                      <p className="text-sm text-gray-600 mt-2">
-                        {new Date(post.publish_date).toLocaleDateString(
-                          undefined,
-                          {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          }
-                        )}
-                      </p>
-                      <div className="flex items-center gap-2 text-sm my-3">
-                        <User className="w-4 h-4" />
-                        {post.author}
+                      <div className="flex items-center gap-2 my-3">
+                        <p className="text-xs text-gray-600">
+                          {new Date(post.publish_date).toLocaleDateString(
+                            undefined,
+                            {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            }
+                          )}
+                        </p>
+                        |
+                        <div className="flex items-center gap-2 text-xs">
+                          <User className="w-4 h-4" />
+                          {post.author}
+                        </div>
                       </div>
                       <p className="text-gray-700 mt-3 line-clamp-3 flex-1">
                         {post.excerpt}

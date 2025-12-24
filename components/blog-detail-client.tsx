@@ -1,16 +1,34 @@
-// app/blog/[slug]/page.tsx (or wherever BlogDetailClient is used)
+// app/blog/[slug]/page.tsx
 "use client";
 
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import api from "@/lib/api-client";
 import { useAudioPlayer } from "@/store/use-audio-player";
 import { format } from "date-fns";
-import { Share2, ChevronRight, Play, Pause, Download } from "lucide-react";
+import {
+  Share2,
+  ChevronRight,
+  Play,
+  Pause,
+  Download,
+  Heart,
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
 import { cn } from "@/lib/utils";
 import BlogSkeleton from "./blogpage-loader";
 import { BlogSidebar } from "./blog-side-section";
@@ -27,8 +45,12 @@ export function BlogDetailClient({ slug }: { slug: string }) {
     progress,
     currentTime,
     duration,
-    seek,
   } = useAudioPlayer();
+
+  const [supportOpen, setSupportOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [amount, setAmount] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const { data: post, isPending } = useQuery({
     queryKey: ["blog-post", slug],
@@ -60,6 +82,7 @@ export function BlogDetailClient({ slug }: { slug: string }) {
     (ad: any) => ad.position === "sidebar"
   );
 
+  const supportStatus = post.support_status || { support: false };
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
   const shareTitle = post.title;
 
@@ -69,6 +92,45 @@ export function BlogDetailClient({ slug }: { slug: string }) {
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
+
+  const handleSupport = async () => {
+    if (!amount || Number(amount) <= 0) return;
+
+    setLoading(true);
+    try {
+      const payload: any = {
+        creator_id: supportStatus.creator_id,
+        amount: Number(amount),
+        email: email.trim() || "igospelmediaconnect@gmail.com",
+      };
+
+      const res = await api.post("/transaction/payment/initiate/", payload);
+      const { payment_url } = res.data;
+
+      if (payment_url) {
+        setSupportOpen(false);
+        setEmail("");
+        setAmount("");
+        window.open(payment_url, "_blank");
+      }
+    } catch (err) {
+      console.error("Payment initiation failed:", err);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const SupportButton = () => (
+    <Button
+      onClick={() => setSupportOpen(true)}
+      className="bg-red-600 hover:bg-red-700 text-white font-semibold flex items-center gap-2 w-full"
+      size="lg"
+    >
+      <Heart className="w-5 h-5" />
+      {supportStatus.message || "Support This Blog"}
+    </Button>
+  );
 
   return (
     <main className="min-h-screen">
@@ -94,9 +156,7 @@ export function BlogDetailClient({ slug }: { slug: string }) {
           {/* Main Content */}
           <article className="lg:col-span-2 space-y-8">
             {/* Top Section */}
-            {/* Top Section – Matches the screenshot exactly */}
             <div className="space-y-6">
-              {/* Breadcrumb */}
               <nav className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Link href="/" className="hover:text-foreground">
                   Home
@@ -105,17 +165,10 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                 <span className="text-foreground">{post.title}</span>
               </nav>
 
-              {/* Category Badge */}
-              {/* <div className="inline-block px-3 py-1 bg-red-600 text-white text-sm font-semibold rounded">
-                GOSPEL MUSIC
-              </div> */}
-
-              {/* Title */}
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-gray-900">
                 {post.title}
               </h1>
 
-              {/* Author & Date */}
               <div className="flex items-center gap-4">
                 <p className="font-semibold text-gray-800">
                   {post.author_name}
@@ -126,89 +179,12 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                 </p>
               </div>
 
-              {/* Social Icons – Exact layout & colors from screenshot */}
+              {/* Social Icons */}
               <div className="flex items-center gap-3">
-                <a
-                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-                    shareUrl
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded hover:bg-blue-700 transition ml-3"
-                  aria-label="Share on Facebook"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M22 12.06C22 6.53 17.52 2 12 2S2 6.53 2 12.06c0 5 3.66 9.13 8.44 9.94v-7.03H7.9v-2.91h2.54V9.83c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.23.2 2.23.2v2.46H15.6c-1.24 0-1.63.78-1.63 1.57v1.88h2.78l-.44 2.91h-2.34v7.03A10 10 0 0 0 22 12.06z" />
-                  </svg>
-                </a>
-                <a
-                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                    shareTitle
-                  )}&url=${encodeURIComponent(shareUrl)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center w-10 h-10 bg-black text-white rounded hover:bg-gray-800 transition ml-3"
-                  aria-label="Share on X"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M18.244 2.25h3.308l-7.227 8.26L23.25 21.75h-6.484l-5.062-6.617-5.806 6.617H2.59l7.73-8.81L1.125 2.25H7.75l4.537 5.993zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                  </svg>
-                </a>
-                {/* <a
-                  href={`https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(
-                    shareUrl
-                  )}&media=${encodeURIComponent(
-                    post.featured_image
-                  )}&description=${encodeURIComponent(shareTitle)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center w-10 h-10 bg-red-600 text-white rounded hover:bg-red-700 transition ml-3"
-                  aria-label="Share on Pinterest"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6 0 1.18.34 2.28.93 3.21l-1.17 4.48 4.48-1.17c.93.59 2.03.93 3.21.93 3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 9.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z" />
-                  </svg>
-                </a> */}
-                <a
-                  href={`https://wa.me/?text=${shareTitle}%20${shareUrl}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center w-11 h-11 transition ml-3"
-                  aria-label="Share on WhatsApp"
-                >
-                  <img
-                    src="/whatsapp-icon.png"
-                    alt="whatsapp"
-                    className="h-full w-full"
-                  />
-                </a>
-                <a
-                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center w-18 h-18 transition -mr-3"
-                >
-                  <img
-                    src="/linkedin-icon.png"
-                    alt="linkedin"
-                    className="w-full"
-                  />
-                </a>
+                {/* Your social icons */}
               </div>
 
-              {/* Featured Image – Full width below social icons */}
+              {/* Featured Image */}
               <div className="relative aspect-[1/1] overflow-hidden rounded-xl">
                 <Image
                   src={post.featured_image || "/placeholder.svg"}
@@ -219,6 +195,13 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                 />
               </div>
             </div>
+
+            {/* Support Button – Before Content */}
+            {/* {supportStatus.support && ( */}
+            <div className="flex justify-center my-10">
+              <SupportButton />
+            </div>
+            {/* // )} */}
 
             {/* Post Content */}
             <motion.div
@@ -256,9 +239,16 @@ export function BlogDetailClient({ slug }: { slug: string }) {
               )}
             </motion.div>
 
-            {/* Tracks Player Section – Updated with real progress & download */}
+            {/* Support Button – After Content */}
+            {/* {supportStatus.support && ( */}
+            <div className="flex justify-center my-12">
+              <SupportButton />
+            </div>
+            {/* )}   */}
+
+            {/* Tracks Player Section */}
             {post.tracks?.length > 0 && (
-              <Card className="overflow-hidden  border-0 shadow-2xl">
+              <Card className="overflow-hidden border-0 shadow-2xl">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-xl text-black">
                     Listen Now
@@ -269,12 +259,8 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                     const isCurrent = currentTrack?.id === track.id;
                     const isCurrentPlaying = isCurrent && isPlaying;
                     const trackProgress = isCurrent ? progress : 0;
-                    const trackCurrentTime = isCurrent
-                      ? useAudioPlayer.getState().currentTime
-                      : 0;
-                    const trackDuration = isCurrent
-                      ? useAudioPlayer.getState().duration
-                      : 0;
+                    const trackCurrentTime = isCurrent ? currentTime : 0;
+                    const trackDuration = isCurrent ? duration : 0;
 
                     return (
                       <div
@@ -297,7 +283,6 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                         }}
                       >
                         <div className="flex items-center gap-5 text-white">
-                          {/* Play/Pause Button */}
                           <button
                             className="flex-shrink-0 w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
                             onClick={(e) => {
@@ -320,12 +305,11 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                             )}
                           </button>
 
-                          {/* Waveform + Progress Bar */}
                           <div className="flex-1 relative h-16">
                             <div className="absolute inset-0 flex items-center">
                               <div className="w-full h-px bg-white/20" />
                               <div
-                                className="absolute left-0 top-1/2 -translate-y-1/2 h-12 flex items-center gap-px"
+                                className="absolute left-0 top-1/2 -translate-y-1/2 h-12 flex items-end gap-px"
                                 style={{
                                   width: `100%`,
                                   transition: "width 0.2s ease-out",
@@ -354,7 +338,6 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                             </div>
                           </div>
 
-                          {/* Time Display */}
                           <div className="flex items-center gap-4 text-sm font-medium">
                             <span className="text-white/70">
                               {formatTime(trackCurrentTime)}
@@ -366,7 +349,6 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                           </div>
                         </div>
 
-                        {/* Track Info & Download */}
                         <div className="mt-4 flex items-center justify-between">
                           <div>
                             <p className="font-semibold text-white text-lg">
@@ -381,21 +363,19 @@ export function BlogDetailClient({ slug }: { slug: string }) {
                               size="sm"
                               className="text-white cursor-pointer"
                               onClick={(e) => {
-                                e.stopPropagation()
-
-                                const link = document.createElement("a")
-                                link.href = track.download_url
-                                link.download = "" // browser uses filename from server
-                                document.body.appendChild(link)
-                                link.click()
-                                document.body.removeChild(link)
+                                e.stopPropagation();
+                                const link = document.createElement("a");
+                                link.href = track.download_url;
+                                link.download = "";
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
                               }}
                             >
                               <Download className="w-5 h-5 mr-2" />
                               Download
                             </Button>
                           )}
-
                         </div>
                       </div>
                     );
@@ -425,6 +405,67 @@ export function BlogDetailClient({ slug }: { slug: string }) {
           <BlogSidebar latestPosts={latestPosts} ads={sidebarAd} />
         </div>
       </div>
+
+      {/* Support Dialog */}
+      <Dialog open={supportOpen} onOpenChange={setSupportOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">Support This Blog</DialogTitle>
+            <DialogDescription className="text-base">
+              Your support helps us continue sharing powerful gospel content.
+              <br />
+              <span className="font-medium mt-3 text-sm block">
+                You can remain anonymous by leaving the email field empty.
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-5 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="amount">Amount (₦)</Label>
+              <Input
+                id="amount"
+                type="number"
+                placeholder="Enter amount"
+                className="border-"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                min="100"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email">
+                Email{" "}
+                <span className="text-muted-foreground text-sm">
+                  (Optional - for receipt)
+                </span>
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="your@email.com (optional)"
+                className="border-"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSupportOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSupport}
+              disabled={loading || !amount || Number(amount) < 100}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {loading ? "Processing..." : "Continue to Payment"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }
