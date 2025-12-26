@@ -94,7 +94,7 @@ export function BlogPageClient() {
           <h1 className="text-5xl md:text-7xl font-black text-foreground mb-4">
             Gospel{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent/70">
-              Insights
+              Contents
             </span>
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground">

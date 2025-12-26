@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { ModeToggle } from "./theme-toggler";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
 
 export function Navbar() {
   const router = useRouter();
@@ -48,23 +49,14 @@ export function Navbar() {
         </div>
 
         {/* Search */}
-        <div className="hidden w-64 md:flex">
+        <div className="hidden w-64 md:flex gap-5">
           {/* <ModeToggle /> */}
-          <div className="relative w-full">
-            <Input
-              type="search"
-              placeholder="Search..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && searchQuery) {
-                  router.push(`/search?q=${searchQuery}`);
-                }
-              }}
-              className="bg-secondary"
-            />
-            <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          </div>
+          <Button variant="outline" className="border-accent text-accent">
+            Login
+          </Button>
+          <Button variant="default" className="text-accent">
+            Sign Up
+          </Button>
         </div>
 
         {/* Mobile Menu Button */}

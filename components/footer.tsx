@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail, Github, Twitter, Instagram } from "lucide-react";
+import { Mail, Github, Twitter, Instagram, Facebook, Linkedin } from "lucide-react";
 
 export function Footer() {
   return (
@@ -25,17 +25,12 @@ export function Footer() {
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/blog" className="hover:text-accent">
-                  Blog
+                  Explore
                 </Link>
               </li>
               <li>
                 <Link href="/music" className="hover:text-accent">
                   Music
-                </Link>
-              </li>
-              <li>
-                <Link href="/charts" className="hover:text-accent">
-                  Charts
                 </Link>
               </li>
             </ul>
@@ -73,10 +68,13 @@ export function Footer() {
               <a href="#" className="hover:text-accent">
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="#" className="hover:text-accent">
-                <Github className="h-5 w-5" />
+              <a href="https://www.facebook.com/igospelmediaconnect" className="hover:text-accent">
+                <Facebook className="h-5 w-5" />
               </a>
-              <a href="#" className="hover:text-accent">
+              <a href="https://www.linkedin.com/company/igospelmediaconnect" className="hover:text-accent">
+                <Linkedin className="h-5 w-5" />
+              </a>
+              <a href="mailto:igospelmediaconnect@gmail.com" className="hover:text-accent">
                 <Mail className="h-5 w-5" />
               </a>
             </div>
@@ -84,7 +82,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 border-t border-border pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; 2025 iGospel. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} iGospel. All rights reserved.</p>
         </div>
       </div>
     </footer>
