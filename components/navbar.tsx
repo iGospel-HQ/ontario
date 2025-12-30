@@ -52,10 +52,10 @@ export function Navbar() {
         <div className="hidden w-64 md:flex gap-5">
           {/* <ModeToggle /> */}
           <Button variant="outline" className="border-accent text-accent">
-            Login
+            <Link href="/sign-in">Login</Link>
           </Button>
           <Button variant="default" className="text-accent">
-            Sign Up
+            <Link href="/sign-up">Sign Up</Link>
           </Button>
         </div>
 
