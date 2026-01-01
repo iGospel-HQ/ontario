@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/form";
 import api from "@/lib/api-client";
 import { Alert, AlertTitle } from "@/components/ui/alert";
+import { useAuthStore } from "@/store/use-auth-store";
+import { useRouter } from "next/navigation";
 
 // Zod Schema for validation
 const signInSchema = z.object({
@@ -33,6 +35,8 @@ type SignInFormData = z.infer<typeof signInSchema>;
 
 export default function SignInClient() {
   const [showPassword, setShowPassword] = useState(false);
+  const { setTokens, setUser } = useAuthStore();
+  const router = useRouter();
 
   const form = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
@@ -46,12 +50,17 @@ export default function SignInClient() {
     mutationFn: async (data: SignInFormData) => {
       // Replace with your actual login endpoint
       const res = await api.post("/account/login/", data);
-      return res.data;
+      return res.data.data;
     },
     onSuccess: (data) => {
       console.log("Login successful:", data);
+      setTokens(data.access, data.refresh);
+      setUser({
+        user_id: data.user_id,
+        email: data.email,
+      });
       // Redirect or store token here
-      // router.push("/dashboard");
+      router.push("/dashboard");
     },
     onError: (error: any) => {
       console.error("Login failed:", error);

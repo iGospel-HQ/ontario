@@ -212,6 +212,7 @@ export default function VerifyAccountClient() {
                               value={field.value[index] || ""}
                               onChange={(e) => {
                                 const newCode = field.value.split("");
+                                if(isNaN(Number(e.target.value))) return;
                                 newCode[index] = e.target.value;
                                 field.onChange(newCode.join(""));
 

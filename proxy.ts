@@ -1,0 +1,27 @@
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+export function proxy(request: NextRequest) {
+  const refreshToken = request.cookies.get("refresh_token");
+  const { pathname } = request.nextUrl;
+
+  // Protect dashboard routes
+  if (pathname.startsWith("/dashboard")) {
+    if (!refreshToken) {
+      console.log("No refresh token found, redirecting to login");
+      return NextResponse.redirect(new URL("/sign-in", request.url));
+    }
+  }
+
+  // Redirect authenticated users away from login page
+  if (["/sign-in", "/sign-up"].includes(pathname) && refreshToken) {
+    console.log("User already authenticated, redirecting to dashboard");
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ["/dashboard/:path*", "/sign-in", "/sign-up"],
+};

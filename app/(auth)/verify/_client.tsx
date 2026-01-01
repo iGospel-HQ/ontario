@@ -119,6 +119,7 @@ export default function VerifyAccountClient() {
                             value={field.value[index] || ""}
                             onChange={(e) => {
                               const newCode = field.value.split("");
+                              if(isNaN(Number(e.target.value))) return; // Only allow numbers
                               newCode[index] = e.target.value;
                               const code = newCode.join("");
                               field.onChange(code);
@@ -126,9 +127,7 @@ export default function VerifyAccountClient() {
                               // Auto-focus next input
                               if (e.target.value && index < 3) {
                                 const next =
-                                  e.target.parentElement?.nextElementSibling?.querySelector(
-                                    "input"
-                                  );
+                                  e.target.nextElementSibling as HTMLInputElement;
                                 next?.focus();
                               }
                             }}
@@ -139,9 +138,7 @@ export default function VerifyAccountClient() {
                                 index > 0
                               ) {
                                 const prev =
-                                  e.currentTarget.parentElement?.previousElementSibling?.querySelector(
-                                    "input"
-                                  );
+                                  e.target.previousElementSibling as HTMLInputElement;
                                 prev?.focus();
                               }
                             }}
