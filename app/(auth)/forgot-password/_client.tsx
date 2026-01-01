@@ -122,7 +122,7 @@ export default function VerifyAccountClient() {
     },
     onSuccess: () => {
       // Redirect to login or dashboard
-      router.push("/sign-in");
+      router.push("/signin");
     },
     onError: (error: any) => {
       const msg =

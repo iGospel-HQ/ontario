@@ -58,6 +58,7 @@ export default function SignInClient() {
       setUser({
         user_id: data.user_id,
         email: data.email,
+        has_pin: data.has_pin
       });
       // Redirect or store token here
       router.push("/dashboard");
@@ -194,7 +195,7 @@ export default function SignInClient() {
             <p>
               Don’t have an account?{" "}
               <Link
-                href="/sign-up"
+                href="/signup"
                 className="text-red-600 hover:underline font-medium"
               >
                 Sign up here

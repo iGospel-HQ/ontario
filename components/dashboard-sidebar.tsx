@@ -6,6 +6,7 @@ import {
   CreditCard,
   ArrowRightLeft,
   Gift,
+  Upload,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -19,6 +20,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 // <CHANGE> Added more navigation menu items including Withdrawals, Transactions, and Gifts
@@ -27,6 +29,11 @@ const menuItems = [
     label: "Dashboard",
     icon: LayoutDashboard,
     route: "/dashboard",
+  },
+  {
+    label: "Publish Content",
+    icon: Upload,
+    route: "/dashboard/publish",
   },
   {
     label: "Withdrawals",
@@ -38,11 +45,11 @@ const menuItems = [
     icon: ArrowRightLeft,
     route: "/dashboard/transactions",
   },
-  {
-    label: "Gifts",
-    icon: Gift,
-    route: "/dashboard/gifts",
-  },
+  // {
+  //   label: "Gifts",
+  //   icon: Gift,
+  //   route: "/dashboard/gifts",
+  // },
   {
     label: "Logout",
     icon: LogOut,
@@ -56,6 +63,12 @@ interface DashboardSidebarProps {
 
 export function DashboardSidebar({ onLogoutClick }: DashboardSidebarProps) {
   const pathname = usePathname();
+  const { isMobile, setOpenMobile } = useSidebar();
+  const handleClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -82,7 +95,7 @@ export function DashboardSidebar({ onLogoutClick }: DashboardSidebarProps) {
                       asChild
                       isActive={pathname === item.route}
                     >
-                      <Link href={item.route}>
+                      <Link onClick={handleClick} href={item.route}>
                         <item.icon />
                         <span>{item.label}</span>
                       </Link>

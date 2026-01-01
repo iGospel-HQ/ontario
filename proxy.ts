@@ -9,12 +9,12 @@ export function proxy(request: NextRequest) {
   if (pathname.startsWith("/dashboard")) {
     if (!refreshToken) {
       console.log("No refresh token found, redirecting to login");
-      return NextResponse.redirect(new URL("/sign-in", request.url));
+      return NextResponse.redirect(new URL("/signin", request.url));
     }
   }
 
   // Redirect authenticated users away from login page
-  if (["/sign-in", "/sign-up"].includes(pathname) && refreshToken) {
+  if (["/signin", "/signup"].includes(pathname) && refreshToken) {
     console.log("User already authenticated, redirecting to dashboard");
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
@@ -23,5 +23,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/sign-in", "/sign-up"],
+  matcher: ["/dashboard/:path*", "/signin", "/signup"],
 };

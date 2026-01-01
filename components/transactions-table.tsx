@@ -3,24 +3,29 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useQuery } from "@tanstack/react-query"
-// import { getTransactions } from "@/lib/api"
+import { apiService } from "@/lib/api-client"
 import { format } from "date-fns"
 import { Badge } from "@/components/ui/badge"
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 export function TransactionsTable() {
-  const transactions: any[] = []
-  const isLoading = false
-  // const { data: transactions = [], isLoading } = useQuery({
-  //   queryKey: ["transactions"],
-  //   queryFn: getTransactions,
-  // })
+  const [page, setPage] = useState(1)
 
-  const formatCurrency = (amount: number) => {
+  const { data: response, isLoading } = useQuery({
+    queryKey: ["wallet-transactions", page],
+    queryFn: () => apiService.getWalletTransactions(page),
+  })
+
+  const transactions = response?.results ?? []
+
+  const formatCurrency = (amount: string) => {
     return new Intl.NumberFormat("en-NG", {
       style: "currency",
       currency: "NGN",
       minimumFractionDigits: 2,
-    }).format(amount)
+    }).format(Number.parseFloat(amount))
   }
 
   const getStatusColor = (status: string) => {
@@ -58,30 +63,58 @@ export function TransactionsTable() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Reference</TableHead>
-                  <TableHead>Type</TableHead>
+                  <TableHead>Source</TableHead>
                   <TableHead>Amount</TableHead>
+                  <TableHead>Type</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Date</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {transactions.map((transaction) => (
+                {transactions.map((transaction: any) => (
                   <TableRow key={transaction.id}>
-                    <TableCell className="font-mono text-sm">{transaction.reference}</TableCell>
-                    <TableCell className="capitalize">{transaction.type}</TableCell>
+                    <TableCell className="font-mono text-xs">{transaction.reference}</TableCell>
+                    <TableCell className="capitalize">{transaction.source}</TableCell>
                     <TableCell className="font-medium">{formatCurrency(transaction.amount)}</TableCell>
+                    <TableCell>
+                      <Badge variant={transaction.transaction_type === "credit" ? "default" : "secondary"}>
+                        {transaction.transaction_type}
+                      </Badge>
+                    </TableCell>
                     <TableCell>
                       <Badge variant="outline" className={getStatusColor(transaction.status)}>
                         {transaction.status}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {format(new Date(transaction.createdAt), "MMM dd, yyyy HH:mm")}
+                    <TableCell className="text-muted-foreground whitespace-nowrap">
+                      {format(new Date(transaction.created_at), "MMM dd, yyyy")}
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
+
+            <div className="flex items-center justify-end space-x-2 p-4 border-t">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={!response?.previous || isLoading}
+              >
+                <ChevronLeft className="h-4 w-4 mr-1" />
+                Previous
+              </Button>
+              <div className="text-sm font-medium">Page {page}</div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage((p) => p + 1)}
+                disabled={!response?.next || isLoading}
+              >
+                Next
+                <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
           </div>
         )}
       </CardContent>

@@ -55,7 +55,7 @@ export default function VerifyAccountClient() {
     },
     onSuccess: () => {
       // Redirect to dashboard or home
-      router.push("/sign-in");
+      router.push("/signin");
     },
     onError: (error: any) => {
       const msg =
@@ -115,7 +115,7 @@ export default function VerifyAccountClient() {
                             key={index}
                             type="text"
                             maxLength={1}
-                            className="w-8 h-8 md:w-10 text-xs md:h-10 text-center md:text-2xl font-bold border-gray-300 focus:border-red-500"
+                            className="w-10 h-10 text-sm text-center md:text-2xl font-bold border-gray-300 focus:border-red-500"
                             value={field.value[index] || ""}
                             onChange={(e) => {
                               const newCode = field.value.split("");
