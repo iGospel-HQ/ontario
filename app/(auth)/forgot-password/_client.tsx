@@ -122,7 +122,7 @@ export default function VerifyAccountClient() {
     },
     onSuccess: () => {
       // Redirect to login or dashboard
-      router.push("/signin");
+      router.push("/login");
     },
     onError: (error: any) => {
       const msg =
@@ -212,7 +212,7 @@ export default function VerifyAccountClient() {
                               value={field.value[index] || ""}
                               onChange={(e) => {
                                 const newCode = field.value.split("");
-                                if(isNaN(Number(e.target.value))) return;
+                                if (isNaN(Number(e.target.value))) return;
                                 newCode[index] = e.target.value;
                                 field.onChange(newCode.join(""));
 
@@ -222,14 +222,16 @@ export default function VerifyAccountClient() {
                                   nextInput?.focus();
                                 }
                               }}
-                              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                              onKeyDown={(
+                                e: React.KeyboardEvent<HTMLInputElement>
+                              ) => {
                                 if (
                                   e.key === "Backspace" &&
                                   !field.value[index] &&
                                   index > 0
                                 ) {
-                                  const prevInput = e.target
-                                    .previousElementSibling;
+                                  const prevInput =
+                                    e.target.previousElementSibling;
                                   prevInput?.focus();
                                 }
                               }}

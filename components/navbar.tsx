@@ -64,8 +64,11 @@ export function Navbar() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
               <DropdownMenuItem asChild>
-                <Button variant="outline" className="w-full border-accent text-accent">
-                  <Link href="/signin">Login</Link>
+                <Button
+                  variant="outline"
+                  className="w-full border-accent text-accent"
+                >
+                  <Link href="/login">Login</Link>
                 </Button>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -119,7 +122,7 @@ export function Navbar() {
           {/* Mobile Upload Actions */}
           <div className="pt-2 space-y-2">
             <Button className="w-full bg-accent text-accent-foreground" asChild>
-              <Link href="/signin">Login to Upload</Link>
+              <Link href="/login">Login to Upload</Link>
             </Button>
             <Button variant="outline" className="w-full" asChild>
               <Link href="/signup">Create an Account</Link>

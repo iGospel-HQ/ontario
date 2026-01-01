@@ -35,7 +35,6 @@ export default function VerifyAccountClient() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
 
-
   const form = useForm<VerifyFormData>({
     resolver: zodResolver(verifySchema),
     defaultValues: {
@@ -55,7 +54,7 @@ export default function VerifyAccountClient() {
     },
     onSuccess: () => {
       // Redirect to dashboard or home
-      router.push("/signin");
+      router.push("/login");
     },
     onError: (error: any) => {
       const msg =
@@ -119,15 +118,15 @@ export default function VerifyAccountClient() {
                             value={field.value[index] || ""}
                             onChange={(e) => {
                               const newCode = field.value.split("");
-                              if(isNaN(Number(e.target.value))) return; // Only allow numbers
+                              if (isNaN(Number(e.target.value))) return; // Only allow numbers
                               newCode[index] = e.target.value;
                               const code = newCode.join("");
                               field.onChange(code);
 
                               // Auto-focus next input
                               if (e.target.value && index < 3) {
-                                const next =
-                                  e.target.nextElementSibling as HTMLInputElement;
+                                const next = e.target
+                                  .nextElementSibling as HTMLInputElement;
                                 next?.focus();
                               }
                             }}
@@ -137,12 +136,11 @@ export default function VerifyAccountClient() {
                                 !field.value[index] &&
                                 index > 0
                               ) {
-                                const prev =
-                                  e.target.previousElementSibling as HTMLInputElement;
+                                const prev = e.target
+                                  .previousElementSibling as HTMLInputElement;
                                 prev?.focus();
                               }
                             }}
-
                             onPaste={(e) => {
                               e.preventDefault();
                               const pasteData = e.clipboardData

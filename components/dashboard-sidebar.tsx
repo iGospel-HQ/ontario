@@ -31,19 +31,19 @@ const menuItems = [
     route: "/dashboard",
   },
   {
-    label: "Publish Content",
-    icon: Upload,
-    route: "/dashboard/publish",
+    label: "Transactions",
+    icon: ArrowRightLeft,
+    route: "/dashboard/transactions",
   },
   {
-    label: "Withdrawals",
+    label: "Wallet",
     icon: CreditCard,
     route: "/dashboard/withdrawals",
   },
   {
-    label: "Transactions",
-    icon: ArrowRightLeft,
-    route: "/dashboard/transactions",
+    label: "Publish Content",
+    icon: Upload,
+    route: "/dashboard/publish",
   },
   // {
   //   label: "Gifts",

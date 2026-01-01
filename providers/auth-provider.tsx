@@ -27,7 +27,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     if (!isLoading && !isAuthenticated && pathname.startsWith("/dashboard")) {
       console.log(" Redirecting unauthenticated user to login");
-      router.push("/signin");
+      router.push("/login");
     }
   }, [isLoading, isAuthenticated, pathname, router]);
 

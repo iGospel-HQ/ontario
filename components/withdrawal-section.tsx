@@ -39,9 +39,14 @@ export function WithdrawalSection() {
   const bank = bankDetails?.results?.[0];
 
   const canWithdraw =
-    availableBalance >= MIN_WITHDRAWAL_AMOUNT &&
+    Number(availableBalance) >= MIN_WITHDRAWAL_AMOUNT &&
     !!bank &&
     user?.has_pin === true;
+
+    console.log("AVAILABLE BALANCE:", availableBalance);
+    console.log("BANK DETAILS:", bank);
+    console.log("USER PIN STATUS:", user?.has_pin);
+    console.log("CAN WITHDRAW:", canWithdraw);
 
   const formatCurrency = (amount: number) =>
     new Intl.NumberFormat("en-NG", {

@@ -241,7 +241,7 @@ export default function SignUpClient() {
             <p>
               Already have an account?{" "}
               <Link
-                href="/signin"
+                href="/login"
                 className="text-red-600 hover:underline font-medium"
               >
                 Sign In

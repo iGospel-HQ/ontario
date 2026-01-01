@@ -26,7 +26,7 @@ import { AuthProvider } from "@/providers/auth-provider";
 // <CHANGE> Map routes to page titles
 const pageTitles: Record<string, string> = {
   "/dashboard": "Dashboard",
-  "/dashboard/withdrawals": "Withdrawals",
+  "/dashboard/withdrawals": "Wallets",
   "/dashboard/transactions": "Transactions",
   "/dashboard/publish": "Publish Content",
   "/dashboard/gifts": "Gifts",

@@ -24,7 +24,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       const { logout } = useAuthStore.getState();
       logout();
-      window.location.href = "/signin";
+      window.location.href = "/login";
       // originalRequest._retry = true
       // const refreshed = await refreshAccessToken()
       // if (refreshed) {
@@ -64,7 +64,9 @@ export const apiService = {
     return response.data;
   },
   getWithdrawalsTransactions: async (page = 1) => {
-    const response = await api.get(`/wallet/withdrawal-transactions/?page=${page}`);
+    const response = await api.get(
+      `/wallet/withdrawal-transactions/?page=${page}`
+    );
     return response.data;
   },
   publishContent: async (formData: FormData) => {
@@ -86,59 +88,33 @@ export const apiService = {
     api.post("/transaction/payout/withdraw/", payload),
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export async function fetchBlogPosts(page = 1, limit = 10) {
-  await new Promise((resolve) => setTimeout(resolve, 300))
+  await new Promise((resolve) => setTimeout(resolve, 300));
   return {
     posts: Array.from({ length: limit }).map((_, i) => ({
       id: `blog-${page * limit + i}`,
       slug: `blog-post-${page * limit + i}`,
-      title: `The Evolution of Music Streaming: Article ${page * limit + i + 1}`,
-      excerpt: "Exploring how music platforms have transformed the way we discover and consume music.",
-      category: ["Music", "Technology", "Culture", "Trends"][Math.floor(Math.random() * 4)],
-      date: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+      title: `The Evolution of Music Streaming: Article ${
+        page * limit + i + 1
+      }`,
+      excerpt:
+        "Exploring how music platforms have transformed the way we discover and consume music.",
+      category: ["Music", "Technology", "Culture", "Trends"][
+        Math.floor(Math.random() * 4)
+      ],
+      date: new Date(
+        Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
+      ).toISOString(),
       author: "Editorial Team",
       imageUrl: `/placeholder.svg?height=300&width=400&query=music blog article`,
       content: "Full blog content here...",
     })),
     total: 150,
-  }
+  };
 }
 
 export async function fetchBlogPost(slug: string) {
-  await new Promise((resolve) => setTimeout(resolve, 300))
+  await new Promise((resolve) => setTimeout(resolve, 300));
   return {
     id: slug,
     slug,
@@ -147,12 +123,13 @@ export async function fetchBlogPost(slug: string) {
     date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
     author: "Editorial Team",
     image: `/placeholder.svg?height=400&width=800&query=music streaming`,
-    content: "<h2>Introduction</h2><p>Music streaming has revolutionized how we access and enjoy music...</p>",
-  }
+    content:
+      "<h2>Introduction</h2><p>Music streaming has revolutionized how we access and enjoy music...</p>",
+  };
 }
 
 export async function fetchSongs(page = 1, limit = 20) {
-  await new Promise((resolve) => setTimeout(resolve, 300))
+  await new Promise((resolve) => setTimeout(resolve, 300));
   return {
     songs: Array.from({ length: limit }).map((index, i) => ({
       id: `song-${page * limit + i}`,
@@ -160,33 +137,40 @@ export async function fetchSongs(page = 1, limit = 20) {
       artist: "Artist Name",
       album: "Album Name",
       duration: "3:45",
-      genre: ["Electronic", "Hip-Hop", "Indie", "Pop"][Math.floor(Math.random() * 4)],
+      genre: ["Electronic", "Hip-Hop", "Indie", "Pop"][
+        Math.floor(Math.random() * 4)
+      ],
       streamUrl: "/dummy/track.mp3",
       cover: `https://picsum.photos/300?random=${index}`,
     })),
     total: 500,
-  }
+  };
 }
 
 export async function fetchPlaylists(page = 1, limit = 12) {
-  await new Promise((resolve) => setTimeout(resolve, 300))
+  await new Promise((resolve) => setTimeout(resolve, 300));
   return {
     playlists: Array.from({ length: limit }).map((_, i) => ({
       id: `playlist-${i}`,
-      name: ["Chill Vibes", "Workout Mix", "Night Drive", "Study Focus", "Party Hits", "Lo-fi Beats"][
-        Math.floor(Math.random() * 6)
-      ],
+      name: [
+        "Chill Vibes",
+        "Workout Mix",
+        "Night Drive",
+        "Study Focus",
+        "Party Hits",
+        "Lo-fi Beats",
+      ][Math.floor(Math.random() * 6)],
       description: "Curated collection of tracks",
       cover: `/placeholder.svg?height=250&width=250&query=playlist cover music`,
       songCount: Math.floor(Math.random() * 50) + 10,
       songs: [],
     })),
     total: 100,
-  }
+  };
 }
 
 export async function fetchArtists(page = 1, limit = 12) {
-  await new Promise((resolve) => setTimeout(resolve, 300))
+  await new Promise((resolve) => setTimeout(resolve, 300));
   return {
     artists: Array.from({ length: limit }).map((_, i) => ({
       id: `artist-${i}`,
@@ -196,11 +180,11 @@ export async function fetchArtists(page = 1, limit = 12) {
       followers: Math.floor(Math.random() * 1000000),
     })),
     total: 200,
-  }
+  };
 }
 
 export async function fetchCharts() {
-  await new Promise((resolve) => setTimeout(resolve, 300))
+  await new Promise((resolve) => setTimeout(resolve, 300));
   return {
     weeklyTop10: Array.from({ length: 10 }).map((_, i) => ({
       id: `chart-${i}`,
@@ -215,11 +199,11 @@ export async function fetchCharts() {
       artist: "Artist Name",
       trend: Math.floor(Math.random() * 100) + 10,
     })),
-  }
+  };
 }
 
 export async function searchContent(query: string) {
-  await new Promise((resolve) => setTimeout(resolve, 500))
+  await new Promise((resolve) => setTimeout(resolve, 500));
   return {
     songs: Array.from({ length: 5 }).map((_, i) => ({
       type: "song",
@@ -244,8 +228,7 @@ export async function searchContent(query: string) {
       title: `${query} Article ${i + 1}`,
       excerpt: "Blog post excerpt",
     })),
-  }
+  };
 }
-
 
 export default api;
