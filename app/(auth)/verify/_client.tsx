@@ -160,7 +160,7 @@ export default function VerifyAccountClient() {
               {/* Verify Button */}
               <Button
                 type="submit"
-                className="w-full h-12 bg-pink-600 hover:bg-pink-700 text-white font-semibold text-lg rounded-full"
+                className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-semibold text-lg rounded-full"
                 disabled={verifyMutation.isPending}
               >
                 {verifyMutation.isPending ? "Verifying..." : "Verify"}
