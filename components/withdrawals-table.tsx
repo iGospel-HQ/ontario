@@ -23,6 +23,7 @@ import { useState } from "react";
 import { apiService } from "@/lib/api-client";
 import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function WithdrawalsTable() {
   const [page, setPage] = useState(1);
@@ -54,6 +55,15 @@ export function WithdrawalsTable() {
         return "bg-red-100 text-red-800 border-red-200";
       default:
         return "bg-gray-100 text-gray-800 border-gray-200";
+    }
+  };
+
+  const getTxTypeColor = (type: string) => {
+    switch (type.toLowerCase()) {
+      case "credit":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "debit":
+        return "bg-red-100 text-red-800 border-red-200";
     }
   };
 
@@ -101,13 +111,13 @@ export function WithdrawalsTable() {
                     </TableCell>
                     <TableCell>
                       <Badge
-                        variant={
-                          withdrawal.transaction_type === "credit"
-                            ? "default"
-                            : "secondary"
-                        }
+                        variant="outline"
+                        className={cn(
+                          "",
+                          getTxTypeColor(withdrawal.transaction_type)
+                        )}
                       >
-                        {withdrawal.transaction_type}
+                        <p className="capitalize">{withdrawal.transaction_type}</p>
                       </Badge>
                     </TableCell>
                     <TableCell>

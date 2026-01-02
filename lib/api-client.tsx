@@ -86,6 +86,32 @@ export const apiService = {
 
   withdrawFunds: (payload: any) =>
     api.post("/transaction/payout/withdraw/", payload),
+
+  getUserProfile: async () => {
+    const response = await api.get("/account/profile/");
+    return response.data;
+  },
+  updateUserProfile: async (data: any) => {
+    const response = await api.patch("/account/profile/", data);
+    return response.data;
+  },
+  uploadAvatar: async (file: File) => {
+    const formData = new FormData()
+    formData.append("image", file)
+    const response = await api.patch("/account/profile/", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    return response.data;
+  },
+  changePassword: async (currentPassword: string, newPassword: string) => {
+    const response = await api.post("/account/change-password/", {
+      current_password: currentPassword,
+      new_password: newPassword,
+    });
+    return response.data;
+  },
 };
 
 export async function fetchBlogPosts(page = 1, limit = 10) {

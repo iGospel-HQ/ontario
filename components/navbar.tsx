@@ -14,10 +14,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuthStore } from "@/store/use-auth-store";
 
 export function Navbar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { isAuthenticated } = useAuthStore();
 
   const navigation = [
     { name: "Music", href: "/music" },
@@ -55,30 +57,36 @@ export function Navbar() {
 
         {/* Upload Dropdown (Desktop) */}
         <div className="hidden md:flex items-center">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button className="bg-accent text-accent-foreground hover:bg-accent/90">
-                <Upload className="mr-2 h-4 w-4" />
-                Upload
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem asChild>
-                <Button
-                  variant="outline"
-                  className="w-full border-accent text-accent"
-                >
-                  <Link href="/login">Login</Link>
+          {isAuthenticated ? (
+            <Button variant="default" className="w-full text-accent">
+              <Link href="/dashboard">Dashboard</Link>
+            </Button>
+          ) : (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="bg-accent text-accent-foreground hover:bg-accent/90">
+                  <Upload className="mr-2 h-4 w-4" />
+                  Upload
                 </Button>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Button variant="default" className="w-full text-accent">
-                  <Link href="/signup">Sign Up</Link>
-                </Button>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full border-accent text-accent"
+                  >
+                    <Link href="/login">Login</Link>
+                  </Button>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Button variant="default" className="w-full text-accent">
+                    <Link href="/signup">Sign Up</Link>
+                  </Button>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -120,14 +128,23 @@ export function Navbar() {
           </div>
 
           {/* Mobile Upload Actions */}
-          <div className="pt-2 space-y-2">
-            <Button className="w-full bg-accent text-accent-foreground" asChild>
-              <Link href="/login">Login to Upload</Link>
+          {isAuthenticated ? (
+            <Button variant="default" className="w-full text-accent">
+              <Link href="/dashboard">Dashboard</Link>
             </Button>
-            <Button variant="outline" className="w-full" asChild>
-              <Link href="/signup">Create an Account</Link>
-            </Button>
-          </div>
+          ) : (
+            <div className="pt-2 space-y-2">
+              <Button
+                className="w-full bg-accent text-accent-foreground"
+                asChild
+              >
+                <Link href="/login">Login to Upload</Link>
+              </Button>
+              <Button variant="outline" className="w-full" asChild>
+                <Link href="/signup">Create an Account</Link>
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </nav>

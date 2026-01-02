@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "iGospel - Blog & Music Platform",
+  title: "iGospel - Listen. Share. Support Gospel Voices.",
   description: "Discover curated music, artists, and editorial content",
   icons: {
     icon: [{ url: "/icon-32x32.png" }],

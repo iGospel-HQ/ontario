@@ -13,6 +13,7 @@ import { PinChangeDialog } from "./pin-change-dialog";
 import { WithdrawDialog } from "./withdraw-dialog";
 
 import { useAuthStore } from "@/store/use-auth-store";
+import { WithdrawalSectionSkeleton } from "./wallet-skeleton-loader";
 
 const MIN_WITHDRAWAL_AMOUNT = 5000;
 const TRANSACTION_FEE = 100;
@@ -25,12 +26,12 @@ export function WithdrawalSection() {
   const [isPinSetupOpen, setIsPinSetupOpen] = useState(false);
   const [isPinChangeOpen, setIsPinChangeOpen] = useState(false);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading: isStatsLoading } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: apiService.getDashboardStats,
   });
 
-  const { data: bankDetails } = useQuery({
+  const { data: bankDetails, isLoading: isBankLoading } = useQuery({
     queryKey: ["bank-details"],
     queryFn: apiService.getWalletBankAccounts,
   });
@@ -43,10 +44,7 @@ export function WithdrawalSection() {
     !!bank &&
     user?.has_pin === true;
 
-    console.log("AVAILABLE BALANCE:", availableBalance);
-    console.log("BANK DETAILS:", bank);
-    console.log("USER PIN STATUS:", user?.has_pin);
-    console.log("CAN WITHDRAW:", canWithdraw);
+ 
 
   const formatCurrency = (amount: number) =>
     new Intl.NumberFormat("en-NG", {
@@ -55,6 +53,9 @@ export function WithdrawalSection() {
       minimumFractionDigits: 2,
     }).format(amount);
 
+  if (isStatsLoading || isBankLoading) {
+    return <WithdrawalSectionSkeleton />;
+  }
   return (
     <>
       {/* WALLET BALANCE */}
@@ -159,11 +160,11 @@ export function WithdrawalSection() {
               Withdraw Funds
             </Button>
 
-              <p className="text-center text-xs text-muted-foreground">
-                Minimum withdrawal amount is{" "}
-                {formatCurrency(MIN_WITHDRAWAL_AMOUNT)} with transaction fee of{" "}
-                {formatCurrency(TRANSACTION_FEE)}
-              </p>
+            <p className="text-center text-xs text-muted-foreground">
+              Minimum withdrawal amount is{" "}
+              {formatCurrency(MIN_WITHDRAWAL_AMOUNT)} with transaction fee of{" "}
+              {formatCurrency(TRANSACTION_FEE)}
+            </p>
 
             {!bank && availableBalance >= MIN_WITHDRAWAL_AMOUNT && (
               <p className="text-center text-xs text-muted-foreground">

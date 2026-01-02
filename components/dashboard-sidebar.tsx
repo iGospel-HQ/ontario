@@ -7,6 +7,7 @@ import {
   ArrowRightLeft,
   Gift,
   Upload,
+  User,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -44,6 +45,11 @@ const menuItems = [
     label: "Publish Content",
     icon: Upload,
     route: "/dashboard/publish",
+  },
+  {
+    label: "Profile",
+    icon: User,
+    route: "/dashboard/profile",
   },
   // {
   //   label: "Gifts",
