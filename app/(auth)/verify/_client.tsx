@@ -114,7 +114,7 @@ export default function VerifyAccountClient() {
                             key={index}
                             type="text"
                             maxLength={1}
-                            className="w-10 h-10 text-sm text-center md:text-2xl font-bold border-gray-300 focus:border-red-500"
+                            className="w-10 h-10 md:w-14 md:h-14 text-sm text-center md:text-2xl font-bold border-gray-300 focus:border-red-500"
                             value={field.value[index] || ""}
                             onChange={(e) => {
                               const newCode = field.value.split("");

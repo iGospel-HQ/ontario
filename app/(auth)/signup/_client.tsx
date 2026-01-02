@@ -29,6 +29,7 @@ const signUpSchema = z.object({
   first_name: z.string().min(2, "First name must be at least 2 characters"),
   last_name: z.string().min(2, "Last name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
+  phone: z.string().length(11, "Phone number must be 11 digits"),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")
@@ -149,6 +150,24 @@ export default function SignUpClient() {
                     <FormControl>
                       <Input
                         placeholder="Enter your last name"
+                        className="h-12"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone Number</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="tel"
+                        placeholder="Enter your phone number"
                         className="h-12"
                         {...field}
                       />

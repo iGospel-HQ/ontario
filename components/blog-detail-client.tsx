@@ -35,6 +35,27 @@ import { BlogSidebar } from "./blog-side-section";
 import { CommentSection } from "./blogpost-comment-section";
 import { TelegramCTA } from "./telegram-cta";
 import { BlogStats } from "./blog-stats";
+import { toast } from "sonner";
+
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const supportSchema = z.object({
+  amount: z
+    .number({ message: "Amount is required" })
+    .min(100, "Minimum support amount is ₦100"),
+
+  name: z.string().optional(),
+
+  phone: z.string().optional(),
+
+  email: z
+    .string({ message: "Email is required for receipt" })
+    .email("Please enter a valid email address"),
+});
+
+type SupportFormValues = z.infer<typeof supportSchema>;
 
 export function BlogDetailClient({ slug }: { slug: string }) {
   const {
@@ -48,11 +69,18 @@ export function BlogDetailClient({ slug }: { slug: string }) {
   } = useAudioPlayer();
 
   const [supportOpen, setSupportOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [amount, setAmount] = useState("");
+
   const [loading, setLoading] = useState(false);
+
+  const supportForm = useForm<SupportFormValues>({
+    resolver: zodResolver(supportSchema),
+    defaultValues: {
+      amount: undefined,
+      name: "",
+      phone: "",
+      email: "",
+    },
+  });
 
   const { data: post, isPending } = useQuery({
     queryKey: ["blog-post", slug],
@@ -95,55 +123,44 @@ export function BlogDetailClient({ slug }: { slug: string }) {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const handleSupport = async () => {
-    if (!amount || Number(amount) <= 0) return;
-
+  const handleSupport = async (values: SupportFormValues) => {
     setLoading(true);
+
     try {
       const payload: any = {
         creator_id: supportStatus.creator_id,
-        amount: Number(amount),
-        email: email.trim() || "igospelmediaconnect@gmail.com",
+        amount: values.amount,
+        email: values.email || "igospelmediaconnect@gmail.com",
       };
 
       await api.post("/wallet/givings/", {
         artist: post.artists[0].id,
-        name: name || "Anonymous",
-        amount: payload.amount,
-        phone: phone || "N/A",
+        name: values.name || "Anonymous",
+        amount: values.amount,
+        phone: values.phone || "N/A",
         email: payload.email,
       });
+
       const res = await api.post("/transaction/payment/initiate/", payload);
       const { payment_url } = res.data;
 
       if (payment_url) {
         setSupportOpen(false);
-        setEmail("");
-        setName("");
-        setPhone("");
-        setAmount("");
+        supportForm.reset();
+
         const width = 600;
         const height = 750;
         const left = (window.screen.width - width) / 2;
-        const top = (window.screen.height - height) / 2 - 50; // Slightly higher than center
+        const top = (window.screen.height - height) / 2 - 50;
 
-        const specs = `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=no,menubar=no,toolbar=no,location=no`;
-
-        const newWindow = window.open(payment_url, "SupportPayment", specs);
-
-        if (newWindow) {
-          newWindow.focus();
-        } else {
-          // Fallback if popup blocked
-          alert(
-            "Popup blocked. Please allow popups for this site to complete payment."
-          );
-          window.location.href = payment_url;
-        }
+        window.open(
+          payment_url,
+          "SupportPayment",
+          `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+        );
       }
     } catch (err) {
-      console.error("Payment initiation failed:", err);
-      alert("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -442,91 +459,77 @@ export function BlogDetailClient({ slug }: { slug: string }) {
             <DialogTitle className="text-2xl">Support This Blog</DialogTitle>
             <DialogDescription className="text-base">
               Your support helps us continue sharing powerful gospel content.
-              <br />
-              <span className="font-medium mt-3 text-sm block">
-                You can remain anonymous by leaving the fields below empty.
+              <span className="block mt-3 text-sm text-muted-foreground">
+                You may remain anonymous.
               </span>
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-5 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="amount">Amount (₦)</Label>
+          <form
+            onSubmit={supportForm.handleSubmit(handleSupport)}
+            className="space-y-5 py-4"
+          >
+            {/* Amount */}
+            <div className="space-y-1">
+              <Label>Amount (₦)</Label>
               <Input
-                id="amount"
                 type="number"
-                placeholder="Enter amount"
-                className="border-"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                min="100"
+                {...supportForm.register("amount", { valueAsNumber: true })}
               />
+              {supportForm.formState.errors.amount && (
+                <p className="text-sm text-destructive">
+                  {supportForm.formState.errors.amount.message}
+                </p>
+              )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="name">
-                Name{" "}
-                <span className="text-muted-foreground text-sm">
-                  (Optional)
-                </span>
+            {/* Name */}
+            <div className="space-y-1">
+              <Label>
+                Name <span className="text-muted-foreground">(Optional)</span>
               </Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="Your name (optional)"
-                className="border-"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
+              <Input {...supportForm.register("name")} />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="phone">
-                Phone Number{" "}
-                <span className="text-muted-foreground text-sm">
-                  (Optional)
-                </span>
+            {/* Phone */}
+            <div className="space-y-1">
+              <Label>
+                Phone <span className="text-muted-foreground">(Optional)</span>
               </Label>
-              <Input
-                id="phone"
-                type="tel"
-                placeholder="e.g. 08012345678 (optional)"
-                className="border-"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
+              <Input {...supportForm.register("phone")} />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">
+            {/* Email */}
+            <div className="space-y-1">
+              <Label>
                 Email{" "}
-                <span className="text-muted-foreground text-sm">
-                  (Optional - for receipt)
-                </span>
+                <span className="text-muted-foreground">(For receipt)</span>
               </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="your@email.com (optional)"
-                className="border-"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <Input type="email" {...supportForm.register("email")} />
+              {supportForm.formState.errors.email && (
+                <p className="text-sm text-destructive">
+                  {supportForm.formState.errors.email.message}
+                </p>
+              )}
             </div>
-          </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setSupportOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={handleSupport}
-              disabled={loading || !amount || Number(amount) < 100}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              {loading ? "Processing..." : "Continue to Payment"}
-            </Button>
-          </DialogFooter>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setSupportOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={loading}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                {loading ? "Processing..." : "Continue to Payment"}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </main>

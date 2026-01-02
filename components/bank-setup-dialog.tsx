@@ -190,7 +190,7 @@ export function BankSetupDialog({ open, onOpenChange }: BankSetupDialogProps) {
                     <FormLabel>Account Name</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input placeholder="Loading..." {...field} disabled />
+                        <Input placeholder="Loading..." {...field} readOnly />
                         {isValidating && (
                           <Loader2 className="absolute right-3 top-2.5 h-4 w-4 animate-spin text-muted-foreground" />
                         )}
