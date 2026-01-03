@@ -40,7 +40,7 @@ export function DashboardStats() {
   };
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-5">
       <StatCard
         title="Available Balance"
         value={formatCurrency(stats?.wallet_balance ?? 0)}

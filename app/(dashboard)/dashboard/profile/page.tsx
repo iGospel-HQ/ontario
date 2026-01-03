@@ -45,7 +45,13 @@ const profileSchema = z.object({
 const passwordSchema = z
   .object({
     current_password: z.string().min(1, "Current password is required"),
-    new_password: z.string().min(8, "Password must be at least 8 characters"),
+    new_password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+      ),
     confirm_password: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.new_password === data.confirm_password, {
@@ -100,7 +106,7 @@ export default function ProfilePage() {
     mutationFn: (data: ProfileFormData) => apiService.updateUserProfile(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
-      toast.success("Profile Updated",{
+      toast.success("Profile Updated", {
         description: "Your profile has been updated successfully.",
       });
     },
@@ -116,7 +122,7 @@ export default function ProfilePage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
       setAvatarFile(null);
-      toast.success("Avatar Updated",{
+      toast.success("Avatar Updated", {
         description: "Your profile picture has been updated.",
       });
     },
@@ -129,16 +135,23 @@ export default function ProfilePage() {
 
   const changePasswordMutation = useMutation({
     mutationFn: (data: PasswordFormData) =>
-      apiService.changePassword(data.current_password, data.new_password),
+      apiService.changePassword(
+        data.current_password,
+        data.new_password,
+        data.confirm_password
+      ),
     onSuccess: () => {
       resetPasswordForm();
       toast.success("Password Changed", {
         description: "Your password has been updated successfully.",
       });
     },
-    onError: () => {
-      toast.error("Error",{
+    onError: (error: any) => {
+      toast.error("Error", {
         description:
+          error?.response?.data?.detail ||
+          error?.response?.data?.old_password?.[0] ||
+          error?.response?.data?.new_password?.[0] ||
           "Failed to change password. Please check your current password.",
       });
     },

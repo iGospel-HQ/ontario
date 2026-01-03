@@ -105,10 +105,11 @@ export const apiService = {
     })
     return response.data;
   },
-  changePassword: async (currentPassword: string, newPassword: string) => {
+  changePassword: async (oldPassword: string, newPassword: string, newPasswordConfirm: string) => {
     const response = await api.post("/account/change-password/", {
-      current_password: currentPassword,
+      old_password: oldPassword,
       new_password: newPassword,
+      new_password_confirm: newPasswordConfirm
     });
     return response.data;
   },
