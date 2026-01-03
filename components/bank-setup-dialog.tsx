@@ -222,7 +222,7 @@ export function BankSetupDialog({ open, onOpenChange }: BankSetupDialogProps) {
       >
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-center">
               <img
                 src="/icon.png"
                 alt="icon"
@@ -233,7 +233,7 @@ export function BankSetupDialog({ open, onOpenChange }: BankSetupDialogProps) {
                 ? "Success 🎉"
                 : "Something went wrong"}
             </DialogTitle>
-            <DialogDescription>{resultMessage}</DialogDescription>
+            <DialogDescription className="text-center">{resultMessage}</DialogDescription>
           </DialogHeader>
 
           <DialogFooter>

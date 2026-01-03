@@ -136,7 +136,7 @@ export function WithdrawDialog({ open, onOpenChange, bank }: any) {
 
           <form
             onSubmit={form.handleSubmit((values) => mutation.mutate(values))}
-            className="space-y-6 flex flex-col"
+            className="space-y-6 flex flex-col items-center"
           >
             <div className="space-y-2">
               <input
@@ -178,7 +178,7 @@ export function WithdrawDialog({ open, onOpenChange, bank }: any) {
       >
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-center">
               <img src="/icon.png" alt="icon" className="mx-auto h-20 mb-5 bg-black p-3 rounded-full" />
               {resultStatus === "success"
                 ? "Withdrawal Successful 🎉"
@@ -186,7 +186,7 @@ export function WithdrawDialog({ open, onOpenChange, bank }: any) {
             </DialogTitle>
           </DialogHeader>
 
-          <p className="text-sm text-muted-foreground">{resultMessage}</p>
+          <p className="text-sm text-center text-muted-foreground">{resultMessage}</p>
 
           <div className="flex justify-end pt-4">
             <Button onClick={() => setResultStatus(null)}>
