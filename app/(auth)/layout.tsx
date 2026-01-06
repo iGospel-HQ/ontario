@@ -37,9 +37,6 @@ export default function AuthLayout({
           <Link href="/terms" className="hover:text-red-600">
             Terms
           </Link>
-          <Link href="/accessibility" className="hover:text-red-600">
-            Accessibility
-          </Link>
           <Link href="/contact" className="hover:text-red-600">
             Contact
           </Link>
