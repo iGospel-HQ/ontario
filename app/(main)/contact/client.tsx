@@ -72,8 +72,8 @@ export default function ContactPage() {
 
       {/* CONTENT */}
       <section className="py-16 bg-background text-foreground">
-        <h2 className="text-3xl font-bold mb-8">Let's Connect</h2>
-        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12">
+        <h2 className="text-3xl font-bold mb-8 px-6">Let's Connect</h2>
+        <div className="w-full max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12">
           {/* CONTACT INFO */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -84,13 +84,13 @@ export default function ContactPage() {
               <Card>
                 <CardContent className="flex items-center gap-5 p-6">
                   <div className="p-3 bg-gradient-to-br from-red-400 to-orange-400 rounded-lg text-white">
-                    <Mail className="w-6 h-6" />
+                    <Mail className="w-3 h-3 md:w-6 md:h-6" />
                   </div>
                   <div>
                     <p className="font-semibold">Email</p>
                     <a
                       href="mailto:igospelmediaconnect@gmail.com"
-                      className="text-sm text-muted-foreground"
+                      className="text-xs md:text-sm text-muted-foreground truncate"
                     >
                       igospelmediaconnect@gmail.com
                     </a>
@@ -101,13 +101,13 @@ export default function ContactPage() {
               <Card>
                 <CardContent className="flex items-center gap-5 p-6">
                   <div className="p-3 bg-gradient-to-br from-green-400 to-green-500 rounded-lg text-white">
-                    <Phone className="w-6 h-6" />
+                    <Phone className="w-3 h-3 md:w-6 md:h-6" />
                   </div>
                   <div>
                     <p className="font-semibold">WhatsApp</p>
                     <a
                       href="https://wa.me/+2348068535646"
-                      className="text-sm text-muted-foreground"
+                      className="text-xs md:text-sm text-muted-foreground"
                     >
                       +234 806 853 5646
                     </a>
@@ -118,11 +118,11 @@ export default function ContactPage() {
               <Card>
                 <CardContent className="flex items-center gap-5 p-6">
                   <div className="p-3 bg-gradient-to-br from-purple-400 to-pink-400 rounded-lg text-white">
-                    <MapPin className="w-6 h-6" />
+                    <MapPin className="w-3 h-3 md:w-6 md:h-6" />
                   </div>
                   <div>
                     <p className="font-semibold">Location</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs md:text-sm text-muted-foreground">
                       Lagos, Nigeria
                     </p>
                   </div>
