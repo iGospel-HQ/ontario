@@ -105,14 +105,14 @@ export function Navbar() {
         <div className="fixed bottom-0 left-0 right-0  z-50 border-t border-border bg-background md:hidden">
           <div className="flex justify-around items-center py-2">
             {mobileTabs.map(({ name, href, icon: Icon }) => {
-              const isActive = pathname === href;
+              const isActive = pathname.split("/")[1] === href.split("/")[1];
 
               return (
                 <Link
                   key={name}
                   href={href}
                   className={cn(
-                    "flex flex-col items-center gap-1 p-2 rounded-lg text-[10px] font-medium transition-colors",
+                    "flex flex-col items-center gap-1 py-2 w-14 rounded-lg text-[10px] font-medium transition-colors",
                     isActive
                       ? "text-accent bg-black"
                       : "text-muted-foreground hover:text-accent hover:bg-black"
