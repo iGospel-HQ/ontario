@@ -1,18 +1,23 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import Link from "next/link"
-import { Music, Album, Disc3, Users, TrendingUp } from "lucide-react"
-import { ComingSoonWrapper } from "@/components/coming-soon-wrapper" // Adjust path if needed
-import { cn } from "@/lib/utils"
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { Music, Album, Disc3, Users, TrendingUp } from "lucide-react";
+import { ComingSoonWrapper } from "@/components/coming-soon-wrapper"; // Adjust path if needed
+import { cn } from "@/lib/utils";
 
 const links = [
   { name: "Artists", href: "/music/artists", icon: Users, comingSoon: false }, // Active – no overlay
   { name: "New Releases", href: "/music/songs", icon: Music, comingSoon: true },
   { name: "Albums", href: "/music/albums", icon: Album, comingSoon: true },
   { name: "Top Charts", href: "/charts", icon: TrendingUp, comingSoon: true },
-  { name: "Playlists", href: "/music/playlists", icon: Disc3, comingSoon: true },
-]
+  {
+    name: "Playlists",
+    href: "/music/playlists",
+    icon: Disc3,
+    comingSoon: true,
+  },
+];
 
 export function QuickLinks() {
   const containerVariants = {
@@ -23,12 +28,12 @@ export function QuickLinks() {
         staggerChildren: 0.1,
       },
     },
-  }
+  };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
-  }
+  };
 
   return (
     <section className="py-12 px-4 md:px-8 border-t border-border">
@@ -38,26 +43,29 @@ export function QuickLinks() {
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
-        className="grid grid-cols-2 md:grid-cols-5 gap-4"
+        className="grid grid-cols-5 gap-40 md:gap-4 overflow-x-auto relative h-auto"
       >
+        {/* <div className="md:hidden h-full w-20 shadow-2xl absolute right-0 top-0"/> */}
         {links.map((link) => {
-          const Icon = link.icon
+          const Icon = link.icon;
 
           const content = (
             <motion.div key={link.href} variants={itemVariants}>
               <Link
                 href={link.href}
                 className={cn(
-                  "flex items-center justify-center flex-col gap-3 p-6 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors group",
+                  "flex items-center w-32 border md:w-auto justify-center flex-col gap-3 p-6 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors group",
                   link.comingSoon && "cursor-not-allowed"
                 )}
                 aria-disabled={link.comingSoon}
               >
                 <Icon className="h-8 w-8 text-accent group-hover:scale-110 transition-transform" />
-                <span className="text-sm font-medium text-center">{link.name}</span>
+                <span className="text-sm font-medium text-center">
+                  {link.name}
+                </span>
               </Link>
             </motion.div>
-          )
+          );
 
           return link.comingSoon ? (
             <ComingSoonWrapper
@@ -66,14 +74,15 @@ export function QuickLinks() {
               showLockIcon={true}
               opacity={0.3}
               blur={true}
+              className="w-32 md:w-auto"
             >
               {content}
             </ComingSoonWrapper>
           ) : (
             content
-          )
+          );
         })}
       </motion.div>
     </section>
-  )
+  );
 }

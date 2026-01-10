@@ -14,7 +14,7 @@ export default function ClientLayout({
   return (
     <>
       <Navbar />
-      <div className="grid grid-cols-1 md:grid-cols-14  px-0 md:px-8">
+      <div className="grid grid-cols-1 lg:grid-cols-14  px-0 md:px-8">
         <div className="hidden md:block lg:col-span-2 2xl:col-span-3"></div>
         <div className="lg:col-span-10 2xl:col-span-8 bg-white lg:px-5">
           {children}

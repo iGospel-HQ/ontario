@@ -114,8 +114,8 @@ export function Navbar() {
                   className={cn(
                     "flex flex-col items-center gap-1 py-2 w-14 rounded-lg text-[10px] font-medium transition-colors",
                     isActive
-                      ? "text-accent bg-black"
-                      : "text-muted-foreground hover:text-accent hover:bg-black"
+                      ? "text-white bg-red-600"
+                      : "text-muted-foreground hover:text-white hover:bg-red-600"
                   )}
                 >
                   <Icon className="h-4 w-4" />
