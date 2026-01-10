@@ -3,7 +3,7 @@ import { Mail, Github, Twitter, Instagram, Facebook, Linkedin } from "lucide-rea
 
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-secondary py-12 mb-20">
+    <footer className="border-t border-border bg-secondary py-12 mb-20 md:mb-0">
       <div className="px-4 md:px-12 max-w-5xl mx-auto">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Brand */}
