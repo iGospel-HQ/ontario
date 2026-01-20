@@ -30,7 +30,7 @@ export function Navbar() {
     { name: "Music", href: "/music", icon: Music },
     { name: "Explore", href: "/blog", icon: Compass },
     { name: "Contact", href: "/contact", icon: Phone },
-    ...(isAuthenticated ? [{ name: "Upload", href: "/upload", icon: Upload }] : [{ name: "Dashboard", href: "/dashboard", icon: LayoutDashboard }]),
+    ...(!isAuthenticated ? [{ name: "Upload", href: "/upload", icon: Upload }] : [{ name: "Dashboard", href: "/dashboard", icon: LayoutDashboard }]),
   ];
 
   return (
