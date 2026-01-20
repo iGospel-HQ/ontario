@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Upload, Home, Music, Compass, HelpCircle, Phone } from "lucide-react";
+import { Upload, Home, Music, Compass, HelpCircle, Phone, LayoutDashboard } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -30,11 +30,7 @@ export function Navbar() {
     { name: "Music", href: "/music", icon: Music },
     { name: "Explore", href: "/blog", icon: Compass },
     { name: "Contact", href: "/contact", icon: Phone },
-    {
-      name: "Upload",
-      href: "/upload",
-      icon: Upload,
-    },
+    ...(isAuthenticated ? [{ name: "Upload", href: "/upload", icon: Upload }] : [{ name: "Dashboard", href: "/dashboard", icon: LayoutDashboard }]),
   ];
 
   return (
