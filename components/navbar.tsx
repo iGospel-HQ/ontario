@@ -32,7 +32,7 @@ export function Navbar() {
     { name: "Contact", href: "/contact", icon: Phone },
     {
       name: "Upload",
-      href: isAuthenticated ? "/dashboard" : "/login",
+      href: "/upload",
       icon: Upload,
     },
   ];
@@ -73,58 +73,41 @@ export function Navbar() {
                 <Link href="/dashboard">Dashboard</Link>
               </Button>
             ) : (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button className="bg-accent text-accent-foreground hover:bg-accent/90">
+                  <Button className="bg-accent text-accent-foreground hover:bg-accent/90" asChild>
+                    <Link href="/upload">
                     <Upload className="mr-2 h-4 w-4" />
                     Upload
+                    </Link>
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-40">
-                  <DropdownMenuItem asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full border-accent text-accent"
-                    >
-                      <Link href="/login">Login</Link>
-                    </Button>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Button variant="default" className="w-full text-accent">
-                      <Link href="/signup">Sign Up</Link>
-                    </Button>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              
             )}
           </div>
         </div>
       </nav>
-        {/* ===== MOBILE BOTTOM TAB NAV ===== */}
-        <div className="fixed bottom-0 left-0 right-0  z-50 border-t border-border bg-background md:hidden">
-          <div className="flex justify-around items-center py-2">
-            {mobileTabs.map(({ name, href, icon: Icon }) => {
-              const isActive = pathname.split("/")[1] === href.split("/")[1];
+      {/* ===== MOBILE BOTTOM TAB NAV ===== */}
+      <div className="fixed bottom-0 left-0 right-0  z-50 border-t border-border bg-background md:hidden">
+        <div className="flex justify-around items-center py-2">
+          {mobileTabs.map(({ name, href, icon: Icon }) => {
+            const isActive = pathname.split("/")[1] === href.split("/")[1];
 
-              return (
-                <Link
-                  key={name}
-                  href={href}
-                  className={cn(
-                    "flex flex-col items-center gap-1 py-2 w-14 rounded-lg text-[10px] font-medium transition-colors",
-                    isActive
-                      ? "text-white bg-red-600"
-                      : "text-muted-foreground hover:text-white hover:bg-red-600"
-                  )}
-                >
-                  <Icon className="h-4 w-4" />
-                  {name}
-                </Link>
-              );
-            })}
-          </div>
+            return (
+              <Link
+                key={name}
+                href={href}
+                className={cn(
+                  "flex flex-col items-center gap-1 py-2 w-14 rounded-lg text-[10px] font-medium transition-colors",
+                  isActive
+                    ? "text-white bg-red-600"
+                    : "text-muted-foreground hover:text-white hover:bg-red-600"
+                )}
+              >
+                <Icon className="h-4 w-4" />
+                {name}
+              </Link>
+            );
+          })}
         </div>
+      </div>
     </>
   );
 }

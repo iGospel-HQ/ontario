@@ -33,6 +33,11 @@ export function Footer() {
                   Music
                 </Link>
               </li>
+              <li>
+                <Link href="/login" className="hover:text-accent">
+                  Login to account
+                </Link>
+              </li>
             </ul>
           </div>
 
