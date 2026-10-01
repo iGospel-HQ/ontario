@@ -1,4 +1,3 @@
-// app/components/AudioPlayer.tsx
 "use client";
 
 import Image from "next/image";

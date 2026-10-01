@@ -4,7 +4,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { ReactQueryProvider } from "@/lib/react-query";
 import { AudioProvider } from "@/providers/audio-provider";
-import { FloatingAudioButtons } from "@/components/floating-audio-button";
+import { FloatingAudioButtons } from "@/components/layout/floating-audio-button";
 import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/lib/site";
 
