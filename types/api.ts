@@ -180,6 +180,8 @@ export interface BlogBackground {
   title: string;
   image: string;
   display: "cover" | "natural" | "tile";
+  /** Tile only: copies across the screen, each scaled to show the whole image. */
+  tile_columns: number | null;
   background_color: string;
   updated_at: string;
 }
