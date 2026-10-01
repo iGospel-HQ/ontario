@@ -1,4 +1,5 @@
-import type {NextConfig} from "next"
+import type { NextConfig } from "next";
+
 const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
@@ -6,7 +7,6 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  output: "standalone",
-}
+};
 
-export default nextConfig
+export default nextConfig;
