@@ -1,10 +1,12 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { ChartsPageClient } from "@/components/charts-page-client";
 
-export const metadata: Metadata = {
-  title: "Charts - iGospel",
-  description: "The hottest tracks trending right now",
-};
+export const metadata = pageMetadata({
+  title: "Charts",
+  description:
+    "The hottest tracks trending right now",
+  path: "/charts",
+});
 
 export default function ChartsPage() {
   return <ChartsPageClient />;

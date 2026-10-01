@@ -1,10 +1,12 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { BlogPageClient } from "@/components/blog-page-client";
 
-export const metadata: Metadata = {
-  title: "Blog - iGospel",
-  description: "Explore stories about music, culture, and the industry",
-};
+export const metadata = pageMetadata({
+  title: "Blog",
+  description:
+    "Explore stories about music, culture, and the industry",
+  path: "/blog",
+});
 
 export default function BlogPage() {
   return <BlogPageClient />;

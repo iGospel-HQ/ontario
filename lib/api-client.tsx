@@ -1,11 +1,11 @@
-// API client for fetching dummy data
-// In a real app, this would make actual API calls
+// Browser API client (auth-aware). Server components use lib/api/server.ts instead.
 
 import { useAuthStore } from "@/store/use-auth-store";
+import { siteConfig } from "@/lib/site";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://api.igospels.com.ng/v1",
+  baseURL: siteConfig.apiUrl,
   timeout: 10000,
 });
 

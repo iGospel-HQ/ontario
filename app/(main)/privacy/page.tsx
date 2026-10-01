@@ -1,11 +1,12 @@
-// app/privacy/page.tsx
-import { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import PrivacyPolicyClient from "./_client";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy - iGospel",
-  description: "Learn how iGospel collects, uses, and protects your personal information on our digital gospel platform.",
-};
+export const metadata = pageMetadata({
+  title: "Privacy Policy",
+  description:
+    "Learn how iGospel collects, uses, and protects your personal information on our digital gospel platform.",
+  path: "/privacy",
+});
 
 export default function PrivacyPage() {
   return <PrivacyPolicyClient />;

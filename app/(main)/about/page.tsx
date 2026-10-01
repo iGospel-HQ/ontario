@@ -1,10 +1,12 @@
-import { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import AboutPageClient from "./client";
 
-export const metadata: Metadata = {
-  title: "About - iGospel",
-  description: "Learn more about iGospel's mission and team",
-};
+export const metadata = pageMetadata({
+  title: "About",
+  description:
+    "Learn more about iGospel's mission and team",
+  path: "/about",
+});
 
 export default function AboutPage() {
   return <AboutPageClient />;

@@ -1,10 +1,13 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { SearchPageClient } from "@/components/search-page-client";
 
-export const metadata: Metadata = {
-  title: "Search - iGospel",
-  description: "Search songs, playlists, artists, and articles",
-};
+export const metadata = pageMetadata({
+  title: "Search",
+  description:
+    "Search songs, playlists, artists, and articles",
+  path: "/search",
+  noIndex: true,
+});
 
 export default function SearchPage() {
   return <SearchPageClient />;
