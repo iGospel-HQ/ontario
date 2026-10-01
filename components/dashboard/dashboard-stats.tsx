@@ -7,7 +7,7 @@ import {
   Gift,
   BarChart,
 } from "lucide-react";
-import { StatCard } from "@/components/stat-card";
+import { StatCard } from "@/components/dashboard/stat-card";
 import { useQuery } from "@tanstack/react-query";
 import { apiService } from "@/lib/api-client";
 // import { getDashboardStats } from "@/lib/api"

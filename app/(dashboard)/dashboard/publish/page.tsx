@@ -1,9 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Music, Mic2, Mail, ArrowRight } from "lucide-react";
+import { Music, Mic2 } from "lucide-react";
 
 export default function PublishContentPage() {
   const containerVariants = {

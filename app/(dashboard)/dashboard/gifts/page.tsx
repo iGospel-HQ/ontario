@@ -1,4 +1,4 @@
-import { GiftsTable } from "@/components/gifts-table"
+import { GiftsTable } from "@/components/dashboard/gifts-table"
 
 export default function GiftsPage() {
   return (

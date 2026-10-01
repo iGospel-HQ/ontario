@@ -102,7 +102,7 @@ export function PinChangeDialog({ open, onOpenChange }: any) {
       form.reset();
     },
     onError: (error: any) => {
-     console.log(error)
+     console.error(error)
       toast.error(
         error?.response?.data?.detail || "Failed to change PIN. Please try again."
       );

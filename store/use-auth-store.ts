@@ -89,7 +89,6 @@ export const useAuthStore = create<
         }
 
         try {
-          console.log("Attempting to refresh access token");
           const response = await api.post(`/auth/refresh`, {
             refresh: refreshToken,
           });
@@ -97,7 +96,6 @@ export const useAuthStore = create<
           const data = response.data;
 
           if (data.status === "success" && data.data?.access) {
-            console.log("Successfully refreshed access token");
             set({
               accessToken: data.data.access,
               isAuthenticated: true,

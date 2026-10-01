@@ -3,9 +3,6 @@ import type { NextConfig } from "next";
 const apiHost = new URL(process.env.NEXT_PUBLIC_API_URL ?? "https://api.igospels.com.ng/v1").hostname;
 
 const nextConfig: NextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   images: {
     formats: ["image/avif", "image/webp"],
     // Media is uploaded to S3 with unique keys (AWS_S3_FILE_OVERWRITE = False),

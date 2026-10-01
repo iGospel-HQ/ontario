@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Mail, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -230,8 +230,8 @@ export default function VerifyAccountClient() {
                                   !field.value[index] &&
                                   index > 0
                                 ) {
-                                  const prevInput =
-                                    e.target.previousElementSibling;
+                                  const prevInput = (e.target as HTMLElement)
+                                    .previousElementSibling as HTMLInputElement | null;
                                   prevInput?.focus();
                                 }
                               }}

@@ -7,7 +7,6 @@ import {
   LogOut,
   CreditCard,
   ArrowRightLeft,
-  Gift,
   Upload,
   User,
 } from "lucide-react";

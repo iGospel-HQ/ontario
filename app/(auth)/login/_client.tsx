@@ -11,7 +11,6 @@ import { AlertCircleIcon, Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Form,
   FormControl,
@@ -53,7 +52,6 @@ export default function SignInClient() {
       return res.data.data;
     },
     onSuccess: (data) => {
-      console.log("Login successful:", data);
       setTokens(data.access, data.refresh);
       setUser({
         user_id: data.user_id,

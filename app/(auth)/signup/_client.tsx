@@ -11,7 +11,6 @@ import { AlertCircleIcon, Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Form,
   FormControl,
@@ -62,7 +61,6 @@ export default function SignUpClient() {
       return res.data;
     },
     onSuccess: (res) => {
-      console.log("Registration successful:", res);
       router.push("/verify?email=" + encodeURIComponent(res.data.email));
       // Redirect to sign-in or dashboard
     },

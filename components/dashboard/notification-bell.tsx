@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useQueryClient } from "@tanstack/react-query"
 // import { getNotifications, markNotificationAsRead, markAllNotificationsAsRead } from "@/lib/api"
 import { formatDistanceToNow } from "date-fns"
 

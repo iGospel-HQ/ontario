@@ -136,8 +136,8 @@ export default function VerifyAccountClient() {
                                 !field.value[index] &&
                                 index > 0
                               ) {
-                                const prev = e.target
-                                  .previousElementSibling as HTMLInputElement;
+                                const prev = (e.target as HTMLElement)
+                                  .previousElementSibling as HTMLInputElement | null;
                                 prev?.focus();
                               }
                             }}

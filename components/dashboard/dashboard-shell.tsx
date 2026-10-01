@@ -8,8 +8,8 @@ import {
   SidebarInset,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { DashboardSidebar } from "@/components/dashboard-sidebar";
-import { NotificationBell } from "@/components/notification-bell";
+import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
+import { NotificationBell } from "@/components/dashboard/notification-bell";
 import { Separator } from "@/components/ui/separator";
 import {
   Dialog,

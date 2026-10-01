@@ -1,6 +1,6 @@
 import type React from "react";
 import type { Metadata } from "next";
-import { DashboardShell } from "@/components/dashboard-shell";
+import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 
 export const metadata: Metadata = {
   title: "Dashboard",
