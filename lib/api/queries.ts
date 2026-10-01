@@ -3,6 +3,7 @@ import { cache } from "react";
 import { apiGet } from "@/lib/api/server";
 import type {
   Artist,
+  BlogBackground,
   Genre,
   HomepageData,
   MusicTrack,
@@ -21,6 +22,7 @@ export const POSTS_PAGE_SIZE = 20;
  */
 export const POSTS_TAG = "posts";
 export const postTag = (slug: string) => `post:${slug}`;
+export const BACKGROUND_TAG = "background";
 
 const emptyPage = <T>(): Paginated<T> => ({ count: 0, next: null, previous: null, results: [] });
 
@@ -128,3 +130,16 @@ export async function searchAll(q: string) {
   ]);
   return { posts, tracks, artists, playlists };
 }
+
+/**
+ * The admin-scheduled site background, or null (use the default). Re-checked
+ * every 5 minutes so time-of-day rotations take effect, and refreshed at once
+ * when changed in the admin.
+ */
+export const getBackground = cache(async () => {
+  const data = await apiGet<{ background: BlogBackground | null }>("/blog/background/", {
+    revalidate: 300,
+    tags: [BACKGROUND_TAG],
+  }).catch(() => null);
+  return data?.background ?? null;
+});

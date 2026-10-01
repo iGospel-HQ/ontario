@@ -173,3 +173,13 @@ export interface SitemapIndex {
   artists: { slug: string; created_at: string }[];
   playlists: { slug: string; updated_at: string }[];
 }
+
+/** `/blog/background/` (BlogBackgroundSerializer); null when none is scheduled. */
+export interface BlogBackground {
+  id: number;
+  title: string;
+  image: string;
+  display: "cover" | "natural" | "tile";
+  background_color: string;
+  updated_at: string;
+}
