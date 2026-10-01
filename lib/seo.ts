@@ -67,3 +67,27 @@ export function toDescription(...candidates: (string | null | undefined)[]) {
   if (!text) return siteConfig.description;
   return text.length > 155 ? `${text.slice(0, 152).trimEnd()}...` : text;
 }
+
+type SearchParams = Record<string, string | string[] | undefined>;
+
+const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value);
+
+/**
+ * Metadata for paginated/searchable listings: page N gets its own canonical
+ * (`?page=N`), and search-result views are kept out of the index.
+ */
+export function listingMetadata(
+  base: Omit<PageMetadataInput, "noIndex">,
+  searchParams: SearchParams,
+): Metadata {
+  const page = Number(first(searchParams.page));
+  const hasQuery = Boolean(first(searchParams.q)?.trim());
+  const paged = Number.isInteger(page) && page > 1;
+
+  return pageMetadata({
+    ...base,
+    title: paged ? `${base.title} - Page ${page}` : base.title,
+    path: paged ? `${base.path}?page=${page}` : base.path,
+    noIndex: hasQuery,
+  });
+}

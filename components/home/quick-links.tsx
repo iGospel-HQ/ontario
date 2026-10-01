@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Music, Album, Disc3, Users, TrendingUp } from "lucide-react";
-import { ComingSoonWrapper } from "@/components/coming-soon-wrapper"; // Adjust path if needed
+import { ComingSoonWrapper } from "@/components/shared/coming-soon-wrapper";
 import { cn } from "@/lib/utils";
 
 const links = [

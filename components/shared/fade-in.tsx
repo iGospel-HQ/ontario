@@ -1,33 +1,40 @@
-"use client";
-
-import type { ReactNode } from "react";
-import { motion } from "framer-motion";
+import type { CSSProperties, ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 /**
- * Entrance animation wrapper. Children stay server-rendered; only the
- * animation runs on the client.
+ * Fade/slide-up entrance animation in pure CSS (tw-animate-css), so
+ * server-rendered content animates on first paint instead of staying hidden
+ * until JavaScript hydrates.
  */
 export function FadeIn({
   children,
   className,
   delay = 0,
+  duration = 0.5,
   y = 20,
-  as = "div",
+  as: Component = "div",
 }: {
   children: ReactNode;
   className?: string;
+  /** Seconds. */
   delay?: number;
+  /** Seconds. */
+  duration?: number;
+  /** Starting vertical offset in px. */
   y?: number;
   as?: "div" | "section" | "article";
 }) {
-  const Component = motion[as];
+  const style = {
+    "--tw-enter-opacity": "0",
+    "--tw-enter-translate-y": `${y}px`,
+    "--tw-animation-duration": `${duration}s`,
+    "--tw-animation-delay": `${delay}s`,
+    "--tw-animation-fill-mode": "both",
+    "--tw-ease": "ease-out",
+  } as CSSProperties;
+
   return (
-    <Component
-      initial={{ opacity: 0, y }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay }}
-      className={className}
-    >
+    <Component className={cn("animate-in motion-reduce:animate-none", className)} style={style}>
       {children}
     </Component>
   );

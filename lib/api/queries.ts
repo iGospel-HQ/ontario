@@ -25,9 +25,19 @@ export async function getPosts({ page = 1, q }: { page?: number; q?: string } = 
   return data ?? emptyPage<PostSummary>();
 }
 
-export async function getMusicPosts({ page = 1, q }: { page?: number; q?: string } = {}) {
+export async function getMusicPosts({
+  page = 1,
+  q,
+  sort,
+}: { page?: number; q?: string; sort?: "date" | "title" } = {}) {
   const data = await apiGet<Paginated<PostSummary>>("/blog/posts/music/", {
-    query: { view: "summary", page, page_size: POSTS_PAGE_SIZE, search: q },
+    query: {
+      view: "summary",
+      page,
+      page_size: POSTS_PAGE_SIZE,
+      search: q,
+      ordering: sort === "title" ? "title" : undefined,
+    },
   });
   return data ?? emptyPage<PostSummary>();
 }
