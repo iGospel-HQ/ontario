@@ -23,7 +23,7 @@ export function Footer() {
               href="/"
               className="text-xl font-bold tracking-wider bg-black p-2 rounded-md block w-fit mb-4"
             >
-              <Image src={logo} alt="iGospel home" className="w-auto h-9" />
+              <Image src={logo} alt="iGospel home" width={146} height={36} className="w-auto h-9" />
             </Link>
             <p className="text-sm text-muted-foreground">
               Discover music, read stories, explore artists.

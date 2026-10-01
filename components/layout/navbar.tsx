@@ -38,7 +38,7 @@ export function Navbar() {
             href="/"
             className="rounded-md bg-black p-2 text-xl font-bold tracking-wider"
           >
-            <Image src={logo} alt="iGospel home" className="h-5 w-auto" priority />
+            <Image src={logo} alt="iGospel home" width={81} height={20} className="h-5 w-auto" priority />
           </Link>
 
           {/* Desktop Navigation */}

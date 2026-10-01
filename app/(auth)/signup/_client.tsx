@@ -229,7 +229,7 @@ export default function SignUpClient() {
 
               {/* Terms */}
               <p className="text-xs text-gray-600 text-center">
-                By clicking on sign up, you agree to iGospel music's{" "}
+                By clicking on sign up, you agree to iGospel music&apos;s{" "}
                 <Link href="/terms" className="text-red-600 hover:underline">
                   Terms of Condition Of Use
                 </Link>

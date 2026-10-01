@@ -99,7 +99,7 @@ export default function ContactPage() {
           href="/"
           className="text-xl font-bold tracking-wider bg-black p-2 rounded-md mx-auto block w-fit mb-3"
         >
-          <Image src={logo} alt={`${siteConfig.name} home`} className="w-full h-10 object-contain" />
+          <Image src={logo} alt={`${siteConfig.name} home`} width={162} height={40} className="w-full h-10 object-contain" />
         </Link>
         <p className="text-2xl font-bold">{siteConfig.legalName}</p>
         <p className="text-muted-foreground mt-2">Music, Ministry. Always on.</p>

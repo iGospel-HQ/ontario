@@ -15,7 +15,7 @@ export default function AuthLayout({
             href="/"
             className="text-xl font-bold tracking-wider bg-black p-2 rounded-md"
           >
-            <Image src={logo} alt="iGospel home" className="w-full h-12 object-contain" priority />
+            <Image src={logo} alt="iGospel home" width={194} height={48} className="w-full h-12 object-contain" priority />
           </Link>
         </div>
       </div>

@@ -19,7 +19,7 @@ export default function TermsPage() {
         <div className="max-w-7xl mx-auto px-6 text-center">
           <FadeIn y={30} className="inline-flex items-center gap-4 mb-6">
             <div className="rounded-md bg-black p-2 text-xl font-bold tracking-wider">
-              <Image src={logo} alt="iGospel logo" className="h-16 w-auto" priority />
+              <Image src={logo} alt="iGospel logo" width={259} height={64} className="h-16 w-auto" priority />
             </div>
           </FadeIn>
           <FadeIn as="h1" y={0} delay={0.3} className="text-3xl md:text-4xl font-bold text-gray-800">
