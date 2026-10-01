@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 
 import api from "@/lib/api-client";
-import { BlogSidebar } from "./blog-side-section";
+import { BlogSidebar } from "@/components/blog/blog-sidebar";
 
 // Type definition for Music Post
 interface MusicPost {

@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Search, Calendar, User, ChevronLeft, ChevronRight } from "lucide-react";
 
 import api from "@/lib/api-client";
-import { BlogSidebar } from "./blog-side-section";
+import { BlogSidebar } from "@/components/blog/blog-sidebar";
 
 export function BlogPageClient() {
   const [searchQuery, setSearchQuery] = useState("");

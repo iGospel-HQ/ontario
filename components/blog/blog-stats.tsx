@@ -1,14 +1,13 @@
-import { Eye, Users, TrendingUp, Calendar } from "lucide-react"
+import type { ReactNode } from "react"
+import { Eye, TrendingUp } from "lucide-react"
 
 export function BlogStats({
-  totalVisitors,
   totalViews,
-  todayVisitors,
   todayViews,
 }: {
-  totalVisitors: number
+  totalVisitors?: number
   totalViews: number
-  todayVisitors: number
+  todayVisitors?: number
   todayViews: number
 }) {
   return (
@@ -19,15 +18,6 @@ export function BlogStats({
           p-6
         "
       >
-        {/* Total Visitors */}
-        {/* <StatCard
-          icon={<Users />}
-          label="Total Visitors"
-          value={totalVisitors}
-          accent="text-blue-500"
-        /> */}
-
-        {/* Total Views */}
         <StatCard
           icon={<Eye />}
           label="Total Views"
@@ -35,15 +25,6 @@ export function BlogStats({
           accent="text-violet-500"
         />
 
-        {/* Today Visitors */}
-        {/* <StatCard
-          icon={<Calendar />}
-          label="Today Visitors"
-          value={todayVisitors}
-          accent="text-emerald-500"
-        /> */}
-
-        {/* Today Views */}
         <StatCard
           icon={<TrendingUp />}
           label="Today Views"
@@ -61,7 +42,7 @@ function StatCard({
   value,
   accent,
 }: {
-  icon: React.ReactNode
+  icon: ReactNode
   label: string
   value: number
   accent: string
@@ -83,7 +64,7 @@ function StatCard({
 
       <div>
         <p className="text-xs text-muted-foreground">{label}</p>
-        <p className="text-lg font-bold">{value.toLocaleString()}</p>
+        <p className="text-lg font-bold">{(value ?? 0).toLocaleString("en-US")}</p>
       </div>
     </div>
   )

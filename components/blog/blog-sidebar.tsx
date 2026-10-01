@@ -1,32 +1,25 @@
-// components/blog/BlogSidebar.tsx
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import Image from "next/image";
-import { format } from "date-fns";
 import { Music } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatDate } from "@/lib/format";
+import type { AdBanner } from "@/types/api";
 
-type Post = {
+type SidebarPost = {
   id: string;
   slug: string;
   title: string;
-  excerpt: string;
-  featured_image?: string;
+  featured_image?: string | null;
   publish_date: string;
-  author: string;
-  category?: string;
 };
 
 type BlogSidebarProps = {
-  latestPosts: Post[];
-  relatedPosts?: Post[]; // optional – used on single post page
-  ads?: any[];
+  latestPosts: SidebarPost[];
+  relatedPosts?: SidebarPost[];
+  ads?: AdBanner[];
 };
 
-export function BlogSidebar({
-  latestPosts,
-  relatedPosts = [],
-  ads,
-}: BlogSidebarProps) {
+export function BlogSidebar({ latestPosts, relatedPosts = [], ads }: BlogSidebarProps) {
   const postsToShow = relatedPosts.length > 0 ? relatedPosts : latestPosts;
 
   return (
@@ -34,9 +27,11 @@ export function BlogSidebar({
       {/* Latest Posts */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl font-bold flex items-center gap-2">
-            <Music className="w-5 h-5 text-red-500" />
-            {relatedPosts.length > 0 ? "Related Articles" : "Latest Posts"}
+          <CardTitle className="text-xl font-bold">
+            <h2 className="flex items-center gap-2">
+              <Music className="w-5 h-5 text-red-500" />
+              {relatedPosts.length > 0 ? "Related Articles" : "Latest Posts"}
+            </h2>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-5">
@@ -51,15 +46,16 @@ export function BlogSidebar({
                   src={post.featured_image || "/placeholder.svg"}
                   alt={post.title}
                   fill
+                  sizes="80px"
                   className="object-cover group-hover:scale-110 transition"
                 />
               </div>
               <div className="flex-1">
-                <h4 className="font-semibold text-sm line-clamp-2 group-hover:text-red-400 transition">
+                <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-red-400 transition">
                   {post.title}
-                </h4>
+                </h3>
                 <p className="text-xs text-gray-500 mt-1">
-                  {format(new Date(post.publish_date), "MMM dd, yyyy")}
+                  <time dateTime={post.publish_date}>{formatDate(post.publish_date)}</time>
                 </p>
               </div>
             </Link>
@@ -67,7 +63,6 @@ export function BlogSidebar({
         </CardContent>
       </Card>
 
-      {/* Optional: Newsletter or Categories */}
       <Card className="bg-gradient-to-br from-red-900/30 to-orange-900/30 border-red-800/50">
         <CardHeader>
           <CardTitle className="text-lg">Stay in the Fire</CardTitle>
@@ -81,19 +76,23 @@ export function BlogSidebar({
           </button>
         </CardContent>
       </Card>
-      <div className="grid gap-5">
-        {ads &&
-          ads.length > 0 &&
-          ads?.map((ad: any, i: number) => (
-            <a href={ad.link} key={i} title={ad.title}>
-              <img
-                src={ad.image}
-                alt={ad.title}
-                className="w-full h-[400px]"
-              />
+
+      {ads && ads.length > 0 && (
+        <div className="grid gap-5">
+          {ads.map((ad) => (
+            <a
+              href={ad.link}
+              key={ad.id}
+              title={ad.title}
+              target="_blank"
+              rel="noopener noreferrer sponsored"
+              className="relative block h-[400px]"
+            >
+              <Image src={ad.image} alt={ad.title} fill sizes="(min-width: 1024px) 33vw, 100vw" />
             </a>
           ))}
-      </div>
+        </div>
+      )}
     </aside>
   );
 }
