@@ -1,36 +1,22 @@
 import type { ReactNode } from "react"
-import { Eye, TrendingUp } from "lucide-react"
+import { CalendarCheck, Eye, TrendingUp, Users } from "lucide-react"
 
-export function BlogStats({
-  totalViews,
-  todayViews,
-}: {
-  totalVisitors?: number
-  totalViews: number
-  todayVisitors?: number
-  todayViews: number
-}) {
+export interface TrafficStats {
+  total_visitors: number
+  total_views: number
+  today_visitors: number
+  today_views: number
+}
+
+/** Visitor and page-view counters shown under a post. */
+export function BlogStats({ stats }: { stats: TrafficStats }) {
   return (
     <div className="my-8">
-      <div
-        className="
-          grid grid-cols-2 md:grid-cols-3 gap-4
-          p-6
-        "
-      >
-        <StatCard
-          icon={<Eye />}
-          label="Total Views"
-          value={totalViews}
-          accent="text-violet-500"
-        />
-
-        <StatCard
-          icon={<TrendingUp />}
-          label="Today Views"
-          value={todayViews}
-          accent="text-orange-500"
-        />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6">
+        <StatCard icon={<Users />} label="Total Visitors" value={stats.total_visitors} accent="text-blue-500" />
+        <StatCard icon={<Eye />} label="Total Page Visits" value={stats.total_views} accent="text-violet-500" />
+        <StatCard icon={<CalendarCheck />} label="Today's Visitors" value={stats.today_visitors} accent="text-emerald-500" />
+        <StatCard icon={<TrendingUp />} label="Today's Page Visits" value={stats.today_views} accent="text-orange-500" />
       </div>
     </div>
   )

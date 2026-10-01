@@ -8,10 +8,9 @@ import { pageMetadata, toDescription } from "@/lib/seo";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 import { formatDate } from "@/lib/format";
 import { BlogSidebar } from "@/components/blog/blog-sidebar";
-import { BlogStats } from "@/components/blog/blog-stats";
 import { CommentSection } from "@/components/blog/comment-section";
 import { PostTracks } from "@/components/blog/post-tracks";
-import { PostViewTracker } from "@/components/blog/post-view-tracker";
+import { PostTraffic } from "@/components/blog/post-traffic";
 import { SupportButton } from "@/components/blog/support-button";
 import { FadeIn } from "@/components/shared/fade-in";
 import { JsonLd } from "@/components/shared/json-ld";
@@ -101,7 +100,6 @@ export default async function BlogDetailPage({ params }: Props) {
           },
         ]}
       />
-      <PostViewTracker slug={post.slug} />
 
       {/* Header Ad */}
       {headerAd && (
@@ -187,11 +185,14 @@ export default async function BlogDetailPage({ params }: Props) {
                 className="post-content text-base sm:text-lg"
                 dangerouslySetInnerHTML={{ __html: post.content }}
               />
-              <BlogStats
-                totalVisitors={post.total_visitors}
-                totalViews={post.total_views}
-                todayVisitors={post.today_visitors}
-                todayViews={post.today_views}
+              <PostTraffic
+                slug={post.slug}
+                initial={{
+                  total_visitors: post.total_visitors,
+                  total_views: post.total_views,
+                  today_visitors: post.today_visitors,
+                  today_views: post.today_views,
+                }}
               />
               <TelegramCTA />
 
