@@ -1,18 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Upload, Home, Music, Compass, HelpCircle, Phone, LayoutDashboard } from "lucide-react";
+import Image from "next/image";
+import { Upload, Home, Music, Compass, Phone, LayoutDashboard } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useAuthStore } from "@/store/use-auth-store";
+import logo from "@/public/logo.png";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -36,18 +31,18 @@ export function Navbar() {
   return (
     <>
       {/* ===== TOP NAV (DESKTOP + MOBILE HEADER) ===== */}
-      <nav className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 md:px-10">
           {/* Logo */}
           <Link
             href="/"
             className="rounded-md bg-black p-2 text-xl font-bold tracking-wider"
           >
-            <img src="/logo.png" alt="logo" className="h-5 w-auto" />
+            <Image src={logo} alt="iGospel home" className="h-5 w-auto" priority />
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex flex-1 items-center justify-center gap-8">
+          <nav aria-label="Main" className="hidden md:flex flex-1 items-center justify-center gap-8">
             {desktopNavigation.map((item) => (
               <Link
                 key={item.href}
@@ -60,12 +55,12 @@ export function Navbar() {
                 {item.name}
               </Link>
             ))}
-          </div>
+          </nav>
 
           {/* Desktop Auth / Upload */}
           <div className="hidden md:flex items-center">
             {isAuthenticated ? (
-              <Button variant="default" className="text-accent">
+              <Button variant="default" className="text-accent" asChild>
                 <Link href="/dashboard">Dashboard</Link>
               </Button>
             ) : (
@@ -79,9 +74,9 @@ export function Navbar() {
             )}
           </div>
         </div>
-      </nav>
+      </header>
       {/* ===== MOBILE BOTTOM TAB NAV ===== */}
-      <div className="fixed bottom-0 left-0 right-0  z-50 border-t border-border bg-background md:hidden">
+      <nav aria-label="Mobile" className="fixed bottom-0 left-0 right-0  z-50 border-t border-border bg-background md:hidden">
         <div className="flex justify-around items-center py-2">
           {mobileTabs.map(({ name, href, icon: Icon }) => {
             const isActive = pathname.split("/")[1] === href.split("/")[1];
@@ -103,7 +98,7 @@ export function Navbar() {
             );
           })}
         </div>
-      </div>
+      </nav>
     </>
   );
 }

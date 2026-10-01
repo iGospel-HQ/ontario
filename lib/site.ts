@@ -16,6 +16,8 @@ export const siteConfig = {
     contact: "igospelmediaconnect@gmail.com",
     support: "support@igospel.ng",
   },
+  whatsapp: { href: "https://wa.me/+2348068535646", display: "+234 806 853 5646" },
+  location: "Lagos, Nigeria",
   social: {
     facebook: "https://www.facebook.com/igospelmediaconnect",
     linkedin: "https://www.linkedin.com/company/igospelmediaconnect",

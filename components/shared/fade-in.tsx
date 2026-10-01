@@ -22,7 +22,7 @@ export function FadeIn({
   duration?: number;
   /** Starting vertical offset in px. */
   y?: number;
-  as?: "div" | "section" | "article";
+  as?: "div" | "section" | "article" | "h1" | "h2" | "p" | "span";
 }) {
   const style = {
     "--tw-enter-opacity": "0",
