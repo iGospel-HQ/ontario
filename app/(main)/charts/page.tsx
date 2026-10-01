@@ -2,6 +2,7 @@ import { TrendingUp } from "lucide-react";
 import { getLatestTracks, getPopularTracks } from "@/lib/api/queries";
 import { pageMetadata } from "@/lib/seo";
 import { FadeIn } from "@/components/shared/fade-in";
+import { PageHeader } from "@/components/shared/page-header";
 import { TrackPlayButton } from "@/components/music/track-play-button";
 
 export const revalidate = 300;
@@ -21,13 +22,9 @@ export default async function ChartsPage() {
   const maxPlays = Math.max(1, ...popular.map((t) => t.plays_count), ...trending.map((t) => t.plays_count));
 
   return (
-    <div className="min-h-screen px-4 md:px-8 py-12">
-      <div className="max-w-4xl mx-auto">
-        <FadeIn y={-20} className="mb-16">
-          <h1 className="text-5xl font-bold mb-4">Charts</h1>
-          <p className="text-muted-foreground text-lg">The hottest tracks trending right now</p>
-        </FadeIn>
-
+    <>
+      <PageHeader title="Charts" description="The hottest tracks trending right now" />
+      <div className="px-4 md:px-6 py-10">
         {/* Top 10 by plays */}
         <FadeIn as="section" delay={0.1} className="mb-16">
           <h2 className="text-3xl font-bold mb-8">Top 10</h2>
@@ -101,7 +98,7 @@ export default async function ChartsPage() {
             })}
           </div>
         </FadeIn>
-      </div>
     </div>
+    </>
   );
 }

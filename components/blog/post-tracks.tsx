@@ -5,7 +5,6 @@ import { useAudioPlayer } from "@/store/use-audio-player";
 import { formatTime } from "@/lib/format";
 import type { PostTrack } from "@/types/api";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 /** "Listen Now" player list for the tracks attached to a post. */
 export function PostTracks({ tracks }: { tracks: PostTrack[] }) {
@@ -32,11 +31,11 @@ export function PostTracks({ tracks }: { tracks: PostTrack[] }) {
   };
 
   return (
-    <Card className="overflow-hidden border-0 shadow-2xl">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-xl text-black">Listen Now</CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
+    <section>
+      <h2 className="widget-title">
+        <span>Listen Now</span>
+      </h2>
+      <div>
         {tracks.map((track) => {
           const isCurrent = currentTrack?.id === track.id;
           const isCurrentPlaying = isCurrent && isPlaying;
@@ -117,7 +116,7 @@ export function PostTracks({ tracks }: { tracks: PostTrack[] }) {
             </div>
           );
         })}
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }

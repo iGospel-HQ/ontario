@@ -42,14 +42,52 @@ export function CommentSection({
   });
 
   return (
-    <section className="space-y-10" aria-labelledby="comments-heading">
-      {/* Comment Form */}
-      <div className="bg-secondary p-6 rounded-xl border border-border/40 my-5">
-        <h2 className="text-xl text-accent font-semibold mb-4">Leave a Comment</h2>
+    <section className="space-y-10 border-t border-rule pt-10" aria-labelledby="comments-heading">
+      {/* Comments list */}
+      <div>
+        <h2 id="comments-heading" className="widget-title">
+          <span>
+            {comments.length} Comment{comments.length === 1 ? "" : "s"}
+          </span>
+        </h2>
 
-        <div className="space-y-4">
+        {comments.length > 0 ? (
+          <ol className="divide-y divide-rule">
+            {comments.map((item) => (
+              <li key={item.id} className="flex gap-4 py-5 first:pt-0">
+                <Avatar className="h-12 w-12 rounded-none">
+                  <AvatarImage src={item.author_avatar || undefined} />
+                  <AvatarFallback className="rounded-none bg-shade font-bold text-meta">
+                    {item.name?.charAt(0)?.toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+
+                <div className="min-w-0">
+                  <p className="font-bold text-text">{item.name}</p>
+                  <p className="entry-meta">
+                    <time dateTime={item.created_at} suppressHydrationWarning>
+                      {new Date(item.created_at).toLocaleDateString()}
+                    </time>
+                  </p>
+                  <p className="mt-2 text-[15px] leading-relaxed text-[#444]">{item.content}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p className="text-meta">No comments yet — be the first!</p>
+        )}
+      </div>
+
+      {/* Comment form */}
+      <div>
+        <h2 className="widget-title">
+          <span>Leave a Comment</span>
+        </h2>
+
+        <div className="space-y-4 [&_input]:rounded-none [&_textarea]:rounded-none">
           <Input
-            className="border-accent"
+            className="h-11 border-rule bg-white focus-visible:border-accent"
             placeholder="Your name"
             aria-label="Your name"
             value={name}
@@ -59,56 +97,19 @@ export function CommentSection({
           <Textarea
             placeholder="Your comment..."
             aria-label="Your comment"
-            className="min-h-[120px] border-accent"
+            className="min-h-[140px] border-rule bg-white focus-visible:border-accent"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
           />
 
           <Button
-            className="w-full bg-accent text-md py-5"
+            className="h-11 rounded-none bg-accent px-8 text-[13px] font-bold uppercase tracking-wider hover:bg-topbar"
             disabled={isPending || !name || !comment}
             onClick={() => submitComment()}
           >
             {isPending ? "Posting..." : "Post Comment"}
           </Button>
         </div>
-      </div>
-
-      {/* Comments List */}
-      <div>
-        <h2 id="comments-heading" className="text-xl font-semibold mb-4">
-          {comments.length} Comment{comments.length === 1 ? "" : "s"}
-        </h2>
-
-        {comments.length > 0 && (
-          <div className="space-y-6">
-            {comments.map((item) => (
-              <div
-                key={item.id}
-                className="flex gap-3 p-4 bg-secondary rounded-xl border border-border/40"
-              >
-                <Avatar>
-                  <AvatarImage src={item.author_avatar || undefined} />
-                  <AvatarFallback>{item.name?.charAt(0)?.toUpperCase()}</AvatarFallback>
-                </Avatar>
-
-                <div>
-                  <p className="font-semibold">{item.name}</p>
-                  <p className="text-sm text-muted-foreground mt-1">{item.content}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    <time dateTime={item.created_at} suppressHydrationWarning>
-                      {new Date(item.created_at).toLocaleDateString()}
-                    </time>
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {comments.length === 0 && (
-          <p className="text-muted-foreground">No comments yet — be the first!</p>
-        )}
       </div>
     </section>
   );

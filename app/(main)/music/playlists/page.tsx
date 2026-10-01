@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getPlaylists } from "@/lib/api/queries";
 import { listingMetadata } from "@/lib/seo";
 import { FadeIn } from "@/components/shared/fade-in";
+import { PageHeader } from "@/components/shared/page-header";
 import { SearchInput } from "@/components/shared/search-input";
 import { PlaylistCard } from "@/components/music/playlist-card";
 
@@ -24,13 +25,9 @@ export default async function PlaylistsPage({ searchParams }: Props) {
   const { results: playlists } = await getPlaylists({ q: query });
 
   return (
-    <div className="min-h-screen px-4 md:px-8 py-12">
-      <div className="max-w-6xl mx-auto">
-        <FadeIn y={-20} className="mb-12">
-          <h1 className="text-4xl font-bold mb-4">Playlists</h1>
-          <p className="text-muted-foreground text-lg">Explore curated collections</p>
-        </FadeIn>
-
+    <>
+      <PageHeader title="Playlists" description="Explore curated collections" crumbs={[{ name: "Music", href: "/music" }]} />
+      <div className="px-4 md:px-6 py-10">
         <FadeIn y={0} delay={0.1} className="mb-12">
           <SearchInput
             placeholder="Search playlists..."
@@ -51,7 +48,7 @@ export default async function PlaylistsPage({ searchParams }: Props) {
             ))}
           </div>
         )}
-      </div>
     </div>
+    </>
   );
 }

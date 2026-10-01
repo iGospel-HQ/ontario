@@ -98,7 +98,7 @@ export function SupportButton({
     <>
       <Button
         onClick={() => setOpen(true)}
-        className="bg-red-600 hover:bg-red-700 text-white font-semibold flex items-center gap-2 w-full"
+        className="flex w-full items-center gap-2 rounded-none bg-accent text-[13px] font-bold uppercase tracking-wider text-white hover:bg-topbar"
         size="lg"
       >
         <Heart className="w-5 h-5" />

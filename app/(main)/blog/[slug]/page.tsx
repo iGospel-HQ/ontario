@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { notFoundMetadata } from "@/components/shared/not-found-content";
@@ -119,45 +120,53 @@ export default async function BlogDetailPage({ params }: Props) {
         </a>
       )}
 
-      <div className="max-w-7xl mx-auto px-4 py-8 lg:py-12">
+      <div className="px-4 md:px-6 py-8 lg:py-10">
         <div className="grid lg:grid-cols-3 gap-8 xl:gap-12">
           {/* Main Content */}
           <article className="lg:col-span-2 space-y-8">
-            <header className="space-y-6">
-              <nav aria-label="Breadcrumb">
-                <ol className="flex items-center gap-2 text-sm text-muted-foreground">
+            <header className="space-y-4">
+              <nav aria-label="Breadcrumb" className="entry-meta">
+                <ol className="flex flex-wrap items-center gap-1.5">
                   <li>
-                    <Link href="/" className="hover:text-foreground">
+                    <Link href="/" className="hover:text-accent">
                       Home
                     </Link>
                   </li>
-                  <li aria-hidden="true" className="text-muted-foreground">
-                    ›
+                  <li aria-hidden="true">
+                    <ChevronRight className="h-3 w-3" />
                   </li>
-                  <li aria-current="page" className="text-foreground">
+                  <li>
+                    <Link href="/blog" className="hover:text-accent">
+                      Blog
+                    </Link>
+                  </li>
+                  <li aria-hidden="true">
+                    <ChevronRight className="h-3 w-3" />
+                  </li>
+                  <li aria-current="page" className="text-text line-clamp-1">
                     {post.title}
                   </li>
                 </ol>
               </nav>
 
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-gray-900">
-                {post.title}
-              </h1>
+              <span className="cat-label">{post.genres?.[0]?.name || "Gospel"}</span>
 
-              <div className="flex items-center gap-4">
-                <p className="font-semibold text-gray-800">{post.author_name}</p>
-                <span className="text-gray-500" aria-hidden="true">
-                  •
-                </span>
-                <p className="text-sm text-gray-500">
-                  <time dateTime={post.publish_date}>
-                    {formatDate(post.publish_date, "MMMM d, yyyy")}
-                  </time>
-                </p>
-              </div>
+              <h1 className="text-3xl md:text-[40px] font-bold leading-tight">{post.title}</h1>
+
+              <p className="entry-meta border-b border-rule pb-4 text-[13px]">
+                By <span className="font-semibold text-text">{post.author_name}</span>
+                <span className="mx-2" aria-hidden="true">·</span>
+                <time dateTime={post.publish_date}>
+                  {formatDate(post.publish_date, "MMMM d, yyyy")}
+                </time>
+                <span className="mx-2" aria-hidden="true">·</span>
+                <a href="#comments-heading" className="hover:text-accent">
+                  {post.comments.length} Comment{post.comments.length === 1 ? "" : "s"}
+                </a>
+              </p>
 
               {/* Featured Image */}
-              <div className="relative aspect-[1/1] overflow-hidden rounded-xl">
+              <div className="relative aspect-[1/1] overflow-hidden bg-shade">
                 <Image
                   src={post.featured_image || "/placeholder.svg"}
                   alt={post.title}
@@ -179,10 +188,10 @@ export default async function BlogDetailPage({ params }: Props) {
             </div>
 
             {/* Post Content */}
-            <FadeIn delay={0.2} className="prose prose-lg max-w-none dark:prose-invert">
+            <FadeIn delay={0.2}>
               <TelegramCTA />
               <div
-                className="post-content text-base sm:text-lg"
+                className="entry-content my-6"
                 dangerouslySetInnerHTML={{ __html: post.content }}
               />
               <PostTraffic
@@ -208,7 +217,6 @@ export default async function BlogDetailPage({ params }: Props) {
                     alt={inPostAd.title}
                     fill
                     sizes="(min-width: 1024px) 66vw, 100vw"
-                    className="rounded-lg"
                   />
                 </a>
               )}
@@ -230,14 +238,14 @@ export default async function BlogDetailPage({ params }: Props) {
 
           {/* Sidebar */}
           <div className="hidden lg:block">
-            <div className="sticky top-24 space-y-8">
+            <div className="sticky top-16">
               <BlogSidebar latestPosts={latestPosts} ads={sidebarAds} />
             </div>
           </div>
         </div>
 
         {/* Mobile Sidebar */}
-        <div className="lg:hidden mt-12 border-t pt-8">
+        <div className="lg:hidden mt-12 border-t border-rule pt-8">
           <BlogSidebar latestPosts={latestPosts} ads={sidebarAds} />
         </div>
       </div>

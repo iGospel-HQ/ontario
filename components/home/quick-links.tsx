@@ -1,88 +1,52 @@
-"use client";
-
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { Music, Album, Disc3, Users, TrendingUp } from "lucide-react";
 import { ComingSoonWrapper } from "@/components/shared/coming-soon-wrapper";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { name: "Artists", href: "/music/artists", icon: Users, comingSoon: false }, // Active – no overlay
+  { name: "Artists", href: "/music/artists", icon: Users, comingSoon: false },
   { name: "New Releases", href: "/music/songs", icon: Music, comingSoon: true },
   { name: "Albums", href: "/music/albums", icon: Album, comingSoon: true },
   { name: "Top Charts", href: "/charts", icon: TrendingUp, comingSoon: true },
-  {
-    name: "Playlists",
-    href: "/music/playlists",
-    icon: Disc3,
-    comingSoon: true,
-  },
+  { name: "Playlists", href: "/music/playlists", icon: Disc3, comingSoon: true },
 ];
 
+/** Row of shortcut tiles under the homepage hero. */
 export function QuickLinks() {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-  };
-
   return (
-    <section className="py-12 px-4 md:px-8 border-t border-border">
-      <h2 className="text-2xl font-bold mb-8">Quick Access</h2>
+    <section className="px-4 md:px-6 py-10">
+      <h2 className="section-title">
+        <span>Quick Access</span>
+      </h2>
 
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        className="grid grid-cols-5 gap-40 md:gap-4 overflow-x-auto relative h-auto"
-      >
-        {/* <div className="md:hidden h-full w-20 shadow-2xl absolute right-0 top-0"/> */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {links.map((link) => {
           const Icon = link.icon;
-
-          const content = (
-            <motion.div key={link.href} variants={itemVariants}>
-              <Link
-                href={link.href}
-                className={cn(
-                  "flex items-center w-32 border md:w-auto justify-center flex-col gap-3 p-6 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors group",
-                  link.comingSoon && "cursor-not-allowed"
-                )}
-                aria-disabled={link.comingSoon}
-              >
-                <Icon className="h-8 w-8 text-accent group-hover:scale-110 transition-transform" />
-                <span className="text-sm font-medium text-center">
-                  {link.name}
-                </span>
-              </Link>
-            </motion.div>
+          const tile = (
+            <Link
+              href={link.href}
+              aria-disabled={link.comingSoon}
+              className={cn(
+                "group flex flex-col items-center justify-center gap-3 border border-rule bg-white px-4 py-6 transition-colors hover:border-accent hover:bg-accent",
+                link.comingSoon && "cursor-not-allowed",
+              )}
+            >
+              <Icon className="h-7 w-7 text-accent transition-colors group-hover:text-white" />
+              <span className="text-center text-[12px] font-bold uppercase tracking-wider text-text transition-colors group-hover:text-white">
+                {link.name}
+              </span>
+            </Link>
           );
 
           return link.comingSoon ? (
-            <ComingSoonWrapper
-              key={link.href}
-              text="Coming Soon"
-              showLockIcon={true}
-              opacity={0.3}
-              blur={true}
-              className="w-32 md:w-auto"
-            >
-              {content}
+            <ComingSoonWrapper key={link.href} text="Coming Soon" showLockIcon opacity={0.3} blur>
+              {tile}
             </ComingSoonWrapper>
           ) : (
-            content
+            <div key={link.href}>{tile}</div>
           );
         })}
-      </motion.div>
+      </div>
     </section>
   );
 }

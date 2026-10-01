@@ -8,17 +8,20 @@ import { FloatingAudioButtons } from "@/components/layout/floating-audio-button"
 import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/lib/site";
 
-// Geist (latin, variable weight) self-hosted so builds don't depend on Google Fonts.
-const geist = localFont({
-  src: "./fonts/Geist-Variable.woff2",
-  weight: "100 900",
-  variable: "--font-geist",
+// Classic blog typography, self-hosted (latin, variable weight):
+// Open Sans for body text and menus, Lora (serif) for headings and post titles.
+const openSans = localFont({
+  src: "./fonts/OpenSans-Variable.woff2",
+  weight: "300 800",
+  variable: "--font-open-sans",
   display: "swap",
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMono-Variable.woff2",
-  weight: "100 900",
-  variable: "--font-geist-mono",
+const lora = localFont({
+  src: [
+    { path: "./fonts/Lora-Variable.woff2", weight: "400 700", style: "normal" },
+    { path: "./fonts/Lora-Italic-Variable.woff2", weight: "400 700", style: "italic" },
+  ],
+  variable: "--font-lora",
   display: "swap",
 });
 
@@ -63,7 +66,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geist.variable} ${geistMono.variable}`}
+      className={`${openSans.variable} ${lora.variable}`}
     >
       <body className="font-sans antialiased">
         <Toaster position="top-center"/>

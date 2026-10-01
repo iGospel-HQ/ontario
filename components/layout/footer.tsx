@@ -1,101 +1,77 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, Twitter, Instagram, Facebook, Linkedin } from "lucide-react";
 import { siteConfig } from "@/lib/site";
+import { mainMenu } from "@/lib/navigation";
 import logo from "@/public/logo.png";
+import { SocialIcons } from "@/components/layout/social-icons";
 
-const social = [
-  { name: "iGospel on X (Twitter)", href: siteConfig.social.twitter, icon: Twitter },
-  { name: "iGospel on Instagram", href: "#", icon: Instagram },
-  { name: "iGospel on Facebook", href: siteConfig.social.facebook, icon: Facebook },
-  { name: "iGospel on LinkedIn", href: siteConfig.social.linkedin, icon: Linkedin },
-  { name: "Email iGospel", href: `mailto:${siteConfig.emails.contact}`, icon: Mail },
-];
-
-export function Footer() {
+function FooterTitle({ children }: { children: ReactNode }) {
   return (
-    <footer className="border-t border-border bg-secondary py-12 mb-20 md:mb-0">
-      <div className="px-4 md:px-12 max-w-5xl mx-auto">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-          {/* Brand */}
-          <div>
-            <Link
-              href="/"
-              className="text-xl font-bold tracking-wider bg-black p-2 rounded-md block w-fit mb-4"
-            >
-              <Image src={logo} alt="iGospel home" width={146} height={36} className="w-auto h-9" />
-            </Link>
-            <p className="text-sm text-muted-foreground">
-              Discover music, read stories, explore artists.
-            </p>
-          </div>
+    <h2 className="mb-5 border-b border-white/15 pb-3 font-sans text-[13px] font-bold uppercase tracking-[0.08em] text-white">
+      {children}
+    </h2>
+  );
+}
 
-          {/* Links */}
-          <nav aria-label="Explore">
-            <h2 className="font-semibold mb-4">Explore</h2>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/blog" className="hover:text-accent">
-                  Explore
-                </Link>
-              </li>
-              <li>
-                <Link href="/music" className="hover:text-accent">
-                  Music
-                </Link>
-              </li>
-              <li>
-                <Link href="/login" className="hover:text-accent">
-                  Login to account
-                </Link>
-              </li>
-            </ul>
-          </nav>
+const linkClass = "text-white/70 hover:text-accent hover:pl-1 transition-all";
 
-          {/* Legal */}
-          <nav aria-label="Legal">
-            <h2 className="font-semibold mb-4">Legal</h2>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/privacy" className="hover:text-accent">
-                  Privacy
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className="hover:text-accent">
-                  Terms
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="hover:text-accent">
-                  Contact
-                </Link>
-              </li>
-            </ul>
-          </nav>
+/** Dark footer with widget columns and a copyright bar. */
+export function Footer() {
+  const music = mainMenu.find((item) => item.href === "/music")?.children ?? [];
 
-          {/* Social */}
-          <div>
-            <h2 className="font-semibold mb-4">Follow</h2>
-            <div className="flex gap-4">
-              {social.map(({ name, href, icon: Icon }) => (
-                <a
-                  key={name}
-                  href={href}
-                  aria-label={name}
-                  className="hover:text-accent"
-                  {...(href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                >
-                  <Icon className="h-5 w-5" />
-                </a>
-              ))}
-            </div>
-          </div>
+  return (
+    <footer className="bg-topbar text-sm text-white/70">
+      <div className="grid grid-cols-1 gap-10 px-6 py-12 sm:grid-cols-2 lg:grid-cols-4">
+        {/* About */}
+        <div>
+          <Link href="/" className="mb-4 block w-fit">
+            <Image src={logo} alt={`${siteConfig.name} home`} width={146} height={36} className="h-9 w-auto" />
+          </Link>
+          <p className="leading-relaxed">
+            Discover music, read stories, explore artists.
+          </p>
+          <SocialIcons className="mt-5 gap-4 text-white/80" iconClassName="h-4 w-4" />
         </div>
 
-        <div className="mt-8 border-t border-border pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} iGospel. All rights reserved.</p>
-        </div>
+        {/* Music */}
+        <nav aria-label="Music">
+          <FooterTitle>Music</FooterTitle>
+          <ul className="space-y-2.5">
+            {music.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className={linkClass}>
+                  {link.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        {/* Explore */}
+        <nav aria-label="Explore">
+          <FooterTitle>Explore</FooterTitle>
+          <ul className="space-y-2.5">
+            <li><Link href="/blog" className={linkClass}>Explore</Link></li>
+            <li><Link href="/upload" className={linkClass}>Upload Your Content</Link></li>
+            <li><Link href="/login" className={linkClass}>Login to account</Link></li>
+            <li><Link href="/feed.xml" className={linkClass}>RSS Feed</Link></li>
+          </ul>
+        </nav>
+
+        {/* Legal */}
+        <nav aria-label="Legal">
+          <FooterTitle>Legal</FooterTitle>
+          <ul className="space-y-2.5">
+            <li><Link href="/privacy" className={linkClass}>Privacy</Link></li>
+            <li><Link href="/terms" className={linkClass}>Terms</Link></li>
+            <li><Link href="/contact" className={linkClass}>Contact</Link></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div className="border-t border-white/10 bg-black px-6 py-4 text-center text-xs text-white/50">
+        &copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
       </div>
     </footer>
   );

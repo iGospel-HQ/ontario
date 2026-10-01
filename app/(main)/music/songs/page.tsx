@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getGenres, getTracks, POSTS_PAGE_SIZE } from "@/lib/api/queries";
 import { listingMetadata } from "@/lib/seo";
 import { FadeIn } from "@/components/shared/fade-in";
+import { PageHeader } from "@/components/shared/page-header";
 import { PagePagination, parsePage } from "@/components/shared/page-pagination";
 import { SearchInput } from "@/components/shared/search-input";
 import { GenreSelect } from "@/components/music/genre-select";
@@ -37,13 +38,9 @@ export default async function SongsPage({ searchParams }: Props) {
   const offset = (page - 1) * POSTS_PAGE_SIZE;
 
   return (
-    <div className="min-h-screen px-4 md:px-8 py-12">
-      <div className="max-w-6xl mx-auto">
-        <FadeIn y={-20} className="mb-12">
-          <h1 className="text-4xl font-bold mb-4">Songs</h1>
-          <p className="text-muted-foreground text-lg">Stream unlimited music</p>
-        </FadeIn>
-
+    <>
+      <PageHeader title="Songs" description="Stream unlimited music" crumbs={[{ name: "Music", href: "/music" }]} />
+      <div className="px-4 md:px-6 py-10">
         <FadeIn y={0} delay={0.2} className="mb-12 flex gap-4">
           <SearchInput
             placeholder="Search songs..."
@@ -105,7 +102,7 @@ export default async function SongsPage({ searchParams }: Props) {
           page={page}
           totalPages={Math.ceil(data.count / POSTS_PAGE_SIZE)}
         />
-      </div>
     </div>
+    </>
   );
 }

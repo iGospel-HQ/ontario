@@ -26,9 +26,9 @@ export function SortSelect() {
   };
 
   return (
-    <div className="flex justify-center mt-4 w-3/12">
+    <div className="sm:w-48">
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="h-14 w-full text-foreground border-border bg-card" aria-label="Sort by">
+        <SelectTrigger className="h-11 w-full rounded-none border-rule bg-white" aria-label="Sort by">
           <SelectValue placeholder="Sort by" />
         </SelectTrigger>
         <SelectContent className="bg-popover text-popover-foreground">

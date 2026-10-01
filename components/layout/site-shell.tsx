@@ -1,28 +1,28 @@
 import type React from "react";
 import { AudioPlayer } from "@/components/layout/audio-player";
+import { BackToTop } from "@/components/layout/back-to-top";
 import { Footer } from "@/components/layout/footer";
-import { Navbar } from "@/components/layout/navbar";
+import { SiteHeader } from "@/components/layout/site-header";
 
-/** Public page frame: background, navbar, centered content column, player, footer. */
+/** Public page frame: a boxed blog layout on the site background. */
 export function SiteShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="site-bg">
+    <div className="site-bg min-h-screen md:px-6 md:py-6">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-white focus:px-4 focus:py-2"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-white focus:px-4 focus:py-2"
       >
         Skip to content
       </a>
-      <Navbar />
-      <div className="grid grid-cols-1 lg:grid-cols-14  px-0 md:px-8">
-        <div className="hidden md:block lg:col-span-2 2xl:col-span-3"></div>
-        <main id="main-content" className="lg:col-span-10 2xl:col-span-8 bg-white lg:px-5">
+      <div className="mx-auto max-w-[1200px] bg-white shadow-[0_0_25px_rgba(0,0,0,0.08)]">
+        <SiteHeader />
+        <main id="main-content" className="min-h-[60vh]">
           {children}
         </main>
-        <div className="hidden md:block lg:col-span-2 2xl:col-span-3"></div>
-        <AudioPlayer />
+        <Footer />
       </div>
-      <Footer />
+      <AudioPlayer />
+      <BackToTop />
     </div>
   );
 }

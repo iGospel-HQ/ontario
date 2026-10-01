@@ -12,7 +12,6 @@ export function TelegramCTA() {
         w-full
         mx-auto my-3
         px-6 py-2
-        rounded-lg
         bg-[#2AABEE]
         text-white
         font-semibold
@@ -20,8 +19,6 @@ export function TelegramCTA() {
         shadow-md
         hover:bg-[#229ED9]
         transition-all
-        hover:scale-[1.02]
-        active:scale-[0.98]
       "
     >
       <span className="flex items-center justify-center w-9 h-9 rounded-full bg-white/20">

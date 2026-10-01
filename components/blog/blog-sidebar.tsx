@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Music } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Send } from "lucide-react";
+import { siteConfig } from "@/lib/site";
 import { formatDate } from "@/lib/format";
 import type { AdBanner } from "@/types/api";
 
@@ -19,66 +19,66 @@ type BlogSidebarProps = {
   ads?: AdBanner[];
 };
 
+/** WordPress-style sidebar widgets: recent posts, subscribe box, ads. */
 export function BlogSidebar({ latestPosts, relatedPosts = [], ads }: BlogSidebarProps) {
   const postsToShow = relatedPosts.length > 0 ? relatedPosts : latestPosts;
 
   return (
-    <aside className="space-y-8">
-      {/* Latest Posts */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl font-bold">
-            <h2 className="flex items-center gap-2">
-              <Music className="w-5 h-5 text-red-500" />
-              {relatedPosts.length > 0 ? "Related Articles" : "Latest Posts"}
-            </h2>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-5">
+    <aside className="space-y-10">
+      {/* Recent posts */}
+      <section>
+        <h2 className="widget-title">
+          <span>{relatedPosts.length > 0 ? "Related Articles" : "Latest Posts"}</span>
+        </h2>
+        <ul className="divide-y divide-rule">
           {postsToShow.slice(0, 5).map((post) => (
-            <Link
-              key={post.id}
-              href={`/blog/${post.slug}`}
-              className="flex gap-4 group hover:bg-gray-100/50 p-3 -m-3 rounded-lg transition"
-            >
-              <div className="relative w-20 h-20 flex-shrink-0 overflow-hidden rounded-lg">
-                <Image
-                  src={post.featured_image || "/placeholder.svg"}
-                  alt={post.title}
-                  fill
-                  sizes="80px"
-                  className="object-cover group-hover:scale-110 transition"
-                />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-red-400 transition">
-                  {post.title}
-                </h3>
-                <p className="text-xs text-gray-500 mt-1">
-                  <time dateTime={post.publish_date}>{formatDate(post.publish_date)}</time>
-                </p>
-              </div>
-            </Link>
+            <li key={post.id}>
+              <Link href={`/blog/${post.slug}`} className="group flex gap-3 py-3 first:pt-0">
+                <div className="relative h-16 w-20 flex-shrink-0 overflow-hidden bg-shade">
+                  <Image
+                    src={post.featured_image || "/placeholder.svg"}
+                    alt=""
+                    fill
+                    sizes="80px"
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="entry-title text-[14px] font-bold leading-snug line-clamp-2 transition-colors">
+                    {post.title}
+                  </h3>
+                  <p className="entry-meta mt-1">
+                    <time dateTime={post.publish_date}>{formatDate(post.publish_date, "MMMM d, yyyy")}</time>
+                  </p>
+                </div>
+              </Link>
+            </li>
           ))}
-        </CardContent>
-      </Card>
+        </ul>
+      </section>
 
-      <Card className="bg-gradient-to-br from-red-900/30 to-orange-900/30 border-red-800/50">
-        <CardHeader>
-          <CardTitle className="text-lg">Stay in the Fire</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-gray-300 mb-4">
-            Get fresh gospel insights delivered weekly.
-          </p>
-          <button className="w-full py-3 bg-gradient-to-r from-red-600 to-orange-600 rounded-lg font-bold text-sm hover:from-red-700 hover:to-orange-700 transition">
+      {/* Subscribe */}
+      <section>
+        <h2 className="widget-title">
+          <span>Stay in the Fire</span>
+        </h2>
+        <div className="border border-rule bg-shade p-5">
+          <p className="mb-4 text-sm text-[#555]">Get fresh gospel insights delivered weekly.</p>
+          <a
+            href={siteConfig.social.telegram}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex w-full items-center justify-center gap-2 bg-accent py-3 text-[13px] font-bold uppercase tracking-wider text-white hover:bg-topbar"
+          >
+            <Send className="h-4 w-4" aria-hidden="true" />
             Subscribe Now
-          </button>
-        </CardContent>
-      </Card>
+          </a>
+        </div>
+      </section>
 
       {ads && ads.length > 0 && (
-        <div className="grid gap-5">
+        <section className="grid gap-5">
+          <h2 className="sr-only">Sponsored</h2>
           {ads.map((ad) => (
             <a
               href={ad.link}
@@ -91,7 +91,7 @@ export function BlogSidebar({ latestPosts, relatedPosts = [], ads }: BlogSidebar
               <Image src={ad.image} alt={ad.title} fill sizes="(min-width: 1024px) 33vw, 100vw" />
             </a>
           ))}
-        </div>
+        </section>
       )}
     </aside>
   );

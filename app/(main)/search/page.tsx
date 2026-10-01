@@ -4,6 +4,7 @@ import { Disc3, FileText, Music, Search, Users } from "lucide-react";
 import { searchAll } from "@/lib/api/queries";
 import { pageMetadata } from "@/lib/seo";
 import { Input } from "@/components/ui/input";
+import { PageHeader } from "@/components/shared/page-header";
 
 export const metadata = pageMetadata({
   title: "Search",
@@ -62,8 +63,8 @@ export default async function SearchPage({ searchParams }: Props) {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-        <h1 className="sr-only">{query ? `Search results for “${query}”` : "Search iGospel"}</h1>
+      <PageHeader title={query ? `Search results for “${query}”` : "Search"} />
+      <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
 
         <form action="/search" role="search" className="flex items-center justify-center">
           <div className="relative w-full max-w-lg">
@@ -102,11 +103,11 @@ export default async function SearchPage({ searchParams }: Props) {
             <Link
               key={item.key}
               href={item.href}
-              className="flex items-center space-x-4 rounded-lg border p-4 hover:bg-accent"
+              className="group flex items-center space-x-4 border border-rule p-4 transition-colors hover:border-accent hover:bg-shade"
             >
               {item.icon}
               <div className="flex-1 space-y-1 min-w-0">
-                <p className="text-sm font-medium leading-none">{item.name}</p>
+                <p className="entry-title font-heading text-[15px] font-bold leading-snug">{item.name}</p>
                 <p className="text-sm text-muted-foreground line-clamp-2">{item.description}</p>
               </div>
             </Link>
