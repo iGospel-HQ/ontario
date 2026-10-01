@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import ChartsPageClientComponent from "./client";
+import { ChartsPageClient } from "@/components/charts-page-client";
 
 export const metadata: Metadata = {
   title: "Charts - iGospel",
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function ChartsPage() {
-  return <ChartsPageClientComponent />;
+  return <ChartsPageClient />;
 }
