@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { notFoundMetadata } from "@/components/shared/not-found-content";
 import { getPost, getPosts } from "@/lib/api/queries";
 import { pageMetadata, toDescription } from "@/lib/seo";
 import { absoluteUrl, siteConfig } from "@/lib/site";
@@ -34,7 +35,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPost(slug);
-  if (!post) return { title: "Article not found", robots: { index: false } };
+  if (!post) return notFoundMetadata;
 
   return pageMetadata({
     title: post.meta_title || post.title,

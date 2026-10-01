@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { notFoundMetadata } from "@/components/shared/not-found-content";
 import { getArtist, getArtistPosts } from "@/lib/api/queries";
 import { pageMetadata, toDescription } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
@@ -22,7 +23,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const artist = await getArtist(slug);
-  if (!artist) return { title: "Artist not found", robots: { index: false } };
+  if (!artist) return notFoundMetadata;
 
   return pageMetadata({
     title: artist.name,
