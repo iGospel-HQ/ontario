@@ -3,6 +3,7 @@ import { cache } from "react";
 import { apiGet } from "@/lib/api/server";
 import type {
   Artist,
+  Genre,
   HomepageData,
   MusicTrack,
   Paginated,
@@ -63,11 +64,20 @@ export async function getArtistPosts(slug: string) {
   return posts ?? [];
 }
 
-export async function getTracks({ page = 1, q }: { page?: number; q?: string } = {}) {
+export async function getTracks({
+  page = 1,
+  q,
+  genre,
+}: { page?: number; q?: string; genre?: string } = {}) {
   const data = await apiGet<Paginated<MusicTrack>>("/music/tracks/", {
-    query: { page, page_size: POSTS_PAGE_SIZE, search: q, ordering: "-created_at" },
+    query: { page, page_size: POSTS_PAGE_SIZE, search: q, genre, ordering: "-created_at" },
   });
   return data ?? emptyPage<MusicTrack>();
+}
+
+export async function getGenres() {
+  const data = await apiGet<Paginated<Genre>>("/music/genres/", { revalidate: 3600 });
+  return data?.results ?? [];
 }
 
 export async function getPopularTracks() {
