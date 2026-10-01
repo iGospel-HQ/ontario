@@ -16,6 +16,8 @@ interface GetOptions {
   query?: Query;
   /** Seconds to cache the response (ISR). Defaults to 5 minutes. */
   revalidate?: number;
+  /** Cache tags; Django refreshes them via /api/revalidate when content changes. */
+  tags?: string[];
 }
 
 const isBuild = process.env.NEXT_PHASE === "phase-production-build";
@@ -23,13 +25,13 @@ const isBuild = process.env.NEXT_PHASE === "phase-production-build";
 /**
  * GET a public API resource from a server component. Returns `null` on 404.
  * Sends `X-Skip-Tracking` so server renders aren't counted as post views;
- * the browser reports real views through `PostViewTracker`.
+ * the browser reports real views through `PostTraffic`.
  *
  * If the API is unreachable during `next build`, returns `null` so the deploy
  * still succeeds (ISR fills the pages in later). At runtime it throws instead,
  * which makes ISR keep serving the last good version of the page.
  */
-export async function apiGet<T>(path: string, { query, revalidate = 300 }: GetOptions = {}) {
+export async function apiGet<T>(path: string, { query, revalidate = 300, tags }: GetOptions = {}) {
   const url = new URL(`${siteConfig.apiUrl}/${path.replace(/^\/+/, "")}`);
   for (const [key, value] of Object.entries(query ?? {})) {
     if (value !== undefined && value !== "") url.searchParams.set(key, String(value));
@@ -39,7 +41,7 @@ export async function apiGet<T>(path: string, { query, revalidate = 300 }: GetOp
   try {
     res = await fetch(url, {
       headers: { Accept: "application/json", "X-Skip-Tracking": "1" },
-      next: { revalidate },
+      next: { revalidate, tags },
       signal: AbortSignal.timeout(15_000),
     });
   } catch (error) {

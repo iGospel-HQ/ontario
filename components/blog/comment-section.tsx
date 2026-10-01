@@ -9,9 +9,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
+type ShownComment = Comment & { pending?: boolean };
+
 /**
- * Comments arrive server-rendered with the post; new comments are appended
- * locally because the cached post page only refreshes periodically.
+ * Approved comments arrive server-rendered with the post. A newly posted
+ * comment needs approval in the admin, so it's shown only to its author,
+ * marked as awaiting moderation; once approved, Django refreshes the page.
  */
 export function CommentSection({
   comments: initialComments = [],
@@ -20,7 +23,7 @@ export function CommentSection({
   comments?: Comment[];
   postId: string;
 }) {
-  const [comments, setComments] = useState(initialComments);
+  const [comments, setComments] = useState<ShownComment[]>(initialComments);
   const [name, setName] = useState("");
   const [comment, setComment] = useState("");
 
@@ -35,7 +38,7 @@ export function CommentSection({
       return res.data;
     },
     onSuccess: (created) => {
-      setComments((current) => [...current, { ...created, name: created.name ?? name }]);
+      setComments((current) => [...current, { ...created, name: created.name ?? name, pending: true }]);
       setName("");
       setComment("");
     },
@@ -69,6 +72,9 @@ export function CommentSection({
                       {new Date(item.created_at).toLocaleDateString()}
                     </time>
                   </p>
+                  {item.pending && (
+                    <p className="mt-1 text-[13px] italic text-accent">Your comment is awaiting moderation.</p>
+                  )}
                   <p className="mt-2 text-[15px] leading-relaxed text-[#444]">{item.content}</p>
                 </div>
               </li>
