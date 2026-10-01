@@ -88,9 +88,9 @@ export default function SignUpClient() {
       {/* Sign Up Card */}
       <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
         <div className="p-8">
-          <h2 className="text-2xl font-bold text-center text-gray-900 mb-6">
+          <h1 className="text-2xl font-bold text-center text-gray-900 mb-6">
             Create an account
-          </h2>
+          </h1>
 
           {/* Social Buttons */}
           {/* <div className="grid grid-cols-2 gap-4 mb-6">

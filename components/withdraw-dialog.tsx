@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import icon from "@/public/icon.png";
 import {
   Dialog,
   DialogContent,
@@ -179,7 +181,7 @@ export function WithdrawDialog({ open, onOpenChange, bank }: any) {
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle className="text-center">
-              <img src="/icon.png" alt="icon" className="mx-auto h-20 mb-5 bg-black p-3 rounded-full" />
+              <Image src={icon} alt="" className="mx-auto h-20 w-auto mb-5 bg-black p-3 rounded-full" />
               {resultStatus === "success"
                 ? "Withdrawal Successful 🎉"
                 : "Withdrawal Failed"}

@@ -86,9 +86,9 @@ export default function SignInClient() {
       {/* Login Card */}
       <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
         <div className="p-8">
-          <h2 className="text-2xl font-bold text-center text-gray-900 mb-6">
+          <h1 className="text-2xl font-bold text-center text-gray-900 mb-6">
             Login to your account
-          </h2>
+          </h1>
 
           {/* Server Error */}
           {form.formState.errors.root && (

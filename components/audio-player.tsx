@@ -1,6 +1,7 @@
 // app/components/AudioPlayer.tsx
 "use client";
 
+import Image from "next/image";
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -84,9 +85,11 @@ export function AudioPlayer() {
           <div className="flex items-center justify-between gap-3">
             {/* Track Info – Compact */}
             <div className="flex items-center gap-3 flex-1 min-w-0">
-              <img
+              <Image
                 src={currentTrack.cover || "/placeholder.svg"}
                 alt={currentTrack.title}
+                width={40}
+                height={40}
                 className="w-10 h-10 rounded object-cover"
               />
               <div className="truncate">

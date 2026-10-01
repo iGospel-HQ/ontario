@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import icon from "@/public/icon.png";
 import {
   LayoutDashboard,
   LogOut,
@@ -82,7 +84,7 @@ export function DashboardSidebar({ onLogoutClick }: DashboardSidebarProps) {
       <SidebarHeader>
         <Link href="/dashboard" className="flex items-center gap-2 py-1">
           <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            <img src="/icon.png" alt="logo" />
+            <Image src={icon} alt="iGospel" />
           </div>
           <span className="text-lg font-semibold group-data-[collapsible=icon]:hidden">
             IGospel

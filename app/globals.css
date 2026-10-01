@@ -108,3 +108,11 @@
 .post-content p a {
   color: var(--accent) !important;
 }
+
+/* Site background. The image is the visible top-left 2560x1600 crop of the
+   original 8K texture, shown at natural size like before. */
+.site-bg {
+  background-image: url(/bg-back.jpg);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}

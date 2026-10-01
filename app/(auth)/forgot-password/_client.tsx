@@ -141,9 +141,9 @@ export default function VerifyAccountClient() {
       {/* Verify Card */}
       <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
         <div className="p-8">
-          <h2 className="text-2xl font-bold text-center text-gray-900 mb-2">
+          <h1 className="text-2xl font-bold text-center text-gray-900 mb-2">
             Reset Your password
-          </h2>
+          </h1>
           <p className="text-gray-600 text-base text-center mb-8">
             Follow the steps to change your password
           </p>

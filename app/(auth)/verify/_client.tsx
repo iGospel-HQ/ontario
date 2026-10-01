@@ -89,9 +89,9 @@ export default function VerifyAccountClient() {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
               <Mail className="w-8 h-8 text-gray-600" />
             </div>
-            <h2 className="text-md md:text-2xl font-bold text-gray-900 mb-2">
+            <h1 className="text-md md:text-2xl font-bold text-gray-900 mb-2">
               Verify account
-            </h2>
+            </h1>
             <p className="text-gray-600 text-sm md:text-base">
               A four digit pin has been sent to your email account,
               <br />
