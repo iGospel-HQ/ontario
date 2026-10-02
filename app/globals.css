@@ -240,6 +240,44 @@
 .entry-content strong { color: var(--text); }
 .entry-content hr { border-color: var(--rule); }
 
+/* Terms / Privacy body text. */
+.legal-body {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #3a3a3a;
+}
+.legal-body > * + * { margin-top: 1rem; }
+.legal-body h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 1.5rem;
+}
+.legal-body h3:first-child { margin-top: 0; }
+.legal-body ul { display: grid; gap: 0.5rem; }
+.legal-body ul > li {
+  position: relative;
+  padding-left: 1.4rem;
+}
+.legal-body ul > li::before {
+  content: "";
+  position: absolute;
+  left: 0.2rem;
+  top: 0.72em;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--accent);
+}
+.legal-body strong { color: var(--text); }
+.legal-body a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.legal-body a:hover { color: var(--text); }
+
 /* Post "Listen Now" player: seek bar filled up to --progress. */
 .seek-range {
   -webkit-appearance: none;
