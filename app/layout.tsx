@@ -35,7 +35,12 @@ export const metadata: Metadata = {
   applicationName: siteConfig.name,
   icons: {
     icon: [{ url: "/icon-32x32.png" }],
-    apple: "/icon.png",
+    apple: "/apple-icon.png",
+  },
+  appleWebApp: {
+    capable: true,
+    title: siteConfig.name,
+    statusBarStyle: "black-translucent",
   },
   alternates: {
     types: { "application/rss+xml": [{ url: "/feed.xml", title: `${siteConfig.name} RSS` }] },
@@ -55,6 +60,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#000000",
+  // Draw under the notch / home indicator; the app bars pad with safe-area insets.
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

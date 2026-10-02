@@ -41,11 +41,55 @@ export function AudioPlayer() {
 
   return (
     <AnimatePresence>
+      {/* Phones: compact mini player floating above the tab bar */}
       <motion.div
+        key="mini"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 20 }}
-        className="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-800 shadow-2xl z-50"
+        className="mobile-miniplayer fixed inset-x-2 z-50 overflow-hidden rounded-2xl bg-neutral-900/95 text-white shadow-2xl backdrop-blur-xl md:hidden"
+        style={{ bottom: "calc(var(--tabbar-h) + 8px)" }}
+      >
+        <div className="flex items-center gap-3 p-2 pr-1">
+          <Image
+            src={currentTrack.cover || "/placeholder.svg"}
+            alt=""
+            width={44}
+            height={44}
+            className="size-11 rounded-lg object-cover"
+          />
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold">{currentTrack.title}</p>
+            <p className="truncate text-xs text-white/60">{currentTrack.artist}</p>
+          </div>
+          <button
+            onClick={togglePlay}
+            aria-label={isPlaying ? "Pause" : "Play"}
+            className="flex size-10 items-center justify-center rounded-full active:bg-white/15"
+          >
+            {isPlaying ? <Pause className="size-6 fill-current" /> : <Play className="size-6 fill-current" />}
+          </button>
+          <button
+            onClick={closePlayer}
+            aria-label="Close player"
+            className="flex size-10 items-center justify-center rounded-full text-white/60 active:bg-white/15"
+          >
+            <X className="size-5" />
+          </button>
+        </div>
+        {/* Progress */}
+        <div className="absolute inset-x-3 bottom-0 h-0.5 rounded-full bg-white/15" aria-hidden="true">
+          <div className="h-full rounded-full bg-accent" style={{ width: `${progress}%` }} />
+        </div>
+      </motion.div>
+
+      {/* Tablet / desktop: full-width bar */}
+      <motion.div
+        key="bar"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 20 }}
+        className="fixed bottom-0 left-0 right-0 hidden bg-black border-t border-gray-800 shadow-2xl z-50 md:block"
       >
         <div className="max-w-7xl mx-auto px-4 py-2 relative">
           {/* Close Button – Top Right Corner */}

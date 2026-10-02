@@ -16,13 +16,13 @@ function FooterTitle({ children }: { children: ReactNode }) {
 
 const linkClass = "text-white/70 hover:text-accent hover:pl-1 transition-all";
 
-/** Dark footer with widget columns and a copyright bar. */
+/** Dark footer with widget columns and a copyright bar (phones get only the bar; links live in the More sheet). */
 export function Footer() {
   const music = mainMenu.find((item) => item.href === "/music")?.children ?? [];
 
   return (
     <footer className="bg-topbar text-sm text-white/70">
-      <div className="grid grid-cols-1 gap-10 px-6 py-12 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="hidden gap-10 px-6 py-12 md:grid md:grid-cols-2 lg:grid-cols-4">
         {/* About */}
         <div>
           <Link href="/" className="mb-4 block w-fit">

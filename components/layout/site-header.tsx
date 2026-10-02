@@ -8,11 +8,11 @@ import { MainMenu } from "@/components/layout/main-menu";
 import { SocialIcons } from "@/components/layout/social-icons";
 import { TodayDate } from "@/components/layout/today-date";
 
-/** Classic blog header: top bar, branding row with search, primary menu. */
+/** Classic blog header: top bar, branding row with search, primary menu (md and up). */
 export function SiteHeader() {
   return (
     <>
-      <header>
+      <header className="hidden md:block">
         {/* Top bar */}
         <div className="bg-topbar text-[12px] text-white/75">
           <div className="flex items-center justify-between gap-4 px-4 md:px-6 h-9">
