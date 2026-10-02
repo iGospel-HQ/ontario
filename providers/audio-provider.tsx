@@ -1,17 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { useAudioPlayer } from "@/store/use-audio-player";
 
+/** The single <audio> element behind the global player; registered via ref callback. */
 export function AudioProvider() {
   const { setAudioRef, audioRef, updateProgress } = useAudioPlayer();
-  const audioElement = useRef<HTMLAudioElement | null>(null);
-
-  useEffect(() => {
-    if (audioElement.current) {
-      setAudioRef(audioElement.current);
-    }
-  }, []);
 
   return (
     <audio

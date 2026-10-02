@@ -1,4 +1,5 @@
 import * as React from 'react'
+import Link from 'next/link'
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -46,23 +47,23 @@ function PaginationLink({
   className,
   isActive,
   size = 'icon',
+  href,
   ...props
 }: PaginationLinkProps) {
-  return (
-    <a
-      aria-current={isActive ? 'page' : undefined}
-      data-slot="pagination-link"
-      data-active={isActive}
-      className={cn(
-        buttonVariants({
-          variant: isActive ? 'outline' : 'ghost',
-          size,
-        }),
-        className,
-      )}
-      {...props}
-    />
-  )
+  const shared = {
+    'aria-current': isActive ? ('page' as const) : undefined,
+    'data-slot': 'pagination-link',
+    'data-active': isActive,
+    className: cn(
+      buttonVariants({
+        variant: isActive ? 'outline' : 'ghost',
+        size,
+      }),
+      className,
+    ),
+  }
+  // Internal pages navigate client-side via next/link.
+  return href ? <Link href={href} {...shared} {...props} /> : <a {...shared} {...props} />
 }
 
 function PaginationPrevious({

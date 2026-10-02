@@ -34,7 +34,15 @@
   --input: #ffffff;
   --ring: #ff375f;
 
-  --radius: 0.5rem;
+  --radius: 0.25rem;
+
+  /* WordPress-style magazine palette */
+  --text: #222222;
+  --meta: #888888;
+  --rule: #e6e6e6;
+  --shade: #f5f5f5;
+  --topbar: #111111;
+  --menu: var(--accent);
 
   --sidebar: var(--secondary);
   --sidebar-background: var(--secondary);
@@ -54,8 +62,15 @@
 }
 
 @theme inline {
-  --font-sans: "Geist", "Geist Fallback";
-  --font-mono: "Geist Mono", "Geist Mono Fallback";
+  --font-sans: var(--font-open-sans), "Helvetica Neue", Arial, sans-serif;
+  --font-heading: var(--font-lora), Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --color-text: var(--text);
+  --color-meta: var(--meta);
+  --color-rule: var(--rule);
+  --color-shade: var(--shade);
+  --color-topbar: var(--topbar);
+  --color-menu: var(--menu);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -102,9 +117,135 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    line-height: 1.3;
+  }
+  a {
+    transition: color 0.2s ease, background-color 0.2s ease;
   }
 }
 
-.post-content p a {
-  color: var(--accent) !important;
+/* ---- WordPress-style blog components ------------------------------------ */
+
+/* Sidebar widget heading: dark label sitting on a rule. */
+.widget-title {
+  font-family: var(--font-open-sans), sans-serif;
+  border-bottom: 2px solid var(--text);
+  margin-bottom: 1.25rem;
+  line-height: 1;
+}
+.widget-title > span {
+  display: inline-block;
+  background: var(--text);
+  color: #fff;
+  padding: 8px 12px 7px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Homepage block heading: same idea in the brand colour. */
+.section-title {
+  font-family: var(--font-open-sans), sans-serif;
+  border-bottom: 2px solid var(--accent);
+  margin-bottom: 1.5rem;
+  line-height: 1;
+}
+.section-title > span {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  padding: 9px 14px 8px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Post meta line: "By Author · Oct 1, 2026". */
+.entry-meta {
+  font-size: 12px;
+  color: var(--meta);
+  letter-spacing: 0.02em;
+}
+.entry-meta a:hover { color: var(--accent); }
+
+/* Category label on post thumbnails. */
+.cat-label {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-open-sans), sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  line-height: 1;
+}
+
+.read-more {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.read-more:hover { color: var(--text); }
+
+/* Post title links: dark, brand colour on hover. */
+.entry-title a { color: var(--text); }
+.entry-title a:hover, .group:hover .entry-title { color: var(--accent); }
+
+/* Article body typography (the CMS HTML). */
+.entry-content {
+  font-size: 16px;
+  line-height: 1.85;
+  color: #333;
+}
+.entry-content > * + * { margin-top: 1.25em; }
+.entry-content h2 { font-size: 1.6em; margin-top: 1.6em; }
+.entry-content h3 { font-size: 1.3em; margin-top: 1.5em; }
+.entry-content h4 { font-size: 1.1em; margin-top: 1.4em; }
+.entry-content a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.entry-content a:hover { color: var(--text); }
+.entry-content ul { list-style: disc; padding-left: 1.5em; }
+.entry-content ol { list-style: decimal; padding-left: 1.5em; }
+.entry-content li + li { margin-top: 0.4em; }
+.entry-content blockquote {
+  border-left: 4px solid var(--accent);
+  background: var(--shade);
+  padding: 1em 1.25em;
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 1.1em;
+}
+.entry-content img,
+.entry-content video {
+  max-width: 100%;
+  height: auto;
+}
+/* Embeds (YouTube, Audiomack) keep the height the CMS gives them. */
+.entry-content iframe { max-width: 100%; }
+.entry-content strong { color: var(--text); }
+.entry-content hr { border-color: var(--rule); }
+
+
+/* Site background. The image is the visible top-left 2560x1600 crop of the
+   original 8K texture, shown at natural size like before. */
+.site-bg {
+  background-color: #eceef1;
+  background-image: url(/bg-back.jpg);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }

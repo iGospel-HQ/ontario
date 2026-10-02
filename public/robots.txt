@@ -1,3 +1,0 @@
-User-agent: *
-Disallow: 
-Sitemap: https://www.igospel.com.ng/sitemap.xml

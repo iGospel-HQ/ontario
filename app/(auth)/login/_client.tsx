@@ -11,7 +11,6 @@ import { AlertCircleIcon, Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Form,
   FormControl,
@@ -53,7 +52,6 @@ export default function SignInClient() {
       return res.data.data;
     },
     onSuccess: (data) => {
-      console.log("Login successful:", data);
       setTokens(data.access, data.refresh);
       setUser({
         user_id: data.user_id,
@@ -86,9 +84,9 @@ export default function SignInClient() {
       {/* Login Card */}
       <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
         <div className="p-8">
-          <h2 className="text-2xl font-bold text-center text-gray-900 mb-6">
+          <h1 className="text-2xl font-bold text-center text-gray-900 mb-6">
             Login to your account
-          </h2>
+          </h1>
 
           {/* Server Error */}
           {form.formState.errors.root && (

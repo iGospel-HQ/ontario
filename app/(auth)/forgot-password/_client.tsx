@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Mail, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -141,9 +141,9 @@ export default function VerifyAccountClient() {
       {/* Verify Card */}
       <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
         <div className="p-8">
-          <h2 className="text-2xl font-bold text-center text-gray-900 mb-2">
+          <h1 className="text-2xl font-bold text-center text-gray-900 mb-2">
             Reset Your password
-          </h2>
+          </h1>
           <p className="text-gray-600 text-base text-center mb-8">
             Follow the steps to change your password
           </p>
@@ -230,8 +230,8 @@ export default function VerifyAccountClient() {
                                   !field.value[index] &&
                                   index > 0
                                 ) {
-                                  const prevInput =
-                                    e.target.previousElementSibling;
+                                  const prevInput = (e.target as HTMLElement)
+                                    .previousElementSibling as HTMLInputElement | null;
                                   prevInput?.focus();
                                 }
                               }}

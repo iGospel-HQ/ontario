@@ -1,50 +1,66 @@
-"use client";
+import { getHomepage } from "@/lib/api/queries";
+import { pageMetadata } from "@/lib/seo";
+import { absoluteUrl, siteConfig } from "@/lib/site";
+import { HeroSection } from "@/components/home/hero-section";
+import { HomeInfoSection } from "@/components/home/home-info-section";
+import { QuickLinks } from "@/components/home/quick-links";
+import { JsonLd } from "@/components/shared/json-ld";
 
-import { Navbar } from "@/components/navbar";
-import { Footer } from "@/components/footer";
-import { HeroSection } from "@/components/hero-section";
-import { QuickLinks } from "@/components/quick-links";
-import { FeaturedSongs } from "@/components/featured-songs";
-import { FeaturedPlaylists } from "@/components/featured-playlists";
-import { LatestBlog } from "@/components/latest-blog";
-import { FeaturedCarousel } from "@/components/featured-carousel";
-import HomeInfoSection from "@/components/hero-info-section";
-import { useQuery } from "@tanstack/react-query";
-import api from "@/lib/api-client";
-import { HomePageSkeleton } from "@/components/homepage-loader";
+// Rebuilt in the background at most every 5 minutes.
+export const revalidate = 300;
 
+export const metadata = pageMetadata({
+  title: "iGospel - Blog & Music Platform",
+  absoluteTitle: true,
+  description: "Discover curated music, artists, and editorial content all in one place",
+  path: "/",
+});
 
+export default async function HomePage() {
+  const data = await getHomepage();
 
-export default function HomePage() {
-  const { data , error, isPending, isRefetching } = useQuery({
-    queryKey: ["homepage-data"],
-    queryFn: async () => {
-     const res = await api.get("/blog/homepage/")
-      return res.data;
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-  })
-
-  if (isPending && !isRefetching) {
-    return <HomePageSkeleton />;
-  }
-
-  const latestPosts = data?.latest_posts || [];
-  const featuredPosts = data?.featured_posts || [];
-  const randomPosts = data?.random_posts || [];
-  const trendingPosts = data?.trending_posts || [];
-  const playlists = data?.igospel_playlist || [];
   return (
-    <>
-      <main className="min-h-screen">
-        <HeroSection post={featuredPosts[0]}/>
-        {/* <FeaturedCarousel /> */}
-        <QuickLinks />
-        <HomeInfoSection latestPosts={latestPosts} featuredPosts={featuredPosts} randomPosts={randomPosts} playlists={playlists} />
-        {/* <FeaturedPlaylists /> */}
-        {/* <FeaturedSongs /> */}
-        {/* <LatestBlog /> */}
-      </main>
-    </>
+    <div className="min-h-screen">
+      <JsonLd
+        data={[
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": absoluteUrl("/#organization"),
+            name: siteConfig.legalName,
+            alternateName: siteConfig.name,
+            url: absoluteUrl("/"),
+            logo: absoluteUrl(siteConfig.logo),
+            email: siteConfig.emails.contact,
+            sameAs: Object.values(siteConfig.social),
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": absoluteUrl("/#website"),
+            name: siteConfig.name,
+            url: absoluteUrl("/"),
+            description: siteConfig.description,
+            publisher: { "@id": absoluteUrl("/#organization") },
+            potentialAction: {
+              "@type": "SearchAction",
+              target: `${absoluteUrl("/search")}?q={search_term_string}`,
+              "query-input": "required name=search_term_string",
+            },
+          },
+        ]}
+      />
+      <h1 className="sr-only">
+        {siteConfig.name} — {siteConfig.tagline}
+      </h1>
+      <HeroSection post={data?.featured_posts[0]} />
+      <QuickLinks />
+      <HomeInfoSection
+        latestPosts={data?.latest_posts ?? []}
+        featuredPosts={data?.featured_posts ?? []}
+        randomPosts={data?.random_posts ?? []}
+        playlist={data?.igospel_playlist ?? []}
+      />
+    </div>
   );
 }

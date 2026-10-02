@@ -11,7 +11,6 @@ import { AlertCircleIcon, Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Form,
   FormControl,
@@ -62,7 +61,6 @@ export default function SignUpClient() {
       return res.data;
     },
     onSuccess: (res) => {
-      console.log("Registration successful:", res);
       router.push("/verify?email=" + encodeURIComponent(res.data.email));
       // Redirect to sign-in or dashboard
     },
@@ -88,9 +86,9 @@ export default function SignUpClient() {
       {/* Sign Up Card */}
       <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
         <div className="p-8">
-          <h2 className="text-2xl font-bold text-center text-gray-900 mb-6">
+          <h1 className="text-2xl font-bold text-center text-gray-900 mb-6">
             Create an account
-          </h2>
+          </h1>
 
           {/* Social Buttons */}
           {/* <div className="grid grid-cols-2 gap-4 mb-6">
@@ -229,7 +227,7 @@ export default function SignUpClient() {
 
               {/* Terms */}
               <p className="text-xs text-gray-600 text-center">
-                By clicking on sign up, you agree to iGospel music's{" "}
+                By clicking on sign up, you agree to iGospel music&apos;s{" "}
                 <Link href="/terms" className="text-red-600 hover:underline">
                   Terms of Condition Of Use
                 </Link>

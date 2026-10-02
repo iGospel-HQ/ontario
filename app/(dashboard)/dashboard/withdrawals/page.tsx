@@ -1,5 +1,5 @@
-import { WithdrawalSection } from "@/components/withdrawal-section"
-import { WithdrawalsTable } from "@/components/withdrawals-table"
+import { WithdrawalSection } from "@/components/dashboard/withdrawal-section"
+import { WithdrawalsTable } from "@/components/dashboard/withdrawals-table"
 
 export default function WithdrawalsPage() {
   return (
