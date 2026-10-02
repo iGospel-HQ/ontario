@@ -5,6 +5,8 @@ import { AudioPlayer } from "@/components/layout/audio-player";
 import { BackToTop } from "@/components/layout/back-to-top";
 import { Footer } from "@/components/layout/footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { MobileAppBar } from "@/components/layout/mobile/mobile-app-bar";
+import { MobileTabBar } from "@/components/layout/mobile/mobile-tab-bar";
 
 // Widths the Next image optimizer accepts (default deviceSizes).
 const OPTIMIZER_WIDTHS = [640, 750, 828, 1080, 1200, 1920, 2048, 3840];
@@ -73,12 +75,15 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
       >
         Skip to content
       </a>
-      <div className="mx-auto max-w-[1200px] bg-white shadow-[0_0_25px_rgba(0,0,0,0.08)]">
+      {/* Phones: the white page fills the screen (no background peeking below short pages). */}
+      <div className="mx-auto flex min-h-dvh max-w-[1200px] flex-col bg-white shadow-[0_0_25px_rgba(0,0,0,0.08)] md:block md:min-h-0">
+        <MobileAppBar />
         <SiteHeader />
-        <main id="main-content" className="min-h-[60vh]">
+        <main id="main-content" className="min-h-[60vh] flex-1">
           {children}
         </main>
         <Footer />
+        <MobileTabBar />
       </div>
       <AudioPlayer />
       <BackToTop />

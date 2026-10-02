@@ -240,6 +240,49 @@
 .entry-content strong { color: var(--text); }
 .entry-content hr { border-color: var(--rule); }
 
+/* --- Phone "app" chrome ------------------------------------------------------
+   --tabbar-h / --miniplayer-h are 0 unless the bottom tab bar / mini player is
+   on the page, so fixed elements (player, floating buttons) can stack above it. */
+:root {
+  --tabbar-h: 0px;
+  --miniplayer-h: 0px;
+}
+@media (max-width: 767.98px) {
+  :root:has(.mobile-tabbar) { --tabbar-h: calc(60px + env(safe-area-inset-bottom)); }
+  :root:has(.mobile-miniplayer) { --miniplayer-h: 68px; }
+  body {
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
+  }
+}
+.mobile-nav-spacer { height: calc(var(--tabbar-h) + var(--miniplayer-h)); }
+
+.tab-item {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #8a8a8a;
+  transition: color 0.15s;
+}
+.tab-item:active .tab-icon { transform: scale(0.88); }
+.tab-icon {
+  display: flex;
+  height: 30px;
+  width: 52px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  transition: background-color 0.2s, transform 0.15s;
+}
+.tab-item-active { color: var(--accent); }
+.tab-item-active .tab-icon { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+
 /* Terms / Privacy body text. */
 .legal-body {
   font-size: 16px;
