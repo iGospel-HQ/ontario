@@ -1,4 +1,4 @@
-// Response shapes of the iGospel Django API (https://api.igospels.com.ng/v1).
+// Response shapes of the iGospel Django API (https://api.igospel.ng/v1).
 
 export interface Paginated<T> {
   count: number;

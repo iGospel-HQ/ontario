@@ -16,4 +16,4 @@ pnpm lint
 | Name | Default | Purpose |
 | --- | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | `https://www.igospel.com.ng` | Canonical site origin (metadata, sitemap, RSS, JSON-LD) |
-| `NEXT_PUBLIC_API_URL` | `https://api.igospels.com.ng/v1` | Django API base URL |
+| `NEXT_PUBLIC_API_URL` | `https://api.igospel.ng/v1` | Django API base URL |
