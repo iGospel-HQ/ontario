@@ -17,6 +17,7 @@ export function AudioProvider() {
         const audio = audioRef;
         if (audio) updateProgress(audio.currentTime, audio.duration);
       }}
+      onEnded={() => useAudioPlayer.setState({ isPlaying: false })}
     />
   );
 }
