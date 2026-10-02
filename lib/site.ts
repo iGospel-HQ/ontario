@@ -7,7 +7,7 @@ export const siteConfig = {
   description:
     "Discover curated gospel music, artists, and editorial content all in one place.",
   url: trimSlash(process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.igospel.com.ng"),
-  apiUrl: trimSlash(process.env.NEXT_PUBLIC_API_URL ?? "https://api.igospels.com.ng/v1"),
+  apiUrl: trimSlash(process.env.NEXT_PUBLIC_API_URL ?? "https://api.igospel.ng/v1"),
   locale: "en_US",
   logo: "/logo.png",
   ogImage: { url: "/og-image.png", width: 1200, height: 630 },

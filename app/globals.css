@@ -240,6 +240,103 @@
 .entry-content strong { color: var(--text); }
 .entry-content hr { border-color: var(--rule); }
 
+/* Terms / Privacy body text. */
+.legal-body {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #3a3a3a;
+}
+.legal-body > * + * { margin-top: 1rem; }
+.legal-body h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 1.5rem;
+}
+.legal-body h3:first-child { margin-top: 0; }
+.legal-body ul { display: grid; gap: 0.5rem; }
+.legal-body ul > li {
+  position: relative;
+  padding-left: 1.4rem;
+}
+.legal-body ul > li::before {
+  content: "";
+  position: absolute;
+  left: 0.2rem;
+  top: 0.72em;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--accent);
+}
+.legal-body strong { color: var(--text); }
+.legal-body a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.legal-body a:hover { color: var(--text); }
+
+/* Post "Listen Now" player: seek bar filled up to --progress. */
+.seek-range {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 6px;
+  border-radius: 9999px;
+  cursor: pointer;
+  background: linear-gradient(to right, var(--accent) var(--progress, 0%), rgb(255 255 255 / 0.2) var(--progress, 0%));
+}
+.seek-range:disabled { cursor: default; }
+.seek-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.4);
+  transition: transform 0.15s;
+}
+.seek-range::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 0;
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.4);
+}
+.seek-range:hover::-webkit-slider-thumb { transform: scale(1.2); }
+.seek-range:disabled::-webkit-slider-thumb { opacity: 0; }
+.seek-range:disabled::-moz-range-thumb { opacity: 0; }
+.seek-range:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+/* Equalizer bars on the playing track. */
+.eq {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+.eq > span {
+  width: 3px;
+  height: 100%;
+  border-radius: 1px;
+  background: var(--accent);
+  transform-origin: bottom;
+  animation: eq-bounce 0.9s ease-in-out infinite;
+}
+.eq > span:nth-child(2) { animation-delay: -0.3s; }
+.eq > span:nth-child(3) { animation-delay: -0.6s; }
+@keyframes eq-bounce {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .eq > span { animation: none; transform: scaleY(0.7); }
+}
+
 
 /* Site background. The image is the visible top-left 2560x1600 crop of the
    original 8K texture, shown at natural size like before. */

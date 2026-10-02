@@ -6,6 +6,7 @@ import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+import { isAxiosError } from "axios";
 import api from "@/lib/api-client";
 import { siteConfig } from "@/lib/site";
 import { Button } from "@/components/ui/button";
@@ -87,8 +88,10 @@ export function SupportButton({
           `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`,
         );
       }
-    } catch {
-      toast.error("Something went wrong. Please try again.");
+    } catch (error) {
+      // Show the API's reason (e.g. payments unavailable) when it gives one.
+      const message = isAxiosError<{ message?: string }>(error) ? error.response?.data?.message : undefined;
+      toast.error(message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }

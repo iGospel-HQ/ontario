@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const apiUrl = new URL(process.env.NEXT_PUBLIC_API_URL ?? "https://api.igospels.com.ng/v1");
+const apiUrl = new URL(process.env.NEXT_PUBLIC_API_URL ?? "https://api.igospel.ng/v1");
 // Local Django (http://127.0.0.1:8000) serves uploads from /media/ instead of S3.
 const isLocalApi = ["127.0.0.1", "localhost"].includes(apiUrl.hostname);
 
