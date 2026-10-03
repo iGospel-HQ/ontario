@@ -182,7 +182,7 @@ export default async function BlogDetailPage({ params }: Props) {
             <div className="flex justify-center my-10">
               <SupportButton
                 artistId={post.artists[0]?.id}
-                creatorId={support?.creator_id}
+                creatorId={support?.creator_id ?? post.creator_id}
                 label={support?.message}
               />
             </div>
@@ -226,7 +226,7 @@ export default async function BlogDetailPage({ params }: Props) {
             <div className="flex justify-center my-12">
               <SupportButton
                 artistId={post.artists[0]?.id}
-                creatorId={support?.creator_id}
+                creatorId={support?.creator_id ?? post.creator_id}
                 label={support?.message}
               />
             </div>

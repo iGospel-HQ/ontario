@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
@@ -34,6 +34,9 @@ const supportSchema = z.object({
 
 type SupportFormValues = z.infer<typeof supportSchema>;
 
+/** postMessage type the /support/callback popup sends back after verifying. */
+export const PAYMENT_MESSAGE = "igospel:support-payment";
+
 /** "Support This Blog/Artist" button and its payment dialog. */
 export function SupportButton({
   artistId,
@@ -41,11 +44,22 @@ export function SupportButton({
   label,
 }: {
   artistId?: string;
-  creatorId?: string;
+  creatorId?: string | null;
   label?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // The checkout popup reports the verified result back to this page.
+  useEffect(() => {
+    const onMessage = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin || event.data?.type !== PAYMENT_MESSAGE) return;
+      if (event.data.status === "success") toast.success("Thank you! Your support was received.");
+      else if (event.data.status === "failed") toast.error("Your payment could not be confirmed.");
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
 
   const form = useForm<SupportFormValues>({
     resolver: zodResolver(supportSchema),
