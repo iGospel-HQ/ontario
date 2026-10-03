@@ -88,7 +88,8 @@ export interface Comment {
 
 export interface SupportStatus {
   support: boolean;
-  creator_id?: string;
+  /** Profile ID that receives support: the artist's account, else the iGospel account. */
+  creator_id?: string | null;
   message?: string;
 }
 
@@ -109,7 +110,7 @@ export interface PostDetail {
   tracks: PostTrack[];
   genres: Genre[];
   support_status?: SupportStatus;
-  creator_id?: string;
+  creator_id?: string | null;
   comments: Comment[];
   total_views: number;
   total_visitors: number;
