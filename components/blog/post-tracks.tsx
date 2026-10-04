@@ -5,7 +5,7 @@ import { Download, Music2, Pause, Play, RotateCcw, RotateCw } from "lucide-react
 import { useAudioPlayer } from "@/store/use-audio-player";
 import { formatTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import type { PostTrack } from "@/types/api";
+import type { PostAlbum, PostTrack } from "@/types/api";
 
 const SKIP_SECONDS = 10;
 
@@ -14,8 +14,51 @@ function downloadHref(track: PostTrack) {
   return track.is_downloadable ? track.download_url || track.mp3_file || null : null;
 }
 
-/** "Listen Now" player for the tracks attached to a post. Drives the global audio player. */
-export function PostTracks({ tracks }: { tracks: PostTrack[] }) {
+/** An album shown as one player card; tracks without art use the album cover. */
+interface Collection {
+  kind: "Album";
+  title: string;
+}
+
+/**
+ * "Listen Now" section of a post: one player card for the tracks attached
+ * directly, and one per attached album (its full tracklist). Drives the
+ * global audio player.
+ */
+export function PostTracks({ tracks, albums = [] }: { tracks: PostTrack[]; albums?: PostAlbum[] }) {
+  // A track attached directly and via one of the albums is shown with the album.
+  const albumTrackIds = new Set(albums.flatMap((album) => album.tracks.map((t) => t.id)));
+  const singles = tracks.filter((t) => !albumTrackIds.has(t.id));
+  const albumGroups = albums
+    .filter((album) => album.tracks.length > 0)
+    .map((album) => ({
+      album,
+      tracks: album.tracks.map((t) => ({
+        ...t,
+        image: t.image ?? album.cover_image,
+        artist_name: t.artist_name ?? album.artist_name,
+      })),
+    }));
+
+  if (singles.length === 0 && albumGroups.length === 0) return null;
+
+  return (
+    <section className="my-10">
+      <h2 className="widget-title">
+        <span>Listen Now</span>
+      </h2>
+      <div className="space-y-6">
+        {singles.length > 0 && <TrackCard tracks={singles} />}
+        {albumGroups.map(({ album, tracks: albumTracks }) => (
+          <TrackCard key={album.id} tracks={albumTracks} collection={{ kind: "Album", title: album.title }} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/** Player card: featured (current or first) track with controls, plus a tracklist when there are several. */
+function TrackCard({ tracks, collection }: { tracks: PostTrack[]; collection?: Collection }) {
   const playTrack = useAudioPlayer((s) => s.playTrack);
   const togglePlay = useAudioPlayer((s) => s.togglePlay);
   const seek = useAudioPlayer((s) => s.seek);
@@ -23,8 +66,6 @@ export function PostTracks({ tracks }: { tracks: PostTrack[] }) {
   const isPlaying = useAudioPlayer((s) => s.isPlaying);
   const currentTime = useAudioPlayer((s) => s.currentTime);
   const duration = useAudioPlayer((s) => s.duration);
-
-  if (tracks.length === 0) return null;
 
   const play = (track: PostTrack) => {
     if (currentTrack?.id === track.id) {
@@ -50,165 +91,166 @@ export function PostTracks({ tracks }: { tracks: PostTrack[] }) {
   const totalLabel = canSeek ? formatTime(duration) : featured.duration || "--:--";
   const featuredDownload = downloadHref(featured);
 
+  const countLabel = tracks.length > 1 ? `${tracks.length} tracks` : "1 track";
+  const idleLabel = collection
+    ? `${collection.kind} · ${collection.title} · ${countLabel}`
+    : tracks.length > 1
+      ? countLabel
+      : "Single";
+
   return (
-    <section className="my-10">
-      <h2 className="widget-title">
-        <span>Listen Now</span>
-      </h2>
+    <div className="relative overflow-hidden rounded-2xl bg-neutral-950 text-white shadow-xl">
+      {/* Blurred cover as backdrop */}
+      {featured.image && (
+        <Image
+          src={featured.image}
+          alt=""
+          fill
+          sizes="(min-width: 1024px) 66vw, 100vw"
+          className="scale-125 object-cover opacity-40 blur-3xl"
+          aria-hidden="true"
+        />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/60 to-black/90" />
 
-      <div className="relative overflow-hidden rounded-2xl bg-neutral-950 text-white shadow-xl">
-        {/* Blurred cover as backdrop */}
-        {featured.image && (
-          <Image
-            src={featured.image}
-            alt=""
-            fill
-            sizes="(min-width: 1024px) 66vw, 100vw"
-            className="scale-125 object-cover opacity-40 blur-3xl"
-            aria-hidden="true"
-          />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/60 to-black/90" />
+      <div className="relative flex flex-col gap-6 p-5 sm:flex-row sm:items-center sm:p-6">
+        <Cover track={featured} playing={isFeaturedPlaying} className="mx-auto size-40 sm:mx-0 sm:size-36" />
 
-        <div className="relative flex flex-col gap-6 p-5 sm:flex-row sm:items-center sm:p-6">
-          <Cover track={featured} playing={isFeaturedPlaying} className="mx-auto size-40 sm:mx-0 sm:size-36" />
+        <div className="min-w-0 flex-1">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
+            {isCurrent ? (isPlaying ? "Now playing" : "Paused") : idleLabel}
+          </p>
+          <h3 className="mt-1 truncate text-xl font-bold sm:text-2xl">{featured.title}</h3>
+          {featured.artist_name && (
+            <p className="truncate text-sm text-white/70">{featured.artist_name}</p>
+          )}
 
-          <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
-              {isCurrent ? (isPlaying ? "Now playing" : "Paused") : tracks.length > 1 ? `${tracks.length} tracks` : "Single"}
-            </p>
-            <h3 className="mt-1 truncate text-xl font-bold sm:text-2xl">{featured.title}</h3>
-            {featured.artist_name && (
-              <p className="truncate text-sm text-white/70">{featured.artist_name}</p>
-            )}
-
-            {/* Seek bar */}
-            <div className="mt-5">
-              <input
-                type="range"
-                min={0}
-                max={canSeek ? duration : 100}
-                step={1}
-                value={position}
-                disabled={!canSeek}
-                onChange={(e) => seek(Number(e.target.value))}
-                aria-label={`Seek ${featured.title}`}
-                className="seek-range"
-                style={{ "--progress": `${progress}%` } as React.CSSProperties}
-              />
-              <div className="mt-1.5 flex justify-between text-xs tabular-nums text-white/60">
-                <span>{formatTime(position)}</span>
-                <span>{totalLabel}</span>
-              </div>
-            </div>
-
-            {/* Controls */}
-            <div className="mt-3 flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => seek(currentTime - SKIP_SECONDS)}
-                disabled={!canSeek}
-                aria-label={`Back ${SKIP_SECONDS} seconds`}
-                className="rounded-full p-1.5 text-white/80 transition hover:bg-white/10 hover:text-white disabled:pointer-events-none disabled:opacity-40"
-              >
-                <SkipIcon direction="back" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => play(featured)}
-                aria-label={isFeaturedPlaying ? `Pause ${featured.title}` : `Play ${featured.title}`}
-                className="flex size-14 items-center justify-center rounded-full bg-accent text-white shadow-lg shadow-accent/30 transition hover:scale-105 active:scale-95"
-              >
-                {isFeaturedPlaying ? (
-                  <Pause className="size-6 fill-current" />
-                ) : (
-                  <Play className="ml-0.5 size-6 fill-current" />
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => seek(currentTime + SKIP_SECONDS)}
-                disabled={!canSeek}
-                aria-label={`Forward ${SKIP_SECONDS} seconds`}
-                className="rounded-full p-1.5 text-white/80 transition hover:bg-white/10 hover:text-white disabled:pointer-events-none disabled:opacity-40"
-              >
-                <SkipIcon direction="forward" />
-              </button>
-
-              {featuredDownload && (
-                <a
-                  href={featuredDownload}
-                  download
-                  className="ml-auto inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-black transition hover:bg-white/85"
-                >
-                  <Download className="size-4" />
-                  Download
-                </a>
-              )}
+          {/* Seek bar */}
+          <div className="mt-5">
+            <input
+              type="range"
+              min={0}
+              max={canSeek ? duration : 100}
+              step={1}
+              value={position}
+              disabled={!canSeek}
+              onChange={(e) => seek(Number(e.target.value))}
+              aria-label={`Seek ${featured.title}`}
+              className="seek-range"
+              style={{ "--progress": `${progress}%` } as React.CSSProperties}
+            />
+            <div className="mt-1.5 flex justify-between text-xs tabular-nums text-white/60">
+              <span>{formatTime(position)}</span>
+              <span>{totalLabel}</span>
             </div>
           </div>
-        </div>
 
-        {/* Tracklist */}
-        {tracks.length > 1 && (
-          <ol className="relative border-t border-white/10 px-2 py-2 sm:px-3">
-            {tracks.map((track, idx) => {
-              const active = currentTrack?.id === track.id;
-              const rowPlaying = active && isPlaying;
-              const href = downloadHref(track);
-              return (
-                <li key={track.id} className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => play(track)}
-                    aria-label={rowPlaying ? `Pause ${track.title}` : `Play ${track.title}`}
-                    className={cn(
-                      "group flex min-w-0 flex-1 items-center gap-3 rounded-lg px-3 py-2.5 text-left transition hover:bg-white/10",
-                      active && "bg-white/5",
-                    )}
-                  >
-                    <span className="flex w-6 justify-center text-sm tabular-nums text-white/50">
-                      {rowPlaying ? (
-                        <Equalizer />
-                      ) : (
-                        <>
-                          <span className="group-hover:hidden">{idx + 1}</span>
-                          <Play className="hidden size-4 fill-current text-white group-hover:block" />
-                        </>
-                      )}
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className={cn("block truncate text-sm font-medium", active ? "text-accent" : "text-white")}>
-                        {track.title}
-                      </span>
-                      {track.artist_name && (
-                        <span className="block truncate text-xs text-white/50">{track.artist_name}</span>
-                      )}
-                    </span>
-                    {track.duration && (
-                      <span className="text-xs tabular-nums text-white/50">{track.duration}</span>
-                    )}
-                  </button>
-                  {href && (
-                    <a
-                      href={href}
-                      download
-                      aria-label={`Download ${track.title}`}
-                      title="Download"
-                      className="shrink-0 rounded-full p-2 text-white/60 transition hover:bg-white/10 hover:text-white"
-                    >
-                      <Download className="size-4" />
-                    </a>
-                  )}
-                </li>
-              );
-            })}
-          </ol>
-        )}
+          {/* Controls */}
+          <div className="mt-3 flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => seek(currentTime - SKIP_SECONDS)}
+              disabled={!canSeek}
+              aria-label={`Back ${SKIP_SECONDS} seconds`}
+              className="rounded-full p-1.5 text-white/80 transition hover:bg-white/10 hover:text-white disabled:pointer-events-none disabled:opacity-40"
+            >
+              <SkipIcon direction="back" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => play(featured)}
+              aria-label={isFeaturedPlaying ? `Pause ${featured.title}` : `Play ${featured.title}`}
+              className="flex size-14 items-center justify-center rounded-full bg-accent text-white shadow-lg shadow-accent/30 transition hover:scale-105 active:scale-95"
+            >
+              {isFeaturedPlaying ? (
+                <Pause className="size-6 fill-current" />
+              ) : (
+                <Play className="ml-0.5 size-6 fill-current" />
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => seek(currentTime + SKIP_SECONDS)}
+              disabled={!canSeek}
+              aria-label={`Forward ${SKIP_SECONDS} seconds`}
+              className="rounded-full p-1.5 text-white/80 transition hover:bg-white/10 hover:text-white disabled:pointer-events-none disabled:opacity-40"
+            >
+              <SkipIcon direction="forward" />
+            </button>
+
+            {featuredDownload && (
+              <a
+                href={featuredDownload}
+                download
+                className="ml-auto inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-black transition hover:bg-white/85"
+              >
+                <Download className="size-4" />
+                Download
+              </a>
+            )}
+          </div>
+        </div>
       </div>
-    </section>
+
+      {/* Tracklist */}
+      {tracks.length > 1 && (
+        <ol className="relative border-t border-white/10 px-2 py-2 sm:px-3">
+          {tracks.map((track, idx) => {
+            const active = currentTrack?.id === track.id;
+            const rowPlaying = active && isPlaying;
+            const href = downloadHref(track);
+            return (
+              <li key={track.id} className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => play(track)}
+                  aria-label={rowPlaying ? `Pause ${track.title}` : `Play ${track.title}`}
+                  className={cn(
+                    "group flex min-w-0 flex-1 items-center gap-3 rounded-lg px-3 py-2.5 text-left transition hover:bg-white/10",
+                    active && "bg-white/5",
+                  )}
+                >
+                  <span className="flex w-6 justify-center text-sm tabular-nums text-white/50">
+                    {rowPlaying ? (
+                      <Equalizer />
+                    ) : (
+                      <>
+                        <span className="group-hover:hidden">{idx + 1}</span>
+                        <Play className="hidden size-4 fill-current text-white group-hover:block" />
+                      </>
+                    )}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className={cn("block truncate text-sm font-medium", active ? "text-accent" : "text-white")}>
+                      {track.title}
+                    </span>
+                    {track.artist_name && (
+                      <span className="block truncate text-xs text-white/50">{track.artist_name}</span>
+                    )}
+                  </span>
+                  {track.duration && (
+                    <span className="text-xs tabular-nums text-white/50">{track.duration}</span>
+                  )}
+                </button>
+                {href && (
+                  <a
+                    href={href}
+                    download
+                    aria-label={`Download ${track.title}`}
+                    title="Download"
+                    className="shrink-0 rounded-full p-2 text-white/60 transition hover:bg-white/10 hover:text-white"
+                  >
+                    <Download className="size-4" />
+                  </a>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+      )}
+    </div>
   );
 }
 

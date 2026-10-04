@@ -231,7 +231,7 @@ export default async function BlogDetailPage({ params }: Props) {
               />
             </div>
 
-            <PostTracks tracks={post.tracks ?? []} />
+            <PostTracks tracks={post.tracks ?? []} albums={post.albums ?? []} />
 
             <CommentSection comments={post.comments} postId={post.id} />
           </article>
