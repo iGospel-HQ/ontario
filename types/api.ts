@@ -67,6 +67,7 @@ export interface PostTrack {
   is_downloadable: boolean;
   download_url: string | null;
   artist_name?: string;
+  track_number?: number | null;
 }
 
 export interface AdBanner {
@@ -93,6 +94,17 @@ export interface SupportStatus {
   message?: string;
 }
 
+/** Album attached to a post, with its tracks in album order. */
+export interface PostAlbum {
+  id: string;
+  title: string;
+  slug: string;
+  cover_image: string | null;
+  release_date: string | null;
+  artist_name?: string;
+  tracks: PostTrack[];
+}
+
 /** `/blog/posts/<slug>/` (PostSerializer) */
 export interface PostDetail {
   id: string;
@@ -108,6 +120,7 @@ export interface PostDetail {
   author_name: string;
   artists: { id: string; name: string; slug: string }[];
   tracks: PostTrack[];
+  albums: PostAlbum[];
   genres: Genre[];
   support_status?: SupportStatus;
   creator_id?: string | null;
