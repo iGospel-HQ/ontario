@@ -1,10 +1,12 @@
 import "./globals.css";
 import type React from "react";
+import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { ReactQueryProvider } from "@/lib/react-query";
 import { AudioProvider } from "@/providers/audio-provider";
 import { FloatingAudioButtons } from "@/components/layout/floating-audio-button";
+import { NavigationProgress } from "@/components/layout/navigation-progress";
 import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/lib/site";
 
@@ -76,6 +78,9 @@ export default function RootLayout({
       className={`${openSans.variable} ${lora.variable}`}
     >
       <body className="font-sans antialiased">
+        <Suspense>
+          <NavigationProgress />
+        </Suspense>
         <Toaster position="top-center"/>
         <ReactQueryProvider>
           <AudioProvider />

@@ -23,6 +23,8 @@ export const POSTS_PAGE_SIZE = 20;
 export const POSTS_TAG = "posts";
 export const postTag = (slug: string) => `post:${slug}`;
 export const BACKGROUND_TAG = "background";
+/** Tracks, albums, artists, genres and playlists. */
+export const MUSIC_TAG = "music";
 
 const emptyPage = <T>(): Paginated<T> => ({ count: 0, next: null, previous: null, results: [] });
 
@@ -64,12 +66,12 @@ export const getPost = cache((slug: string) =>
 );
 
 export async function getArtists({ page = 1, q }: { page?: number; q?: string } = {}) {
-  const data = await apiGet<Paginated<Artist>>("/music/artists/", { query: { page, search: q } });
+  const data = await apiGet<Paginated<Artist>>("/music/artists/", { query: { page, search: q }, tags: [MUSIC_TAG] });
   return data ?? emptyPage<Artist>();
 }
 
 export const getArtist = cache((slug: string) =>
-  apiGet<Artist>(`/music/artists/${encodeURIComponent(slug)}/`, { revalidate: 600 }),
+  apiGet<Artist>(`/music/artists/${encodeURIComponent(slug)}/`, { revalidate: 600, tags: [MUSIC_TAG] }),
 );
 
 export async function getArtistPosts(slug: string) {
@@ -87,30 +89,31 @@ export async function getTracks({
 }: { page?: number; q?: string; genre?: string } = {}) {
   const data = await apiGet<Paginated<MusicTrack>>("/music/tracks/", {
     query: { page, page_size: POSTS_PAGE_SIZE, search: q, genre, ordering: "-created_at" },
+    tags: [MUSIC_TAG],
   });
   return data ?? emptyPage<MusicTrack>();
 }
 
 export async function getGenres() {
-  const data = await apiGet<Paginated<Genre>>("/music/genres/", { revalidate: 3600 });
+  const data = await apiGet<Paginated<Genre>>("/music/genres/", { revalidate: 3600, tags: [MUSIC_TAG] });
   return data?.results ?? [];
 }
 
 export async function getPopularTracks() {
-  return (await apiGet<MusicTrack[]>("/music/popular-tracks/")) ?? [];
+  return (await apiGet<MusicTrack[]>("/music/popular-tracks/", { tags: [MUSIC_TAG] })) ?? [];
 }
 
 export async function getLatestTracks() {
-  return (await apiGet<MusicTrack[]>("/music/latest-tracks/")) ?? [];
+  return (await apiGet<MusicTrack[]>("/music/latest-tracks/", { tags: [MUSIC_TAG] })) ?? [];
 }
 
 export async function getPlaylists({ q }: { q?: string } = {}) {
-  const data = await apiGet<Paginated<Playlist>>("/music/playlists/", { query: { search: q } });
+  const data = await apiGet<Paginated<Playlist>>("/music/playlists/", { query: { search: q }, tags: [MUSIC_TAG] });
   return data ?? emptyPage<Playlist>();
 }
 
 export const getPlaylist = cache((slug: string) =>
-  apiGet<Playlist>(`/music/playlists/${encodeURIComponent(slug)}/`, { revalidate: 600 }),
+  apiGet<Playlist>(`/music/playlists/${encodeURIComponent(slug)}/`, { revalidate: 600, tags: [MUSIC_TAG] }),
 );
 
 export async function getSitemapIndex() {

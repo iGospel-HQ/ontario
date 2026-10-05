@@ -283,6 +283,26 @@
 .tab-item-active { color: var(--accent); }
 .tab-item-active .tab-icon { background: color-mix(in srgb, var(--accent) 12%, transparent); }
 
+/* Top progress bar while a clicked link loads (components/layout/navigation-progress.tsx).
+   Grows quickly at first, then slows, and never completes on its own. */
+.nav-progress {
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  transform-origin: left;
+  transform: scaleX(0);
+  opacity: 0;
+  transition: opacity 0.2s 0.1s;
+}
+.nav-progress-active {
+  opacity: 1;
+  transition: none;
+  animation: nav-progress 8s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+}
+@keyframes nav-progress {
+  from { transform: scaleX(0.05); }
+  to { transform: scaleX(0.92); }
+}
+
 /* Terms / Privacy body text. */
 .legal-body {
   font-size: 16px;
