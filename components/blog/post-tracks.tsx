@@ -26,14 +26,18 @@ interface Collection {
  * global audio player.
  */
 export function PostTracks({ tracks, albums = [] }: { tracks: PostTrack[]; albums?: PostAlbum[] }) {
+  // Older APIs send albums without `tracks`; treat that as "no album tracks"
+  // rather than crashing the post page.
+  const albumTracks = (album: PostAlbum) => album.tracks ?? [];
+
   // A track attached directly and via one of the albums is shown with the album.
-  const albumTrackIds = new Set(albums.flatMap((album) => album.tracks.map((t) => t.id)));
+  const albumTrackIds = new Set(albums.flatMap((album) => albumTracks(album).map((t) => t.id)));
   const singles = tracks.filter((t) => !albumTrackIds.has(t.id));
   const albumGroups = albums
-    .filter((album) => album.tracks.length > 0)
+    .filter((album) => albumTracks(album).length > 0)
     .map((album) => ({
       album,
-      tracks: album.tracks.map((t) => ({
+      tracks: albumTracks(album).map((t) => ({
         ...t,
         image: t.image ?? album.cover_image,
         artist_name: t.artist_name ?? album.artist_name,

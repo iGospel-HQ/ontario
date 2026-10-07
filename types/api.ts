@@ -102,7 +102,8 @@ export interface PostAlbum {
   cover_image: string | null;
   release_date: string | null;
   artist_name?: string;
-  tracks: PostTrack[];
+  /** Missing from older API versions. */
+  tracks?: PostTrack[];
 }
 
 /** `/blog/posts/<slug>/` (PostSerializer) */
