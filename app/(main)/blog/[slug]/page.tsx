@@ -20,7 +20,7 @@ import { TelegramCTA } from "@/components/shared/telegram-cta";
 type Props = { params: Promise<{ slug: string }> };
 
 // Posts are cached and regenerated in the background at most every 10 minutes.
-export const revalidate = 600;
+export const revalidate = 60;
 
 /** Pre-render the most recent posts at build time; older ones render on first request. */
 export async function generateStaticParams() {

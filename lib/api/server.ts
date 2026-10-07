@@ -14,7 +14,10 @@ type Query = Record<string, string | number | undefined>;
 
 interface GetOptions {
   query?: Query;
-  /** Seconds to cache the response (ISR). Defaults to 5 minutes. */
+  /**
+   * Seconds to cache the response (ISR). Defaults to 1 minute: Django refreshes
+   * tagged data instantly on save; this is the fallback if that refresh is missed.
+   */
   revalidate?: number;
   /** Cache tags; Django refreshes them via /api/revalidate when content changes. */
   tags?: string[];
@@ -31,7 +34,7 @@ const isBuild = process.env.NEXT_PHASE === "phase-production-build";
  * still succeeds (ISR fills the pages in later). At runtime it throws instead,
  * which makes ISR keep serving the last good version of the page.
  */
-export async function apiGet<T>(path: string, { query, revalidate = 300, tags }: GetOptions = {}) {
+export async function apiGet<T>(path: string, { query, revalidate = 60, tags }: GetOptions = {}) {
   const url = new URL(`${siteConfig.apiUrl}/${path.replace(/^\/+/, "")}`);
   for (const [key, value] of Object.entries(query ?? {})) {
     if (value !== undefined && value !== "") url.searchParams.set(key, String(value));

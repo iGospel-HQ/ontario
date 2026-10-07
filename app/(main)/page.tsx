@@ -7,7 +7,7 @@ import { QuickLinks } from "@/components/home/quick-links";
 import { JsonLd } from "@/components/shared/json-ld";
 
 // Rebuilt in the background at most every 5 minutes.
-export const revalidate = 300;
+export const revalidate = 60;
 
 export const metadata = pageMetadata({
   title: "iGospel - Blog & Music Platform",

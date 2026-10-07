@@ -59,7 +59,7 @@ export async function getMusicPosts({
 /** Cached per request so generateMetadata and the page share one fetch. */
 export const getPost = cache((slug: string) =>
   apiGet<PostDetail>(`/blog/posts/${encodeURIComponent(slug)}/`, {
-    revalidate: 600,
+    revalidate: 60,
     // Site-wide ads live on every post page, so "posts" refreshes them all.
     tags: [POSTS_TAG, postTag(slug)],
   }),
@@ -71,12 +71,12 @@ export async function getArtists({ page = 1, q }: { page?: number; q?: string } 
 }
 
 export const getArtist = cache((slug: string) =>
-  apiGet<Artist>(`/music/artists/${encodeURIComponent(slug)}/`, { revalidate: 600, tags: [MUSIC_TAG] }),
+  apiGet<Artist>(`/music/artists/${encodeURIComponent(slug)}/`, { revalidate: 60, tags: [MUSIC_TAG] }),
 );
 
 export async function getArtistPosts(slug: string) {
   const posts = await apiGet<PostSummary[]>(`/music/artists/${encodeURIComponent(slug)}/posts/`, {
-    revalidate: 600,
+    revalidate: 60,
     tags: [POSTS_TAG],
   });
   return posts ?? [];
@@ -113,7 +113,7 @@ export async function getPlaylists({ q }: { q?: string } = {}) {
 }
 
 export const getPlaylist = cache((slug: string) =>
-  apiGet<Playlist>(`/music/playlists/${encodeURIComponent(slug)}/`, { revalidate: 600, tags: [MUSIC_TAG] }),
+  apiGet<Playlist>(`/music/playlists/${encodeURIComponent(slug)}/`, { revalidate: 60, tags: [MUSIC_TAG] }),
 );
 
 export async function getSitemapIndex() {

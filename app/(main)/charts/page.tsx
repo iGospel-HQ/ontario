@@ -5,7 +5,7 @@ import { FadeIn } from "@/components/shared/fade-in";
 import { PageHeader } from "@/components/shared/page-header";
 import { TrackPlayButton } from "@/components/music/track-play-button";
 
-export const revalidate = 300;
+export const revalidate = 60;
 
 export const metadata = pageMetadata({
   title: "Charts",

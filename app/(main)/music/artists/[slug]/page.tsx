@@ -13,7 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export const revalidate = 600;
+export const revalidate = 60;
 
 /** Artist pages are generated on first request, then cached and revalidated (ISR). */
 export async function generateStaticParams() {

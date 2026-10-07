@@ -13,7 +13,7 @@ import { TrackPlayButton } from "@/components/music/track-play-button";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export const revalidate = 600;
+export const revalidate = 60;
 
 /** Playlist pages are generated on first request, then cached and revalidated (ISR). */
 export async function generateStaticParams() {
