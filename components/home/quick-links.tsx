@@ -5,10 +5,11 @@ import { cn } from "@/lib/utils";
 
 const links = [
   { name: "Artists", href: "/music/artists", icon: Users, comingSoon: false },
-  { name: "New Releases", href: "/music/songs", icon: Music, comingSoon: true },
+  { name: "New Releases", href: "/music/songs", icon: Music, comingSoon: false },
+  // No /music/albums page yet: stays locked until it exists.
   { name: "Albums", href: "/music/albums", icon: Album, comingSoon: true },
-  { name: "Top Charts", href: "/charts", icon: TrendingUp, comingSoon: true },
-  { name: "Playlists", href: "/music/playlists", icon: Disc3, comingSoon: true },
+  { name: "Top Charts", href: "/charts", icon: TrendingUp, comingSoon: false },
+  { name: "Playlists", href: "/music/playlists", icon: Disc3, comingSoon: false },
 ];
 
 /** Row of shortcut tiles under the homepage hero. */
