@@ -72,10 +72,6 @@ export default async function ArtistsPage({ searchParams }: Props) {
                       {artist.name}
                     </h2>
 
-                    <p className="text-sm mt-1 text-muted-foreground">
-                      {Math.floor(artist.followers_count / 1000)}K followers
-                    </p>
-
                     <div className="flex justify-center gap-4 mt-3 text-sm text-muted-foreground">
                       <span>{artist.album_count} Albums</span>
                       <span>{artist.track_count} Tracks</span>

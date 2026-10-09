@@ -7,7 +7,6 @@ import { pageMetadata, toDescription } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
 import { PostCard } from "@/components/blog/post-card";
 import { JsonLd } from "@/components/shared/json-ld";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -100,9 +99,6 @@ export default async function ArtistPage({ params }: Props) {
                 </a>
               </Button>
             )}
-            <Badge variant="secondary" className="text-base px-4 py-1">
-              {artist.followers_count} Followers
-            </Badge>
             <Button variant={artist.is_following ? "secondary" : "default"} size="lg">
               {artist.is_following ? "Following" : "Follow"}
             </Button>
