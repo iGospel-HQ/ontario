@@ -88,9 +88,7 @@ export default async function ArtistPage({ params }: Props) {
         </div>
         <div className="text-center md:text-left">
           <h1 className="text-4xl md:text-5xl font-bold mb-3">{artist.name}</h1>
-          <p className="text-lg md:text-xl text-gray-600 mb-6">
-            {artist.bio || "No bio available."}
-          </p>
+          {artist.bio && <p className="text-lg md:text-xl text-gray-600 mb-6">{artist.bio}</p>}
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-6">
             {artist.website && (
               <Button variant="outline" asChild>

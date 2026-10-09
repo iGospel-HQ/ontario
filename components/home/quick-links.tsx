@@ -1,13 +1,13 @@
 import Link from "next/link";
-import { Music, Album, Disc3, Users, TrendingUp } from "lucide-react";
+import { Music, Disc3, Users, TrendingUp } from "lucide-react";
 import { ComingSoonWrapper } from "@/components/shared/coming-soon-wrapper";
 import { cn } from "@/lib/utils";
 
 const links = [
   { name: "Artists", href: "/music/artists", icon: Users, comingSoon: false },
   { name: "New Releases", href: "/music/songs", icon: Music, comingSoon: false },
-  // No /music/albums page yet: stays locked until it exists.
-  { name: "Albums", href: "/music/albums", icon: Album, comingSoon: true },
+  // Albums (icon: Album): add back once a /music/albums page exists. Hidden
+  // meanwhile: "coming soon" tiles read as an unfinished site to AdSense reviewers.
   { name: "Top Charts", href: "/charts", icon: TrendingUp, comingSoon: false },
   { name: "Playlists", href: "/music/playlists", icon: Disc3, comingSoon: false },
 ];
