@@ -92,18 +92,15 @@ export default async function ArtistPage({ params }: Props) {
           {artist.bio && (
             <div className="entry-content mb-6 text-gray-700" dangerouslySetInnerHTML={{ __html: artist.bio }} />
           )}
-          <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-6">
-            {artist.website && (
+          {artist.website && (
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-6">
               <Button variant="outline" asChild>
                 <a href={artist.website} target="_blank" rel="noopener noreferrer">
                   Website
                 </a>
               </Button>
-            )}
-            <Button variant={artist.is_following ? "secondary" : "default"} size="lg">
-              {artist.is_following ? "Following" : "Follow"}
-            </Button>
-          </div>
+            </div>
+          )}
           <p className="text-base text-gray-600">
             {artist.album_count} Albums • {artist.track_count} Tracks
           </p>
