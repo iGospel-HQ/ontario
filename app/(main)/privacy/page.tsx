@@ -71,6 +71,10 @@ const SECTIONS: LegalSection[] = [
         <ul>
           <li>Payment processors</li>
           <li>Analytics providers</li>
+          <li>
+            Advertising partners such as Google, through cookies on our pages (see{" "}
+            <a href="#cookies">Cookies &amp; Advertising</a>)
+          </li>
           <li>Legal authorities when required by law</li>
         </ul>
         <LegalCallout>
@@ -91,8 +95,73 @@ const SECTIONS: LegalSection[] = [
   },
   {
     id: "cookies",
-    title: "Cookies & Tracking",
-    body: <p>iGospel may use cookies or similar technologies to enhance user experience and analytics.</p>,
+    title: "Cookies & Advertising",
+    body: (
+      <>
+        <p>
+          Cookies are small files a website stores in your browser. iGospel and our partners use cookies and similar
+          technologies (such as local storage) for the purposes below.
+        </p>
+
+        <h3>a. Essential cookies</h3>
+        <p>
+          These keep you signed in, remember your preferences, protect your account and make payments work. The site
+          cannot work properly without them.
+        </p>
+
+        <h3>b. Analytics</h3>
+        <p>
+          We record visit statistics, such as which posts and songs are viewed or played and an approximate location
+          derived from your IP address, to understand which content is popular and improve the Platform.
+        </p>
+
+        <h3>c. Advertising</h3>
+        <p>
+          iGospel may show ads served by Google AdSense and other advertising partners. These third-party vendors,
+          including Google, use cookies to serve ads based on your prior visits to iGospel or to other websites.
+          Google&rsquo;s use of advertising cookies enables it and its partners to show you ads based on your visits to
+          iGospel and/or other sites on the Internet.
+        </p>
+        <ul>
+          <li>
+            You can opt out of personalised advertising in{" "}
+            <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">
+              Google Ads Settings
+            </a>
+            .
+          </li>
+          <li>
+            You can opt out of other vendors&rsquo; use of cookies for personalised advertising at{" "}
+            <a href="https://www.aboutads.info/choices" target="_blank" rel="noopener noreferrer">
+              aboutads.info
+            </a>{" "}
+            (or{" "}
+            <a href="https://www.youronlinechoices.eu" target="_blank" rel="noopener noreferrer">
+              youronlinechoices.eu
+            </a>{" "}
+            in Europe).
+          </li>
+          <li>
+            Learn how Google uses information from sites that use its services:{" "}
+            <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">
+              policies.google.com/technologies/partner-sites
+            </a>
+            .
+          </li>
+        </ul>
+        <p>
+          If you opt out, you will still see ads, but they will be less relevant to you. Where the law requires it (for
+          example in the European Economic Area, the United Kingdom and Switzerland), we ask for your consent before
+          personalised ads are shown.
+        </p>
+
+        <h3>d. Managing cookies</h3>
+        <p>
+          You can block or delete cookies in your browser settings. If you block essential cookies, signing in and
+          payments may not work.
+        </p>
+      </>
+    ),
   },
   {
     id: "user-rights",
@@ -156,7 +225,7 @@ export default function PrivacyPage() {
       title="Privacy Policy"
       description="How iGospel collects, uses, and protects your information."
       path="/privacy"
-      updated="January 6, 2026"
+      updated="October 9, 2026"
       intro={
         <>
           <p>
