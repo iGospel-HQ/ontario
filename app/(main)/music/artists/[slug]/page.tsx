@@ -3,7 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { notFoundMetadata } from "@/components/shared/not-found-content";
 import { getArtist, getArtistPosts } from "@/lib/api/queries";
-import { pageMetadata, toDescription } from "@/lib/seo";
+import { htmlToText, pageMetadata, toDescription } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
 import { PostCard } from "@/components/blog/post-card";
 import { JsonLd } from "@/components/shared/json-ld";
@@ -51,7 +51,7 @@ export default async function ArtistPage({ params }: Props) {
             "@context": "https://schema.org",
             "@type": "MusicGroup",
             name: artist.name,
-            description: artist.bio || undefined,
+            description: artist.bio ? htmlToText(artist.bio) : undefined,
             image: artist.image || undefined,
             url,
             sameAs: artist.website ? [artist.website] : undefined,
@@ -88,7 +88,10 @@ export default async function ArtistPage({ params }: Props) {
         </div>
         <div className="text-center md:text-left">
           <h1 className="text-4xl md:text-5xl font-bold mb-3">{artist.name}</h1>
-          {artist.bio && <p className="text-lg md:text-xl text-gray-600 mb-6">{artist.bio}</p>}
+          {/* Rich text from the admin, cleaned by the API (music/richtext.py). */}
+          {artist.bio && (
+            <div className="entry-content mb-6 text-gray-700" dangerouslySetInnerHTML={{ __html: artist.bio }} />
+          )}
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-6">
             {artist.website && (
               <Button variant="outline" asChild>

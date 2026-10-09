@@ -56,14 +56,30 @@ export function pageMetadata({
   };
 }
 
-/** Plain-text excerpt for meta descriptions (~155 chars). */
-export function toDescription(...candidates: (string | null | undefined)[]) {
-  const text = candidates
-    .find((value) => value && value.trim())
-    ?.replace(/<[^>]*>/g, " ")
-    .replace(/&nbsp;/g, " ")
+const ENTITIES: Record<string, string> = {
+  amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ",
+  lsquo: "‘", rsquo: "’", ldquo: "“", rdquo: "”", ndash: "–", mdash: "—", hellip: "…",
+};
+
+/** HTML (CMS rich text) to plain text: tags removed, entities decoded, whitespace collapsed. */
+export function htmlToText(value: string) {
+  return value
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (entity, code: string) => {
+      if (code[0] === "#") {
+        const n = code[1] === "x" || code[1] === "X" ? parseInt(code.slice(2), 16) : parseInt(code.slice(1), 10);
+        return Number.isFinite(n) ? String.fromCodePoint(n) : entity;
+      }
+      return ENTITIES[code.toLowerCase()] ?? entity;
+    })
     .replace(/\s+/g, " ")
     .trim();
+}
+
+/** Plain-text excerpt for meta descriptions (~155 chars). */
+export function toDescription(...candidates: (string | null | undefined)[]) {
+  const value = candidates.find((candidate) => candidate && htmlToText(candidate));
+  const text = value ? htmlToText(value) : "";
   if (!text) return siteConfig.description;
   return text.length > 155 ? `${text.slice(0, 152).trimEnd()}...` : text;
 }
