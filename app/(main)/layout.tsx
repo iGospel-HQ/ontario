@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   },
   description:
     "Discover curated music, artists, and editorial content all in one place",
+  // AdSense site verification (alternative to the script tag and ads.txt).
+  other: { "google-adsense-account": siteConfig.adsenseClient },
 };
 
 export default function MainLayout({
