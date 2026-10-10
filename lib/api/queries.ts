@@ -2,6 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { apiGet } from "@/lib/api/server";
 import type {
+  AdBanner,
   Artist,
   BlogBackground,
   Genre,
@@ -23,6 +24,8 @@ export const POSTS_PAGE_SIZE = 20;
 export const POSTS_TAG = "posts";
 export const postTag = (slug: string) => `post:${slug}`;
 export const BACKGROUND_TAG = "background";
+/** Ad banners set to show on the whole site. */
+export const ADS_TAG = "ads";
 /** Tracks, albums, artists, genres and playlists. */
 export const MUSIC_TAG = "music";
 
@@ -88,6 +91,19 @@ export async function getAlbumPosts({
   });
   return data ?? emptyPage<PostSummary>();
 }
+
+/**
+ * Ads set to "Whole site": header/footer banners on every page and listing
+ * sidebars. Never breaks a page: no ads if the API is unreachable.
+ */
+export const getSiteWideAds = cache(async () =>
+  asList(
+    await apiGet<AdBanner[] | { results?: AdBanner[] }>("/blog/ads/site-wide/", {
+      query: UNPAGINATED,
+      tags: [ADS_TAG],
+    }).catch(() => null),
+  ),
+);
 
 /** Cached per request so generateMetadata and the page share one fetch. */
 export const getPost = cache((slug: string) =>

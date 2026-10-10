@@ -75,7 +75,9 @@ export interface AdBanner {
   title: string;
   image: string;
   link: string;
-  position: "header" | "in_post" | "sidebar" | string;
+  position: "header" | "in_post" | "sidebar" | "footer" | string;
+  /** site_wide (every page), all_posts, selected_posts */
+  placement?: string;
 }
 
 export interface Comment {

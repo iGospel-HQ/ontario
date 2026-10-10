@@ -1,5 +1,6 @@
 import type React from "react";
-import { getBackground } from "@/lib/api/queries";
+import { getBackground, getSiteWideAds } from "@/lib/api/queries";
+import { BannerAd } from "@/components/shared/banner-ad";
 import type { BlogBackground } from "@/types/api";
 import { AudioPlayer } from "@/components/layout/audio-player";
 import { BackToTop } from "@/components/layout/back-to-top";
@@ -62,7 +63,10 @@ function backgroundStyle(bg: BlogBackground): React.CSSProperties {
 /** Public page frame: a boxed blog layout on the site background. */
 export async function SiteShell({ children }: { children: React.ReactNode }) {
   // Scheduled background from the admin; none -> the built-in .site-bg default.
-  const background = await getBackground();
+  const [background, siteAds] = await Promise.all([getBackground(), getSiteWideAds()]);
+  // "Whole site" ads: one header banner under the menu and one above the footer, on every page.
+  const headerAd = siteAds.find((ad) => ad.position === "header");
+  const footerAd = siteAds.find((ad) => ad.position === "footer");
 
   return (
     <div
@@ -79,9 +83,11 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
       <div className="mx-auto flex min-h-dvh max-w-[1200px] flex-col bg-white shadow-[0_0_25px_rgba(0,0,0,0.08)] md:block md:min-h-0">
         <MobileAppBar />
         <SiteHeader />
+        {headerAd && <BannerAd ad={headerAd} />}
         <main id="main-content" className="min-h-[60vh] flex-1">
           {children}
         </main>
+        {footerAd && <BannerAd ad={footerAd} />}
         <Footer />
         <MobileTabBar />
       </div>

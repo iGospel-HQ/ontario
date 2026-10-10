@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { BlogSidebar } from "@/components/blog/blog-sidebar";
+import { getSiteWideAds } from "@/lib/api/queries";
 import { PostCard } from "@/components/blog/post-card";
 import { PageHeader } from "@/components/shared/page-header";
 import { PagePagination } from "@/components/shared/page-pagination";
@@ -8,7 +9,7 @@ import { POSTS_PAGE_SIZE } from "@/lib/api/queries";
 import type { HomepagePost, Paginated, PostSummary } from "@/types/api";
 
 /** Archive page shared by /blog and /music: header, searchable post grid, sidebar. */
-export function PostsListing({
+export async function PostsListing({
   heading,
   highlight,
   subtitle,
@@ -40,6 +41,8 @@ export function PostsListing({
 }) {
   const posts = data?.results ?? [];
   const totalPages = data ? Math.ceil(data.count / POSTS_PAGE_SIZE) : 1;
+  // "Whole site" sidebar ads (post pages get theirs with the post).
+  const sidebarAds = (await getSiteWideAds()).filter((ad) => ad.position === "sidebar");
 
   return (
     <>
@@ -77,7 +80,7 @@ export function PostsListing({
           )}
         </section>
 
-        <BlogSidebar latestPosts={latestPosts} />
+        <BlogSidebar latestPosts={latestPosts} ads={sidebarAds} />
       </div>
     </>
   );
