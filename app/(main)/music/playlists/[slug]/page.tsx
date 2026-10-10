@@ -7,6 +7,7 @@ import { htmlToText, pageMetadata, toDescription } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
 import { FadeIn } from "@/components/shared/fade-in";
 import { JsonLd } from "@/components/shared/json-ld";
+import { ShareButtons } from "@/components/shared/share-buttons";
 import { PlayAllButton } from "@/components/music/play-all-button";
 import { PlaylistCard } from "@/components/music/playlist-card";
 import { TrackPlayButton } from "@/components/music/track-play-button";
@@ -92,6 +93,7 @@ export default async function PlaylistDetailPage({ params }: Props) {
               />
             )}
             <p className="text-sm text-muted-foreground">{playlist.track_count} songs</p>
+            <ShareButtons url={url} title={playlist.title} heading="Share this playlist" className="mt-6" />
           </FadeIn>
 
           <PlayAllButton tracks={tracks} />

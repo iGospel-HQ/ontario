@@ -16,6 +16,7 @@ import { SupportButton } from "@/components/blog/support-button";
 import { FadeIn } from "@/components/shared/fade-in";
 import { JsonLd } from "@/components/shared/json-ld";
 import { TelegramCTA } from "@/components/shared/telegram-cta";
+import { ShareButtons } from "@/components/shared/share-buttons";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -165,6 +166,8 @@ export default async function BlogDetailPage({ params }: Props) {
                 </a>
               </p>
 
+              <ShareButtons url={url} title={post.meta_title || post.title} variant="compact" />
+
               {/* Featured Image */}
               <div className="relative aspect-[1/1] overflow-hidden bg-shade">
                 <Image
@@ -232,6 +235,13 @@ export default async function BlogDetailPage({ params }: Props) {
             </div>
 
             <PostTracks tracks={post.tracks ?? []} albums={post.albums ?? []} />
+
+            <ShareButtons
+              url={url}
+              title={post.meta_title || post.title}
+              heading="Share this post"
+              className="my-10 border-y border-rule py-6"
+            />
 
             <CommentSection comments={post.comments} postId={post.id} />
           </article>
