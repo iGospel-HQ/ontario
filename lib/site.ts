@@ -12,6 +12,8 @@ export const siteConfig = {
   logo: "/logo.png",
   ogImage: { url: "/og-image.png", width: 1200, height: 630 },
   twitterHandle: "@igospel",
+  /** Google AdSense publisher ID (public by design; also in public/ads.txt). */
+  adsenseClient: "ca-pub-7471641157961637",
   emails: {
     contact: "igospelmediaconnect@gmail.com",
     support: "support@igospel.ng",

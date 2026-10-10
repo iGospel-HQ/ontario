@@ -17,5 +17,17 @@ export default function MainLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <SiteShell>{children}</SiteShell>;
+  return (
+    <>
+      {/* Google AdSense: public pages only (not login, dashboard or payment
+          screens, which have no publisher content). React places async
+          scripts in <head>, where AdSense expects it. */}
+      <script
+        async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${siteConfig.adsenseClient}`}
+        crossOrigin="anonymous"
+      />
+      <SiteShell>{children}</SiteShell>
+    </>
+  );
 }
