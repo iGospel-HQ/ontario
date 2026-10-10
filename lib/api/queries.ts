@@ -28,6 +28,19 @@ export const MUSIC_TAG = "music";
 
 const emptyPage = <T>(): Paginated<T> => ({ count: 0, next: null, previous: null, results: [] });
 
+/**
+ * List endpoints (popular/latest tracks, artist posts) return a plain array,
+ * but Django's SmartAutoPaginationMiddleware wraps a list in
+ * { pagination, results } once it grows past 20 items. We request the full
+ * list (no_pagination) and still accept either shape, so growth never breaks
+ * a page or the build.
+ */
+const UNPAGINATED = { no_pagination: 1 };
+function asList<T>(data: T[] | { results?: T[] } | null): T[] {
+  if (Array.isArray(data)) return data;
+  return data?.results ?? [];
+}
+
 export const getHomepage = cache(() => apiGet<HomepageData>("/blog/homepage/", { tags: [POSTS_TAG] }));
 
 export async function getPosts({ page = 1, q }: { page?: number; q?: string } = {}) {
@@ -75,11 +88,11 @@ export const getArtist = cache((slug: string) =>
 );
 
 export async function getArtistPosts(slug: string) {
-  const posts = await apiGet<PostSummary[]>(`/music/artists/${encodeURIComponent(slug)}/posts/`, {
-    revalidate: 60,
-    tags: [POSTS_TAG],
-  });
-  return posts ?? [];
+  const posts = await apiGet<PostSummary[] | { results?: PostSummary[] }>(
+    `/music/artists/${encodeURIComponent(slug)}/posts/`,
+    { query: UNPAGINATED, revalidate: 60, tags: [POSTS_TAG] },
+  );
+  return asList(posts);
 }
 
 export async function getTracks({
@@ -100,11 +113,21 @@ export async function getGenres() {
 }
 
 export async function getPopularTracks() {
-  return (await apiGet<MusicTrack[]>("/music/popular-tracks/", { tags: [MUSIC_TAG] })) ?? [];
+  return asList(
+    await apiGet<MusicTrack[] | { results?: MusicTrack[] }>("/music/popular-tracks/", {
+      query: UNPAGINATED,
+      tags: [MUSIC_TAG],
+    }),
+  );
 }
 
 export async function getLatestTracks() {
-  return (await apiGet<MusicTrack[]>("/music/latest-tracks/", { tags: [MUSIC_TAG] })) ?? [];
+  return asList(
+    await apiGet<MusicTrack[] | { results?: MusicTrack[] }>("/music/latest-tracks/", {
+      query: UNPAGINATED,
+      tags: [MUSIC_TAG],
+    }),
+  );
 }
 
 export async function getPlaylists({ q }: { q?: string } = {}) {
