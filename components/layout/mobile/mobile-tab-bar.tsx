@@ -14,6 +14,7 @@ import {
   Menu,
   Mic2,
   Music2,
+  Disc3,
   Newspaper,
   ListMusic,
   Rss,
@@ -44,6 +45,7 @@ const SHEET_GROUPS: { title: string; links: SheetLink[] }[] = [
     links: [
       { name: "Songs", href: "/music/songs", icon: Music2 },
       { name: "Artists", href: "/music/artists", icon: Mic2 },
+      { name: "Albums", href: "/music/albums", icon: Disc3 },
       { name: "Playlists", href: "/music/playlists", icon: ListMusic },
     ],
   },

@@ -12,6 +12,7 @@ const STATIC_ROUTES: { path: string; priority: number; changeFrequency: "daily" 
   { path: "/music", priority: 0.9, changeFrequency: "daily" },
   { path: "/music/artists", priority: 0.7, changeFrequency: "weekly" },
   { path: "/music/songs", priority: 0.7, changeFrequency: "daily" },
+  { path: "/music/albums", priority: 0.7, changeFrequency: "weekly" },
   { path: "/music/playlists", priority: 0.6, changeFrequency: "weekly" },
   { path: "/charts", priority: 0.6, changeFrequency: "daily" },
   { path: "/upload", priority: 0.5, changeFrequency: "monthly" },

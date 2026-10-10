@@ -69,6 +69,26 @@ export async function getMusicPosts({
   return data ?? emptyPage<PostSummary>();
 }
 
+/** Album posts (posts with an album attached), newest first. */
+export async function getAlbumPosts({
+  page = 1,
+  q,
+  sort,
+}: { page?: number; q?: string; sort?: "date" | "title" } = {}) {
+  const data = await apiGet<Paginated<PostSummary>>("/blog/posts/", {
+    query: {
+      view: "summary",
+      type: "album",
+      page,
+      page_size: POSTS_PAGE_SIZE,
+      search: q,
+      ordering: sort === "title" ? "title" : undefined,
+    },
+    tags: [POSTS_TAG],
+  });
+  return data ?? emptyPage<PostSummary>();
+}
+
 /** Cached per request so generateMetadata and the page share one fetch. */
 export const getPost = cache((slug: string) =>
   apiGet<PostDetail>(`/blog/posts/${encodeURIComponent(slug)}/`, {

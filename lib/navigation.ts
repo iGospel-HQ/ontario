@@ -16,6 +16,7 @@ export const mainMenu: MenuItem[] = [
       { name: "Music News", href: "/music" },
       { name: "Songs", href: "/music/songs" },
       { name: "Artists", href: "/music/artists" },
+      { name: "Albums", href: "/music/albums" },
       { name: "Playlists", href: "/music/playlists" },
       { name: "Top Charts", href: "/charts" },
     ],
