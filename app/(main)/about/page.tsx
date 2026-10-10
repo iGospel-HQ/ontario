@@ -7,9 +7,13 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata({
   title: "About",
   description:
-    "Learn more about iGospel's mission and team",
+    "iGospel is a Nigerian gospel platform, founded in 2018, for gospel music, artist stories and devotionals. Learn about our mission, vision and values.",
   path: "/about",
 });
+
+const FOUNDED_YEAR = 2018;
+// Computed at build time, so the count stays current with each deploy.
+const YEARS_ACTIVE = new Date().getFullYear() - FOUNDED_YEAR;
 
 export default function AboutPage() {
   return (
@@ -25,7 +29,7 @@ export default function AboutPage() {
             </span>
           </h1>
           <p className="text-lg md:text-xl text-gray-700 max-w-2xl mx-auto">
-            Spreading the Gospel of Jesus Christ Through Digital Media Since 2018
+            Spreading the Gospel of Jesus Christ Through Digital Media Since {FOUNDED_YEAR}
           </p>
         </FadeIn>
       </section>
@@ -36,10 +40,18 @@ export default function AboutPage() {
           <Reveal className="space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Who We Are</h2>
             <p className="text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto">
-              iGospel Media Connect is a digital gospel platform founded in <strong>2018</strong> with a mission to spread the Gospel of our Lord Jesus Christ through edifying and spirit-filled content.
+              iGospel Media Connect is a digital gospel platform founded in <strong>{FOUNDED_YEAR}</strong> with a mission to spread the Gospel of our Lord Jesus Christ through edifying and spirit-filled content.
             </p>
             <p className="text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto">
               We provide access to gospel music, sermons, devotionals, and other inspirational resources designed to build faith and transform lives. We exist to leverage technology as a tool for ministry: connecting people across the world to Christ-centered content that inspires worship, strengthens faith, and nurtures spiritual growth.
+            </p>
+            <p className="text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto">
+              On iGospel, you can stream and download new releases, explore artist profiles, follow the top charts and
+              discover curated playlists. Gospel artists and ministers can{" "}
+              <Link href="/upload" className="font-semibold text-red-600 hover:underline">
+                upload their songs
+              </Link>{" "}
+              to reach a wider audience, and listeners can support them directly through the platform.
             </p>
           </Reveal>
         </div>
@@ -117,7 +129,7 @@ export default function AboutPage() {
           {[
             { icon: Radio, value: "Global", label: "Reach" },
             { icon: Users, value: "Millions", label: "Lives Impacted" },
-            { icon: Heart, value: "7+ Years", label: "Of Ministry" },
+            { icon: Heart, value: `${YEARS_ACTIVE}+ Years`, label: "In This Assignment" },
             { icon: Globe, value: "Worldwide", label: "Community" },
           ].map((stat) => (
             <Reveal key={stat.label} y={0} scale={0.9} className="text-gray-900">
