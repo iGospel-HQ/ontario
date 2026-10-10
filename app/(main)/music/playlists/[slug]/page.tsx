@@ -3,7 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { notFoundMetadata } from "@/components/shared/not-found-content";
 import { getPlaylist, getPlaylists } from "@/lib/api/queries";
-import { pageMetadata, toDescription } from "@/lib/seo";
+import { htmlToText, pageMetadata, toDescription } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
 import { FadeIn } from "@/components/shared/fade-in";
 import { JsonLd } from "@/components/shared/json-ld";
@@ -56,7 +56,7 @@ export default async function PlaylistDetailPage({ params }: Props) {
           "@context": "https://schema.org",
           "@type": "MusicPlaylist",
           name: playlist.title,
-          description: playlist.description || undefined,
+          description: playlist.description ? htmlToText(playlist.description) : undefined,
           url,
           image: playlist.cover_image || undefined,
           numTracks: tracks.length,
@@ -84,7 +84,13 @@ export default async function PlaylistDetailPage({ params }: Props) {
         <div className="max-w-4xl mx-auto">
           <FadeIn y={-20} className="mb-12">
             <h1 className="text-4xl font-bold mb-4">{playlist.title}</h1>
-            <p className="text-muted-foreground mb-4">{playlist.description}</p>
+            {/* Rich text from the admin editor, cleaned by the API (music/richtext.py). */}
+            {playlist.description && (
+              <div
+                className="entry-content mb-4 text-muted-foreground"
+                dangerouslySetInnerHTML={{ __html: playlist.description }}
+              />
+            )}
             <p className="text-sm text-muted-foreground">{playlist.track_count} songs</p>
           </FadeIn>
 
