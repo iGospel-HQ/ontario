@@ -21,10 +21,14 @@ export function AudioProvider() {
     const { currentTrack, setStreamCount } = useAudioPlayer.getState();
     if (!currentTrack) return;
     listened.current.reported = true;
+    // A form body makes this a "simple" CORS request: no preflight, so it works
+    // in every browser (Safari and in-app browsers drop preflighted keepalive requests).
+    const body = new URLSearchParams();
+    const id = visitorId();
+    if (id) body.set("visitor_id", id);
     fetch(`${siteConfig.apiUrl}/music/tracks/${encodeURIComponent(currentTrack.id)}/stream/`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ visitor_id: visitorId() }),
+      body,
       keepalive: true,
     })
       .then((res) => (res.ok ? res.json() : null))
