@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Download, Music2, Pause, Play, RotateCcw, RotateCw } from "lucide-react";
+import { Download, Headphones, Music2, Pause, Play, RotateCcw, RotateCw } from "lucide-react";
 import { useAudioPlayer } from "@/store/use-audio-player";
 import { formatTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -128,6 +128,7 @@ function TrackCard({ tracks, collection }: { tracks: PostTrack[]; collection?: C
           {featured.artist_name && (
             <p className="truncate text-sm text-white/70">{featured.artist_name}</p>
           )}
+          <TrackCounts track={featured} />
 
           {/* Seek bar */}
           <div className="mt-5">
@@ -234,6 +235,7 @@ function TrackCard({ tracks, collection }: { tracks: PostTrack[]; collection?: C
                       <span className="block truncate text-xs text-white/50">{track.artist_name}</span>
                     )}
                   </span>
+                  <PlaysBadge track={track} />
                   {track.duration && (
                     <span className="text-xs tabular-nums text-white/50">{track.duration}</span>
                   )}
@@ -295,6 +297,49 @@ function Equalizer() {
       <span />
       <span />
       <span />
+    </span>
+  );
+}
+
+const countFormat = new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 });
+
+/** Plays for a track: the API count, or the newer one returned after this visitor's stream. */
+function usePlays(track: PostTrack) {
+  const live = useAudioPlayer((s) => s.streamCounts[track.id]);
+  return Math.max(track.plays_count ?? 0, live ?? 0);
+}
+
+/** "1.2K plays · 340 downloads" under the featured track. */
+function TrackCounts({ track }: { track: PostTrack }) {
+  const plays = usePlays(track);
+  const downloads = track.download_count ?? 0;
+  return (
+    <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-white/60">
+      <span className="inline-flex items-center gap-1">
+        <Headphones className="size-3.5" aria-hidden="true" />
+        {countFormat.format(plays)} {plays === 1 ? "play" : "plays"}
+      </span>
+      {track.is_downloadable && (
+        <span className="inline-flex items-center gap-1">
+          <Download className="size-3.5" aria-hidden="true" />
+          {countFormat.format(downloads)} {downloads === 1 ? "download" : "downloads"}
+        </span>
+      )}
+    </p>
+  );
+}
+
+/** Compact play count in tracklist rows (hidden until a track has plays). */
+function PlaysBadge({ track }: { track: PostTrack }) {
+  const plays = usePlays(track);
+  if (plays === 0) return null;
+  return (
+    <span
+      className="hidden items-center gap-1 text-xs tabular-nums text-white/50 sm:inline-flex"
+      title={`${plays.toLocaleString("en")} plays`}
+    >
+      <Headphones className="size-3" aria-hidden="true" />
+      {countFormat.format(plays)}
     </span>
   );
 }

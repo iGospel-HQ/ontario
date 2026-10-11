@@ -19,7 +19,12 @@ interface AudioPlayerState {
   volume: number;
   isMuted: boolean;
   audioRef: HTMLAudioElement | null;
+  /** Increments on every playTrack: one stream report per session (AudioProvider). */
+  playSession: number;
+  /** Latest play counts returned by the API after a stream was reported. */
+  streamCounts: Record<string, number>;
 
+  setStreamCount: (trackId: string, plays: number) => void;
   setAudioRef: (ref: HTMLAudioElement | null) => void;
   playTrack: (track: Track) => void;
   togglePlay: () => void;
@@ -41,19 +46,23 @@ export const useAudioPlayer = create<AudioPlayerState>((set, get) => ({
   volume: 1,
   isMuted: false,
   audioRef: null,
+  playSession: 0,
+  streamCounts: {},
 
+  setStreamCount: (trackId, plays) => set((s) => ({ streamCounts: { ...s.streamCounts, [trackId]: plays } })),
   setAudioRef: (ref) => set({ audioRef: ref }),
 
   playTrack: (track) => {
     const audio = get().audioRef;
 
-    set({
+    set((s) => ({
       currentTrack: track,
       isOpen: true,
       isPlaying: true,
       currentTime: 0,
       progress: 0,
-    });
+      playSession: s.playSession + 1,
+    }));
 
     if (audio) {
       audio.src = track.audioUrl;

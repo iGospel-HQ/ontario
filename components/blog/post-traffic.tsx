@@ -3,22 +3,7 @@
 import { useEffect, useState } from "react";
 import { siteConfig } from "@/lib/site";
 import { BlogStats, type TrafficStats } from "@/components/blog/blog-stats";
-
-const VISITOR_KEY = "igospel_visitor_id";
-
-/** Anonymous per-browser id so readers sharing an IP count as separate visitors. */
-function visitorId() {
-  try {
-    let id = localStorage.getItem(VISITOR_KEY);
-    if (!id) {
-      id = crypto.randomUUID();
-      localStorage.setItem(VISITOR_KEY, id);
-    }
-    return id;
-  } catch {
-    return undefined; // storage blocked: the API falls back to the IP address
-  }
-}
+import { visitorId } from "@/lib/visitor";
 
 /**
  * Reports this page view and shows the post's traffic stats. The page is

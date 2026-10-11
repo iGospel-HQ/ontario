@@ -5,6 +5,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import {
   ArrowDownRight,
+  Download,
   ArrowUpRight,
   ExternalLink,
   Eye,
@@ -205,17 +206,18 @@ export function AdminOverviewDashboard() {
 }
 
 function Overview({ data }: { data: AdminOverview }) {
-  const { days, traffic, plays, users, artists, music, content, money } = data;
+  const { days, traffic, plays, downloads, users, artists, music, content, money } = data;
   const s1 = "var(--viz-series-1)";
   const s2 = "var(--viz-series-2)";
 
   return (
     <>
       {/* Headline numbers for the selected period */}
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
         <KpiTile label="Post views" value={compact(traffic.views.period)} windowed={traffic.views} days={days} icon={Eye} trend={traffic.series.map((d) => d.views)} />
         <KpiTile label="Unique visitors" value={compact(traffic.visitors.period)} windowed={traffic.visitors} days={days} icon={Users} trend={traffic.series.map((d) => d.visitors)} />
         <KpiTile label="Song plays" value={compact(plays.period)} windowed={plays} days={days} icon={Music2} trend={plays.series.map((d) => d.plays)} />
+        <KpiTile label="Downloads" value={compact(downloads.period)} windowed={downloads} days={days} icon={Download} trend={downloads.series.map((d) => d.downloads)} />
         <KpiTile label="New users" value={compact(users.period)} windowed={users} days={days} icon={UserPlus} trend={users.series.map((d) => d.signups)} />
         <KpiTile
           label="Donations"
@@ -259,9 +261,14 @@ function Overview({ data }: { data: AdminOverview }) {
             <BarList rows={plays.top_countries.map((c) => ({ label: c.country, value: c.plays }))} />
           </div>
         </Card>
-        <Card title="Top songs" subtitle={`By plays, last ${days} days`}>
-          <BarList rows={plays.top_tracks.map((t) => ({ label: t.title, sublabel: t.artist, value: t.plays }))} />
-        </Card>
+        <div className="grid min-w-0 content-start gap-4">
+          <Card title="Top songs" subtitle={`By plays (30s+ listens), last ${days} days`}>
+            <BarList rows={plays.top_tracks.map((t) => ({ label: t.title, sublabel: t.artist, value: t.plays }))} />
+          </Card>
+          <Card title="Top downloads" subtitle={`Last ${days} days · ${compact(downloads.all_time)} all time`}>
+            <BarList rows={downloads.top_tracks.map((t) => ({ label: t.title, sublabel: t.artist, value: t.downloads }))} />
+          </Card>
+        </div>
       </div>
 
       {/* Catalogue, community, money */}

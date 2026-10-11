@@ -68,6 +68,8 @@ export interface PostTrack {
   download_url: string | null;
   artist_name?: string;
   track_number?: number | null;
+  plays_count?: number;
+  download_count?: number;
 }
 
 export interface AdBanner {
@@ -113,6 +115,10 @@ export interface AdminOverview {
     visitors: Windowed;
     series: { date: string; views: number; visitors: number }[];
     top_posts: { title: string; slug: string; views: number }[];
+  };
+  downloads: Windowed & {
+    series: { date: string; downloads: number }[];
+    top_tracks: { title: string; artist: string; downloads: number }[];
   };
   plays: Windowed & {
     series: { date: string; plays: number }[];
