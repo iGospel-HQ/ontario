@@ -56,10 +56,11 @@ export default function SignInClient() {
       setUser({
         user_id: data.user_id,
         email: data.email,
-        has_pin: data.has_pin
+        has_pin: data.has_pin,
+        is_admin: Boolean(data.is_admin),
       });
       // Redirect or store token here
-      router.push("/dashboard");
+      router.push(data.is_admin ? "/dashboard/overview" : "/dashboard");
     },
     onError: (error: any) => {
       console.error("Login failed:", error);

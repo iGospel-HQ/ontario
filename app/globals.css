@@ -283,6 +283,22 @@
 .tab-item-active { color: var(--accent); }
 .tab-item-active .tab-icon { background: color-mix(in srgb, var(--accent) 12%, transparent); }
 
+/* Admin dashboard charts (components/dashboard/admin): validated palette tokens.
+   Light only, like the rest of the site. */
+.viz-root {
+  --viz-surface: #ffffff;
+  --viz-series-1: #2a78d6;
+  --viz-series-2: #eb6834;
+  --viz-ink: #0b0b0b;
+  --viz-ink-2: #52514e;
+  --viz-muted: #898781;
+  --viz-grid: #e1e0d9;
+  --viz-axis: #c3c2b7;
+  --viz-border: rgba(11, 11, 11, 0.1);
+  --viz-good: #006300;
+  --viz-bad: #d03b3b;
+}
+
 /* Top progress bar while a clicked link loads (components/layout/navigation-progress.tsx).
    Grows quickly at first, then slows, and never completes on its own. */
 .nav-progress {

@@ -96,6 +96,66 @@ export interface SupportStatus {
   message?: string;
 }
 
+/** Counts for today, the selected period, the period before it and all time. */
+export interface Windowed {
+  today: number;
+  period: number;
+  previous: number;
+  all_time: number;
+}
+
+/** `/stats/overview/?days=` (staff only). */
+export interface AdminOverview {
+  generated_at: string;
+  days: number;
+  traffic: {
+    views: Windowed;
+    visitors: Windowed;
+    series: { date: string; views: number; visitors: number }[];
+    top_posts: { title: string; slug: string; views: number }[];
+  };
+  plays: Windowed & {
+    series: { date: string; plays: number }[];
+    top_tracks: { title: string; artist: string; plays: number }[];
+    top_countries: { country: string; plays: number }[];
+    unknown_country: number;
+  };
+  users: Windowed & { active: number; staff: number; series: { date: string; signups: number }[] };
+  artists: { total: number; active: number; with_account: number; new_period: number };
+  music: {
+    tracks: number;
+    singles: number;
+    album_tracks: number;
+    albums: number;
+    downloadable: number;
+    new_tracks_period: number;
+    genres: number;
+    playlists: number;
+  };
+  content: {
+    published: number;
+    scheduled: number;
+    drafts: number;
+    published_period: number;
+    comments: number;
+    comments_pending: number;
+    newsletter_subscribers: number;
+    contact_messages: number;
+    contact_messages_period: number;
+  };
+  money: {
+    donations_total: number;
+    donations_period: number;
+    donations_previous: number;
+    donations_count_period: number;
+    commission_total: number;
+    pending_withdrawals: number;
+    pending_withdrawals_amount: number;
+    series: { date: string; donations: number }[];
+    recent_donations: { amount: number; creator: string; date: string }[];
+  };
+}
+
 /** Album attached to a post, with its tracks in album order. */
 export interface PostAlbum {
   id: string;

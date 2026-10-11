@@ -3,6 +3,7 @@
 import Image from "next/image";
 import icon from "@/public/icon.png";
 import {
+  BarChart3,
   LayoutDashboard,
   LogOut,
   CreditCard,
@@ -12,6 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAuthStore } from "@/store/use-auth-store";
 import {
   Sidebar,
   SidebarContent,
@@ -71,6 +73,11 @@ interface DashboardSidebarProps {
 export function DashboardSidebar({ onLogoutClick }: DashboardSidebarProps) {
   const pathname = usePathname();
   const { isMobile, setOpenMobile } = useSidebar();
+  const isAdmin = useAuthStore((s) => Boolean(s.user?.is_admin));
+  // Staff accounts also get the site-wide stats page, listed first.
+  const items = isAdmin
+    ? [{ label: "Site Overview", icon: BarChart3, route: "/dashboard/overview" }, ...menuItems]
+    : menuItems;
   const handleClick = () => {
     if (isMobile) {
       setOpenMobile(false);
@@ -95,7 +102,7 @@ export function DashboardSidebar({ onLogoutClick }: DashboardSidebarProps) {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => (
+              {items.map((item) => (
                 <SidebarMenuItem key={item.label}>
                   {item.route ? (
                     <SidebarMenuButton

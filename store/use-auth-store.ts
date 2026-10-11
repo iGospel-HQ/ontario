@@ -7,6 +7,8 @@ interface User {
   user_id: string;
   email: string;
   has_pin: boolean;
+  /** Staff account: sees the site-wide stats dashboard (the API enforces it). */
+  is_admin?: boolean;
 }
 
 interface AuthState {
