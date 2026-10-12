@@ -92,27 +92,24 @@ interface ClipTarget {
   name: string;
   /** Button colours (brand colour of each app). */
   style: string;
-  /** Where to post the video in the app, shown after it's shared or downloaded. */
-  how: string;
 }
 
 /** Apps that take a vertical (9:16) video: Status, Stories, Reels, Shorts. */
 const CLIP_TARGETS: ClipTarget[] = [
-  { id: "whatsapp", name: "WhatsApp Status", style: "bg-[#25D366] text-white", how: "WhatsApp → Updates → add status → pick the video" },
+  { id: "whatsapp", name: "WhatsApp Status", style: "bg-[#25D366] text-white" },
   {
     id: "instagram",
     name: "Instagram",
     style: "bg-gradient-to-r from-[#f58529] via-[#dd2a7b] to-[#8134af] text-white",
-    how: "Instagram → + → Story or Reel → pick the video",
   },
-  { id: "tiktok", name: "TikTok", style: "bg-black text-white ring-1 ring-white/20", how: "TikTok → + → Upload → pick the video" },
-  { id: "facebook", name: "Facebook", style: "bg-[#1877F2] text-white", how: "Facebook → Create story or Reel → pick the video" },
-  { id: "youtube", name: "YouTube Shorts", style: "bg-[#FF0000] text-white", how: "YouTube → + → Short → Upload → pick the video" },
-  { id: "snapchat", name: "Snapchat", style: "bg-[#FFFC00] text-black", how: "Snapchat → Memories → Camera Roll → send to Story" },
-  { id: "telegram", name: "Telegram", style: "bg-[#229ED9] text-white", how: "Telegram → Stories (or any chat) → pick the video" },
+  { id: "tiktok", name: "TikTok", style: "bg-black text-white ring-1 ring-white/20" },
+  { id: "facebook", name: "Facebook", style: "bg-[#1877F2] text-white" },
+  { id: "youtube", name: "YouTube Shorts", style: "bg-[#FF0000] text-white" },
+  { id: "snapchat", name: "Snapchat", style: "bg-[#FFFC00] text-black" },
+  { id: "telegram", name: "Telegram", style: "bg-[#229ED9] text-white" },
 ];
 
-const MORE: ClipTarget = { id: "more", name: "More", style: "bg-white/15 text-white", how: "pick an app in the share menu" };
+const MORE: ClipTarget = { id: "more", name: "More", style: "bg-white/15 text-white" };
 
 /**
  * Count a share of the video (for the dashboard and sponsor reports). A form
@@ -220,12 +217,13 @@ export function ShareClip({ track }: { track: PostTrack }) {
   };
 
   const hint = (() => {
-    const t = target ?? MORE;
-    const caption = captionCopied ? " Caption with the link copied: paste it in your post." : "";
+    const caption = captionCopied ? " Paste the copied caption with your post." : "";
     if (state === "loading") return "Preparing the video…";
-    if (state === "ready") return `Video ready: tap ${t.name} again to share it.`;
-    if (state === "shared") return `Choose ${t.id === "more" ? "an app" : t.name.replace(" Status", "")} in the share menu, then: ${t.how}.${caption}`;
-    if (state === "saved") return `Video saved. ${t.how}.${caption}`;
+    if (state === "ready") return `Video ready: tap ${(target ?? MORE).name} again to share it.`;
+    if (state === "shared")
+      return `Pick the app in the share menu and post the video to your Status, Story, Reel or feed.${caption}`;
+    if (state === "saved")
+      return `Video saved to your device. Open WhatsApp, Instagram, TikTok or any app and post it from your gallery.${caption}`;
     return "Vertical video of this song for Status, Stories, Reels, TikTok and Shorts.";
   })();
 
