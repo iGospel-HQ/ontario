@@ -76,7 +76,7 @@ export interface PostTrack {
   scripture?: ScripturePassage[];
   /** Sanitized HTML: the story behind the song. */
   song_story?: string;
-  /** 30-second vertical MP4 for WhatsApp Status, once generated. */
+  /** Vertical MP4 for WhatsApp Status (60s by default), once generated. */
   status_clip?: string | null;
 }
 

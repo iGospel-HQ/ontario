@@ -86,7 +86,7 @@ export function CallerTunes({ track }: { track: PostTrack }) {
 type ClipState = "idle" | "loading" | "saved" | "error";
 
 /**
- * "Post to WhatsApp Status": the track's 30-second branded video. Phones get
+ * "Post to WhatsApp Status": the track's short branded video (60s by default). Phones get
  * the share sheet (WhatsApp → My status); elsewhere the video downloads, to be
  * posted from WhatsApp's Status tab.
  */
@@ -143,7 +143,7 @@ export function StatusClipButton({ track }: { track: PostTrack }) {
       <p className="mt-1.5 text-[11px] text-white/50" aria-live="polite">
         {state === "saved"
           ? "Video saved. Open WhatsApp → Status → add it from your gallery."
-          : "30-second video of this song, ready for your Status."}
+          : "A short video of this song, ready for your Status."}
       </p>
     </div>
   );
