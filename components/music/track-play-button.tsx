@@ -5,13 +5,19 @@ import { useAudioPlayer, type Track } from "@/store/use-audio-player";
 import { cn } from "@/lib/utils";
 import type { MusicTrack } from "@/types/api";
 
-export function toPlayerTrack(track: MusicTrack): Track {
+/** The fields the player needs: a full MusicTrack, or a chart row. */
+type PlayableTrack = Pick<MusicTrack, "id" | "title" | "artist_name" | "image"> & {
+  album_cover?: string | null;
+  mp3_file: string | null;
+};
+
+export function toPlayerTrack(track: PlayableTrack): Track {
   return {
     id: track.id,
     title: track.title,
     artist: track.artist_name,
     cover: track.image || track.album_cover || "/placeholder.svg",
-    audioUrl: track.mp3_file,
+    audioUrl: track.mp3_file ?? "",
   };
 }
 
@@ -21,7 +27,7 @@ export function TrackPlayButton({
   className,
   iconClassName = "h-5 w-5",
 }: {
-  track: MusicTrack;
+  track: PlayableTrack;
   className?: string;
   iconClassName?: string;
 }) {

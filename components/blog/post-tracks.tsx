@@ -5,6 +5,7 @@ import { Download, Headphones, Music2, Pause, Play, RotateCcw, RotateCw } from "
 import { useAudioPlayer } from "@/store/use-audio-player";
 import { formatTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { CallerTunes, SongStories, StatusClipButton } from "./track-extras";
 import type { PostAlbum, PostTrack } from "@/types/api";
 
 const SKIP_SECONDS = 10;
@@ -57,6 +58,7 @@ export function PostTracks({ tracks, albums = [] }: { tracks: PostTrack[]; album
           <TrackCard key={album.id} tracks={albumTracks} collection={{ kind: "Album", title: album.title }} />
         ))}
       </div>
+      <SongStories tracks={[...singles, ...albumGroups.flatMap((g) => g.tracks)]} />
     </section>
   );
 }
@@ -196,8 +198,12 @@ function TrackCard({ tracks, collection }: { tracks: PostTrack[]; collection?: C
               </a>
             )}
           </div>
+
+          <StatusClipButton key={featured.id} track={featured} />
         </div>
       </div>
+
+      <CallerTunes track={featured} />
 
       {/* Tracklist */}
       {tracks.length > 1 && (

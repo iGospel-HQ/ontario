@@ -70,6 +70,58 @@ export interface PostTrack {
   track_number?: number | null;
   plays_count?: number;
   download_count?: number;
+  /** "Set as caller tune" codes, in the order MTN, Airtel, Glo, 9mobile. */
+  caller_tunes?: CallerTune[];
+  /** Bible passages behind the song (KJV text; empty text if the reference wasn't found). */
+  scripture?: ScripturePassage[];
+  /** Sanitized HTML: the story behind the song. */
+  song_story?: string;
+  /** 30-second vertical MP4 for WhatsApp Status, once generated. */
+  status_clip?: string | null;
+}
+
+export interface CallerTune {
+  network: "mtn" | "airtel" | "glo" | "9mobile" | string;
+  network_name: string;
+  code: string;
+  /** Short code to text the code to; empty when unknown. */
+  send_to: string;
+}
+
+export interface ScripturePassage {
+  reference: string;
+  text: string;
+  url: string;
+}
+
+/** `/music/charts/cities/` */
+export interface ChartCity {
+  name: string;
+  slug: string;
+  region: string;
+  country_code: string;
+  plays: number;
+}
+
+/** `/music/charts/` */
+export interface ChartTrack {
+  rank: number;
+  plays: number;
+  id: string;
+  title: string;
+  slug: string;
+  artist_name: string;
+  artist_slug: string;
+  image: string | null;
+  mp3_file: string | null;
+  duration: string | null;
+  post_slug: string | null;
+}
+
+export interface Chart {
+  city: ChartCity | null;
+  days: number;
+  tracks: ChartTrack[];
 }
 
 export interface AdBanner {

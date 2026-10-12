@@ -4,6 +4,8 @@ import { apiGet } from "@/lib/api/server";
 import type {
   AdBanner,
   Artist,
+  Chart,
+  ChartCity,
   BlogBackground,
   Genre,
   HomepageData,
@@ -156,6 +158,23 @@ export async function getPopularTracks() {
     }),
   );
 }
+
+/** Charts change with every play, so they're refreshed on a timer rather than by tag. */
+const CHART_REVALIDATE = 600;
+
+export async function getChartCities(days?: number) {
+  return asList(
+    await apiGet<ChartCity[] | { results?: ChartCity[] }>("/music/charts/cities/", {
+      query: { ...UNPAGINATED, days },
+      revalidate: CHART_REVALIDATE,
+    }),
+  );
+}
+
+/** Top tracks by plays in the period, site-wide or in one city (null: no plays from that city). */
+export const getChart = cache((city?: string, days?: number) =>
+  apiGet<Chart>("/music/charts/", { query: { city, days, limit: 20 }, revalidate: CHART_REVALIDATE }),
+);
 
 export async function getLatestTracks() {
   return asList(

@@ -1,71 +1,71 @@
 import { TrendingUp } from "lucide-react";
-import { getLatestTracks, getPopularTracks } from "@/lib/api/queries";
+import { getChart, getChartCities, getLatestTracks, getPopularTracks } from "@/lib/api/queries";
 import { pageMetadata } from "@/lib/seo";
 import { FadeIn } from "@/components/shared/fade-in";
 import { PageHeader } from "@/components/shared/page-header";
-import { TrackPlayButton } from "@/components/music/track-play-button";
+import { ChartList, CityChips } from "@/components/music/chart-list";
+import type { ChartTrack, MusicTrack } from "@/types/api";
 
-export const revalidate = 60;
+export const revalidate = 600;
 
 export const metadata = pageMetadata({
-  title: "Charts",
-  description: "The hottest tracks trending right now",
+  title: "Top Gospel Songs in Nigeria This Month",
+  description:
+    "The most played gospel songs on iGospel this month, in Nigeria and city by city: Lagos, Abuja, Port Harcourt and more.",
   path: "/charts",
 });
 
 const compact = new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 });
 
+/** All-time most played, shaped like chart rows (used until this month has plays). */
+function allTime(tracks: MusicTrack[]): ChartTrack[] {
+  return tracks.slice(0, 20).map((t, i) => ({
+    rank: i + 1,
+    plays: t.plays_count,
+    id: t.id,
+    title: t.title,
+    slug: t.slug,
+    artist_name: t.artist_name,
+    artist_slug: t.artist_slug,
+    image: t.image || t.album_cover,
+    mp3_file: t.mp3_file,
+    duration: t.duration,
+    post_slug: null,
+  }));
+}
+
 export default async function ChartsPage() {
-  const [popular, latest] = await Promise.all([getPopularTracks(), getLatestTracks()]);
-  const top10 = popular.slice(0, 10);
-  const trending = latest.slice(0, 5);
-  const maxPlays = Math.max(1, ...popular.map((t) => t.plays_count), ...trending.map((t) => t.plays_count));
+  const [chart, cities, popular, latest] = await Promise.all([
+    getChart(),
+    getChartCities(),
+    getPopularTracks(),
+    getLatestTracks(),
+  ]);
+  const monthly = chart?.tracks ?? [];
+  const fallback = monthly.length === 0;
+  const rows = fallback ? allTime(popular.filter((t) => t.plays_count > 0)) : monthly;
+  const trending = latest.slice(0, 6);
+  const maxPlays = Math.max(1, ...trending.map((t) => t.plays_count));
 
   return (
     <>
-      <PageHeader title="Charts" description="The hottest tracks trending right now" />
+      <PageHeader title="Charts" description="The most played gospel songs on iGospel, everywhere and city by city" />
       <div className="px-4 md:px-6 py-10">
-        {/* Top 10 by plays */}
         <FadeIn as="section" delay={0.1} className="mb-16">
-          <h2 className="text-3xl font-bold mb-8">Top 10</h2>
-
-          {top10.length === 0 && <p className="text-muted-foreground">No chart data yet.</p>}
-          <ol className="space-y-4">
-            {top10.map((track, idx) => (
-              <li key={track.id}>
-                <FadeIn
-                  y={0}
-                  delay={0.1 + idx * 0.1}
-                  className="group flex items-center gap-6 p-6 bg-secondary/50 hover:bg-secondary rounded-lg transition-colors"
-                >
-                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-accent/20">
-                    <span className="text-2xl font-bold text-accent">#{idx + 1}</span>
-                  </div>
-
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-lg group-hover:text-accent">{track.title}</h3>
-                    <p className="text-sm text-muted-foreground">{track.artist_name}</p>
-                  </div>
-
-                  <div className="text-right">
-                    <p className="font-semibold">{compact.format(track.plays_count)}</p>
-                    <p className="text-xs text-muted-foreground">plays</p>
-                  </div>
-
-                  <TrackPlayButton
-                    track={track}
-                    className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity text-accent"
-                    iconClassName="h-6 w-6 fill-accent"
-                  />
-                </FadeIn>
-              </li>
-            ))}
-          </ol>
+          <CityChips cities={cities} />
+          <h2 className="mb-6 mt-6 text-2xl font-bold sm:text-3xl">
+            {fallback ? "Most played of all time" : "Top 20 this month"}
+          </h2>
+          {rows.length === 0 ? (
+            <p className="text-muted-foreground">No chart data yet.</p>
+          ) : (
+            <ChartList tracks={rows} periodLabel={fallback ? "plays" : "plays this month"} />
+          )}
         </FadeIn>
 
         {/* New releases */}
         <FadeIn as="section" y={40} delay={0.3} className="border-t border-border pt-16">
-          <h2 className="text-3xl font-bold mb-8">Trending Now</h2>
+          <h2 className="text-3xl font-bold mb-8">New Releases</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {trending.map((track, idx) => {
@@ -98,7 +98,7 @@ export default async function ChartsPage() {
             })}
           </div>
         </FadeIn>
-    </div>
+      </div>
     </>
   );
 }

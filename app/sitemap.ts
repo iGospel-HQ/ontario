@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getPosts, getSitemapIndex } from "@/lib/api/queries";
+import { getChartCities, getPosts, getSitemapIndex } from "@/lib/api/queries";
 import { absoluteUrl } from "@/lib/site";
 import type { SitemapIndex } from "@/types/api";
 
@@ -38,13 +38,18 @@ async function loadIndex(): Promise<SitemapIndex> {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const index = await loadIndex();
+  const [index, cities] = await Promise.all([loadIndex(), getChartCities().catch(() => [])]);
 
   return [
     ...STATIC_ROUTES.map(({ path, priority, changeFrequency }) => ({
       url: absoluteUrl(path),
       changeFrequency,
       priority,
+    })),
+    ...cities.map((city) => ({
+      url: absoluteUrl(`/charts/${city.slug}`),
+      changeFrequency: "daily" as const,
+      priority: 0.5,
     })),
     ...index.posts.map((post) => ({
       url: absoluteUrl(`/blog/${post.slug}`),
