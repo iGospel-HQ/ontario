@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { BookOpen, Check, CircleFadingPlus, Copy, ExternalLink, Loader2, PhoneCall } from "lucide-react";
+import { useRef, useState } from "react";
+import { BookOpen, Check, CircleFadingPlus, Copy, ExternalLink, Loader2, PhoneCall, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CallerTune, PostTrack } from "@/types/api";
 
@@ -83,15 +83,48 @@ export function CallerTunes({ track }: { track: PostTrack }) {
   );
 }
 
-type ClipState = "idle" | "loading" | "saved" | "error";
+type ClipState = "idle" | "loading" | "ready" | "shared" | "saved";
+
+interface ClipTarget {
+  id: string;
+  name: string;
+  /** Button colours (brand colour of each app). */
+  style: string;
+  /** Where to post the video in the app, shown after it's shared or downloaded. */
+  how: string;
+}
+
+/** Apps that take a vertical (9:16) video: Status, Stories, Reels, Shorts. */
+const CLIP_TARGETS: ClipTarget[] = [
+  { id: "whatsapp", name: "WhatsApp Status", style: "bg-[#25D366] text-white", how: "WhatsApp → Updates → add status → pick the video" },
+  {
+    id: "instagram",
+    name: "Instagram",
+    style: "bg-gradient-to-r from-[#f58529] via-[#dd2a7b] to-[#8134af] text-white",
+    how: "Instagram → + → Story or Reel → pick the video",
+  },
+  { id: "tiktok", name: "TikTok", style: "bg-black text-white ring-1 ring-white/20", how: "TikTok → + → Upload → pick the video" },
+  { id: "facebook", name: "Facebook", style: "bg-[#1877F2] text-white", how: "Facebook → Create story or Reel → pick the video" },
+  { id: "youtube", name: "YouTube Shorts", style: "bg-[#FF0000] text-white", how: "YouTube → + → Short → Upload → pick the video" },
+  { id: "snapchat", name: "Snapchat", style: "bg-[#FFFC00] text-black", how: "Snapchat → Memories → Camera Roll → send to Story" },
+  { id: "telegram", name: "Telegram", style: "bg-[#229ED9] text-white", how: "Telegram → Stories (or any chat) → pick the video" },
+];
+
+const MORE: ClipTarget = { id: "more", name: "More", style: "bg-white/15 text-white", how: "pick an app in the share menu" };
 
 /**
- * "Post to WhatsApp Status": the track's short branded video (60s by default). Phones get
- * the share sheet (WhatsApp → My status); elsewhere the video downloads, to be
- * posted from WhatsApp's Status tab.
+ * "Share this song as a video": the track's short branded vertical video, for
+ * WhatsApp Status, Instagram/Facebook Stories and Reels, TikTok, Shorts...
+ * Websites can't post into those apps directly: phones get the share sheet
+ * with the video attached (the person picks the app), other devices download
+ * it. A caption with the post link is copied first, ready to paste.
  */
-export function StatusClipButton({ track }: { track: PostTrack }) {
+export function ShareClip({ track }: { track: PostTrack }) {
   const [state, setState] = useState<ClipState>("idle");
+  const [target, setTarget] = useState<ClipTarget | null>(null);
+  const [captionCopied, setCaptionCopied] = useState(false);
+  // The video is fetched once (only when someone taps), then reused.
+  const file = useRef<File | null>(null);
   const clip = track.status_clip;
   if (!clip) return null;
 
@@ -105,45 +138,93 @@ export function StatusClipButton({ track }: { track: PostTrack }) {
     setState("saved");
   };
 
-  const share = async () => {
+  const copyCaption = async () => {
+    const artist = track.artist_name ? ` by ${track.artist_name}` : "";
+    const caption = `🎧 ${track.title}${artist}\nListen & download on iGospel: ${window.location.href.split("#")[0]}`;
+    try {
+      await navigator.clipboard.writeText(caption);
+      setCaptionCopied(true);
+    } catch {
+      setCaptionCopied(false);
+    }
+  };
+
+  const loadFile = async () => {
+    if (file.current) return file.current;
+    const res = await fetch(clip);
+    if (!res.ok) throw new Error(String(res.status));
+    const name = `${track.artist_name ? `${track.artist_name} - ` : ""}${track.title} (igospel.ng).mp4`;
+    file.current = new File([await res.blob()], name.replace(/[\\/:*?"<>|]/g, "-"), { type: "video/mp4" });
+    return file.current;
+  };
+
+  const share = async (choice: ClipTarget) => {
     if (state === "loading") return;
+    setTarget(choice);
+    void copyCaption();
     const canShareFiles = typeof navigator !== "undefined" && typeof navigator.canShare === "function";
     if (!canShareFiles) return download();
+    const fresh = !file.current;
     setState("loading");
     try {
-      const res = await fetch(clip);
-      if (!res.ok) throw new Error(String(res.status));
-      const name = `${track.artist_name ? `${track.artist_name} - ` : ""}${track.title} (igospel.ng).mp4`;
-      const file = new File([await res.blob()], name.replace(/[\\/:*?"<>|]/g, "-"), { type: "video/mp4" });
-      if (!navigator.canShare({ files: [file] })) return download();
-      await navigator.share({ files: [file] });
-      setState("idle");
+      const video = await loadFile();
+      if (!navigator.canShare({ files: [video] })) return download();
+      await navigator.share({ files: [video] });
+      setState("shared");
     } catch (error) {
-      // Closing the share sheet isn't an error; anything else falls back to the download.
-      if (error instanceof DOMException && error.name === "AbortError") setState("idle");
+      const name = error instanceof DOMException ? error.name : "";
+      if (name === "AbortError") setState("idle"); // closed the share sheet
+      // Some browsers (Safari) only open the share sheet straight after a tap;
+      // the download took too long, so ask for one more tap (the video is ready now).
+      else if (name === "NotAllowedError" && fresh && file.current) setState("ready");
       else download();
     }
   };
 
+  const hint = (() => {
+    const t = target ?? MORE;
+    const caption = captionCopied ? " Caption with the link copied: paste it in your post." : "";
+    if (state === "loading") return "Preparing the video…";
+    if (state === "ready") return `Video ready: tap ${t.name} again to share it.`;
+    if (state === "shared") return `Choose ${t.id === "more" ? "an app" : t.name.replace(" Status", "")} in the share menu, then: ${t.how}.${caption}`;
+    if (state === "saved") return `Video saved. ${t.how}.${caption}`;
+    return "Vertical video of this song for Status, Stories, Reels, TikTok and Shorts.";
+  })();
+
   return (
     <div className="mt-4">
-      <button
-        type="button"
-        onClick={share}
-        disabled={state === "loading"}
-        className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-black/20 transition hover:bg-[#1fb857] disabled:opacity-70"
-      >
-        {state === "loading" ? (
-          <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-        ) : (
-          <CircleFadingPlus className="size-4" aria-hidden="true" />
-        )}
-        {state === "loading" ? "Preparing video…" : "Post to WhatsApp Status"}
-      </button>
+      <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">
+        Share this song as a video
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {[...CLIP_TARGETS, MORE].map((choice) => {
+          const busy = state === "loading" && target?.id === choice.id;
+          return (
+            <button
+              key={choice.id}
+              type="button"
+              onClick={() => share(choice)}
+              disabled={state === "loading"}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold shadow-lg shadow-black/20 transition hover:brightness-110 disabled:opacity-60",
+                choice.style,
+                state === "ready" && target?.id === choice.id && "ring-2 ring-white",
+              )}
+            >
+              {busy ? (
+                <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
+              ) : choice.id === "whatsapp" ? (
+                <CircleFadingPlus className="size-3.5" aria-hidden="true" />
+              ) : choice.id === "more" ? (
+                <Share2 className="size-3.5" aria-hidden="true" />
+              ) : null}
+              {choice.name}
+            </button>
+          );
+        })}
+      </div>
       <p className="mt-1.5 text-[11px] text-white/50" aria-live="polite">
-        {state === "saved"
-          ? "Video saved. Open WhatsApp → Status → add it from your gallery."
-          : "A short video of this song, ready for your Status."}
+        {hint}
       </p>
     </div>
   );

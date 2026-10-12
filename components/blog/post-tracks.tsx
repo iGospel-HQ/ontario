@@ -5,7 +5,7 @@ import { Download, Headphones, Music2, Pause, Play, RotateCcw, RotateCw } from "
 import { useAudioPlayer } from "@/store/use-audio-player";
 import { formatTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import { CallerTunes, SongStories, StatusClipButton } from "./track-extras";
+import { CallerTunes, ShareClip, SongStories } from "./track-extras";
 import type { PostAlbum, PostTrack } from "@/types/api";
 
 const SKIP_SECONDS = 10;
@@ -199,7 +199,7 @@ function TrackCard({ tracks, collection }: { tracks: PostTrack[]; collection?: C
             )}
           </div>
 
-          <StatusClipButton key={featured.id} track={featured} />
+          <ShareClip key={featured.id} track={featured} />
         </div>
       </div>
 
