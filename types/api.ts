@@ -177,8 +177,10 @@ export interface AdminOverview {
     series: { date: string; shares: number }[];
     by_platform: { platform: string; shares: number }[];
     top_tracks: { title: string; artist: string; shares: number }[];
-    /** The clip sponsor running now, with shares of videos carrying it. */
-    sponsor: { name: string; shares: number; since: string } | null;
+    /** Clip sponsors running now, with the videos carrying each and their shares. */
+    sponsors?: { name: string; shares: number; videos: number; since: string; songs: string }[];
+    /** Older APIs: the single sponsor. */
+    sponsor?: { name: string; shares: number; since: string } | null;
   };
   plays: Windowed & {
     series: { date: string; plays: number }[];

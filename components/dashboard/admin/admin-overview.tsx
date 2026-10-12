@@ -207,6 +207,10 @@ export function AdminOverviewDashboard() {
 
 function Overview({ data }: { data: AdminOverview }) {
   const { days, traffic, plays, downloads, shares, users, artists, music, content, money } = data;
+  // Older APIs send one "sponsor" (on all songs) instead of the "sponsors" list.
+  const sponsors =
+    shares?.sponsors ??
+    (shares?.sponsor ? [{ ...shares.sponsor, videos: null as number | null, songs: "All songs" }] : []);
   const s1 = "var(--viz-series-1)";
   const s2 = "var(--viz-series-2)";
 
@@ -287,16 +291,20 @@ function Overview({ data }: { data: AdminOverview }) {
             </div>
           </Card>
           <div className="grid min-w-0 content-start gap-4">
-            <Card title="Clip sponsor" subtitle="Running on every song video now">
-              {shares.sponsor ? (
-                <div className="grid grid-cols-2 gap-4">
-                  <Stat label="Sponsor" value={shares.sponsor.name} />
-                  <Stat
-                    label="Video shares"
-                    value={shares.sponsor.shares}
-                    hint={`Since ${new Date(shares.sponsor.since).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}`}
-                  />
-                </div>
+            <Card title="Clip sponsors" subtitle="Running on the song videos now">
+              {sponsors.length > 0 ? (
+                <ul className="space-y-4">
+                  {sponsors.map((s) => (
+                    <li key={s.name} className="grid grid-cols-2 gap-4">
+                      <Stat label={s.songs} value={s.name} hint={s.videos != null ? `On ${full(s.videos)} videos` : undefined} />
+                      <Stat
+                        label="Video shares"
+                        value={s.shares}
+                        hint={`Since ${new Date(s.since).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}`}
+                      />
+                    </li>
+                  ))}
+                </ul>
               ) : (
                 <p className="text-sm text-[var(--viz-muted)]">
                   No sponsor running. Add one in the{" "}
