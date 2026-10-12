@@ -172,6 +172,14 @@ export interface AdminOverview {
     series: { date: string; downloads: number }[];
     top_tracks: { title: string; artist: string; downloads: number }[];
   };
+  /** Song video shares (WhatsApp Status, Stories, TikTok...). Missing from older APIs. */
+  shares?: Windowed & {
+    series: { date: string; shares: number }[];
+    by_platform: { platform: string; shares: number }[];
+    top_tracks: { title: string; artist: string; shares: number }[];
+    /** The clip sponsor running now, with shares of videos carrying it. */
+    sponsor: { name: string; shares: number; since: string } | null;
+  };
   plays: Windowed & {
     series: { date: string; plays: number }[];
     top_tracks: { title: string; artist: string; plays: number }[];

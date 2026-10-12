@@ -2,7 +2,9 @@
 
 import { useRef, useState } from "react";
 import { BookOpen, Check, CircleFadingPlus, Copy, ExternalLink, Loader2, PhoneCall, Share2 } from "lucide-react";
+import { siteConfig } from "@/lib/site";
 import { cn } from "@/lib/utils";
+import { visitorId } from "@/lib/visitor";
 import type { CallerTune, PostTrack } from "@/types/api";
 
 /** Small network badges in each network's own colour. */
@@ -112,6 +114,21 @@ const CLIP_TARGETS: ClipTarget[] = [
 
 const MORE: ClipTarget = { id: "more", name: "More", style: "bg-white/15 text-white", how: "pick an app in the share menu" };
 
+/**
+ * Count a share of the video (for the dashboard and sponsor reports). A form
+ * body keeps it a simple CORS request (no preflight), like the play counter.
+ */
+function reportShare(track: PostTrack, platform: string, method: "share" | "download") {
+  const body = new URLSearchParams({ platform, method });
+  const id = visitorId();
+  if (id) body.set("visitor_id", id);
+  fetch(`${siteConfig.apiUrl}/music/tracks/${encodeURIComponent(track.id)}/share/`, {
+    method: "POST",
+    body,
+    keepalive: true,
+  }).catch(() => {});
+}
+
 /** "#MosesBliss" from "Moses Bliss" (letters and digits only). */
 function hashtag(text: string) {
   const tag = text
@@ -148,7 +165,8 @@ export function ShareClip({ track }: { track: PostTrack }) {
   const clip = track.status_clip;
   if (!clip) return null;
 
-  const download = () => {
+  const download = (choice: ClipTarget) => {
+    reportShare(track, choice.id, "download");
     const a = document.createElement("a");
     a.href = `${clip}${clip.includes("?") ? "&" : "?"}download=1`;
     a.rel = "noopener";
@@ -182,13 +200,14 @@ export function ShareClip({ track }: { track: PostTrack }) {
     setTarget(choice);
     void copyCaption();
     const canShareFiles = typeof navigator !== "undefined" && typeof navigator.canShare === "function";
-    if (!canShareFiles) return download();
+    if (!canShareFiles) return download(choice);
     const fresh = !file.current;
     setState("loading");
     try {
       const video = await loadFile();
-      if (!navigator.canShare({ files: [video] })) return download();
+      if (!navigator.canShare({ files: [video] })) return download(choice);
       await navigator.share({ files: [video] });
+      reportShare(track, choice.id, "share");
       setState("shared");
     } catch (error) {
       const name = error instanceof DOMException ? error.name : "";
@@ -196,7 +215,7 @@ export function ShareClip({ track }: { track: PostTrack }) {
       // Some browsers (Safari) only open the share sheet straight after a tap;
       // the download took too long, so ask for one more tap (the video is ready now).
       else if (name === "NotAllowedError" && fresh && file.current) setState("ready");
-      else download();
+      else download(choice);
     }
   };
 

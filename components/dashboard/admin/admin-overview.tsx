@@ -206,7 +206,7 @@ export function AdminOverviewDashboard() {
 }
 
 function Overview({ data }: { data: AdminOverview }) {
-  const { days, traffic, plays, downloads, users, artists, music, content, money } = data;
+  const { days, traffic, plays, downloads, shares, users, artists, music, content, money } = data;
   const s1 = "var(--viz-series-1)";
   const s2 = "var(--viz-series-2)";
 
@@ -270,6 +270,49 @@ function Overview({ data }: { data: AdminOverview }) {
           </Card>
         </div>
       </div>
+
+      {/* Song video shares (the share row on post pages) */}
+      {shares && (
+        <div className="grid gap-4 xl:grid-cols-3">
+          <Card
+            title="Song video shares"
+            subtitle={`Videos shared to Status, Stories, TikTok... per day, last ${days} days · ${compact(shares.all_time)} all time`}
+            className="xl:col-span-2"
+          >
+            <ColumnChart label={`Song video shares per day, last ${days} days`} data={shares.series} series={{ key: "shares", label: "Shares", color: s2 }} />
+            <div className="mt-6 border-t border-[var(--viz-grid)] pt-5">
+              <h3 className="font-sans text-sm font-semibold text-[var(--viz-ink)]">Shared to</h3>
+              <p className="mb-4 mt-0.5 text-xs text-[var(--viz-muted)]">The app picked on the post page, last {days} days</p>
+              <BarList rows={shares.by_platform.map((p) => ({ label: p.platform, value: p.shares }))} />
+            </div>
+          </Card>
+          <div className="grid min-w-0 content-start gap-4">
+            <Card title="Clip sponsor" subtitle="Running on every song video now">
+              {shares.sponsor ? (
+                <div className="grid grid-cols-2 gap-4">
+                  <Stat label="Sponsor" value={shares.sponsor.name} />
+                  <Stat
+                    label="Video shares"
+                    value={shares.sponsor.shares}
+                    hint={`Since ${new Date(shares.sponsor.since).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}`}
+                  />
+                </div>
+              ) : (
+                <p className="text-sm text-[var(--viz-muted)]">
+                  No sponsor running. Add one in the{" "}
+                  <a href={`${DJANGO_ADMIN}music/clipsponsor/`} target="_blank" rel="noopener noreferrer" className="underline">
+                    admin
+                  </a>
+                  .
+                </p>
+              )}
+            </Card>
+            <Card title="Most shared songs" subtitle={`Last ${days} days`}>
+              <BarList rows={shares.top_tracks.map((t) => ({ label: t.title, sublabel: t.artist, value: t.shares }))} />
+            </Card>
+          </div>
+        </div>
+      )}
 
       {/* Catalogue, community, money */}
       <div className="grid gap-4 lg:grid-cols-3">
