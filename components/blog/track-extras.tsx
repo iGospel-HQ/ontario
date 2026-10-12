@@ -112,6 +112,26 @@ const CLIP_TARGETS: ClipTarget[] = [
 
 const MORE: ClipTarget = { id: "more", name: "More", style: "bg-white/15 text-white", how: "pick an app in the share menu" };
 
+/** "#MosesBliss" from "Moses Bliss" (letters and digits only). */
+function hashtag(text: string) {
+  const tag = text
+    .split(/\s+/)
+    .map((word) => word.replace(/[^\p{L}\p{N}]/gu, ""))
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join("");
+  return tag ? `#${tag}` : "";
+}
+
+/** The default caption copied when the video is shared: song, the post link and hashtags. */
+export function clipCaption(track: PostTrack, pageUrl: string) {
+  const artist = track.artist_name ? ` by ${track.artist_name}` : "";
+  const tags = ["#iGospel", "#GospelMusic", hashtag(track.artist_name ?? ""), hashtag(track.title)];
+  const invite = track.is_downloadable ? "Listen & download on iGospel 🙌" : "Listen on iGospel 🙌";
+  return [`🎧 ${track.title}${artist}`, "", invite, `▶️ ${pageUrl}`, "", [...new Set(tags.filter(Boolean))].join(" ")].join(
+    "\n",
+  );
+}
+
 /**
  * "Share this song as a video": the track's short branded vertical video, for
  * WhatsApp Status, Instagram/Facebook Stories and Reels, TikTok, Shorts...
@@ -139,8 +159,7 @@ export function ShareClip({ track }: { track: PostTrack }) {
   };
 
   const copyCaption = async () => {
-    const artist = track.artist_name ? ` by ${track.artist_name}` : "";
-    const caption = `🎧 ${track.title}${artist}\nListen & download on iGospel: ${window.location.href.split("#")[0]}`;
+    const caption = clipCaption(track, window.location.href.split(/[?#]/)[0]);
     try {
       await navigator.clipboard.writeText(caption);
       setCaptionCopied(true);
@@ -226,6 +245,14 @@ export function ShareClip({ track }: { track: PostTrack }) {
       <p className="mt-1.5 text-[11px] text-white/50" aria-live="polite">
         {hint}
       </p>
+      <button
+        type="button"
+        onClick={copyCaption}
+        className="mt-1 inline-flex items-center gap-1 text-[11px] font-semibold text-white/70 underline-offset-2 hover:text-white hover:underline"
+      >
+        {captionCopied ? <Check className="size-3" aria-hidden="true" /> : <Copy className="size-3" aria-hidden="true" />}
+        {captionCopied ? "Caption copied" : "Copy caption"}
+      </button>
     </div>
   );
 }
