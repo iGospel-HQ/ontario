@@ -118,6 +118,23 @@ export interface ChartTrack {
   post_slug: string | null;
 }
 
+/** `/music/charts/report/?month=2026-10` (monthly report) */
+export interface ChartReport {
+  month: string;
+  /** "October 2026" */
+  label: string;
+  /** The month isn't over yet (numbers so far). */
+  is_current: boolean;
+  totals: { plays: number; listeners: number; songs: number; cities: number; downloads: number; shares: number };
+  top_tracks: ChartTrack[];
+  cities: { name: string; slug: string; plays: number; tracks: ChartTrack[] }[];
+  /** `plays` holds the number of shares / downloads in these two lists. */
+  most_shared: ChartTrack[];
+  most_downloaded: ChartTrack[];
+  /** Months with a report, newest first ("2026-10", ...). */
+  months: string[];
+}
+
 export interface Chart {
   city: ChartCity | null;
   days: number;

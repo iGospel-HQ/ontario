@@ -11,6 +11,7 @@ import { formatDate } from "@/lib/format";
 import { BlogSidebar } from "@/components/blog/blog-sidebar";
 import { CommentSection } from "@/components/blog/comment-section";
 import { PostTracks } from "@/components/blog/post-tracks";
+import { FeaturedBadge } from "@/components/blog/featured-badge";
 import { PostTraffic } from "@/components/blog/post-traffic";
 import { SupportButton } from "@/components/blog/support-button";
 import { FadeIn } from "@/components/shared/fade-in";
@@ -242,6 +243,11 @@ export default async function BlogDetailPage({ params }: Props) {
               heading="Share this post"
               className="my-10 border-y border-rule py-6"
             />
+
+            {/* Music posts: badge code for the artist to put on their website (backlinks). */}
+            {((post.tracks?.length ?? 0) > 0 || (post.albums?.length ?? 0) > 0) && (
+              <FeaturedBadge slug={post.slug} title={post.title} />
+            )}
 
             <CommentSection comments={post.comments} postId={post.id} />
           </article>

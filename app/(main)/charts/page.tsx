@@ -1,4 +1,5 @@
-import { TrendingUp } from "lucide-react";
+import Link from "next/link";
+import { FileBarChart, TrendingUp } from "lucide-react";
 import { getChart, getChartCities, getLatestTracks, getPopularTracks } from "@/lib/api/queries";
 import { pageMetadata } from "@/lib/seo";
 import { FadeIn } from "@/components/shared/fade-in";
@@ -53,6 +54,19 @@ export default async function ChartsPage() {
       <div className="px-4 md:px-6 py-10">
         <FadeIn as="section" delay={0.1} className="mb-16">
           <CityChips cities={cities} />
+          <Link
+            href="/charts/report"
+            className="mt-6 flex items-center gap-4 rounded-2xl bg-[#0c0c0c] p-5 text-white transition hover:bg-black"
+          >
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent/20 text-accent">
+              <FileBarChart className="size-5" aria-hidden="true" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-semibold">Monthly report: Top Gospel Songs in Nigeria</span>
+              <span className="block text-sm text-white/60">The month&apos;s top 20, top songs by city, most shared and downloaded</span>
+            </span>
+            <span className="text-sm font-semibold text-accent">View →</span>
+          </Link>
           <h2 className="mb-6 mt-6 text-2xl font-bold sm:text-3xl">
             {fallback ? "Most played of all time" : "Top 20 this month"}
           </h2>

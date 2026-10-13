@@ -6,6 +6,7 @@ import type {
   Artist,
   Chart,
   ChartCity,
+  ChartReport,
   BlogBackground,
   Genre,
   HomepageData,
@@ -174,6 +175,11 @@ export async function getChartCities(days?: number) {
 /** Top tracks by plays in the period, site-wide or in one city (null: no plays from that city). */
 export const getChart = cache((city?: string, days?: number) =>
   apiGet<Chart>("/music/charts/", { query: { city, days, limit: 20 }, revalidate: CHART_REVALIDATE }),
+);
+
+/** The monthly chart report ("2026-10"); without a month, the latest one. null: no report. */
+export const getChartReport = cache((month?: string) =>
+  apiGet<ChartReport>("/music/charts/report/", { query: { month }, revalidate: 3600 }),
 );
 
 export async function getLatestTracks() {
