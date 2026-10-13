@@ -419,9 +419,15 @@ export function BarList({
 }
 
 /** Part-to-whole of two parts as one bar with a 2px gap, legend with counts. */
-export function SplitBar({ parts }: { parts: [Series & { value: number }, Series & { value: number }] }) {
+export function SplitBar({
+  parts,
+  empty = "No songs yet.",
+}: {
+  parts: [Series & { value: number }, Series & { value: number }];
+  empty?: string;
+}) {
   const total = parts[0].value + parts[1].value;
-  if (total === 0) return <p className="text-sm text-[var(--viz-muted)]">No songs yet.</p>;
+  if (total === 0) return <p className="text-sm text-[var(--viz-muted)]">{empty}</p>;
   const pct = (v: number) => Math.round((v / total) * 100);
   return (
     <div className="space-y-2">

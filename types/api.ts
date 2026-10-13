@@ -162,11 +162,19 @@ export interface Windowed {
 export interface AdminOverview {
   generated_at: string;
   days: number;
+  /** Visits to every page of the site except the dashboard. */
   traffic: {
     views: Windowed;
     visitors: Windowed;
     series: { date: string; views: number; visitors: number }[];
     top_posts: { title: string; slug: string; views: number }[];
+    /** Missing from older APIs (post-only traffic). */
+    top_pages?: { path: string; label: string; views: number }[];
+    /** "Google", "WhatsApp", "Direct & apps"... */
+    sources?: { source: string; views: number }[];
+    /** { mobile, tablet, desktop, unknown } */
+    devices?: Record<string, number>;
+    top_countries?: { country: string; views: number }[];
   };
   downloads: Windowed & {
     series: { date: string; downloads: number }[];

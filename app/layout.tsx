@@ -7,6 +7,7 @@ import { ReactQueryProvider } from "@/lib/react-query";
 import { AudioProvider } from "@/providers/audio-provider";
 import { FloatingAudioButtons } from "@/components/layout/floating-audio-button";
 import { NavigationProgress } from "@/components/layout/navigation-progress";
+import { PageTracker } from "@/components/layout/page-tracker";
 import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/lib/site";
 
@@ -81,6 +82,7 @@ export default function RootLayout({
         <Suspense>
           <NavigationProgress />
         </Suspense>
+        <PageTracker />
         <Toaster position="top-center"/>
         <ReactQueryProvider>
           <AudioProvider />

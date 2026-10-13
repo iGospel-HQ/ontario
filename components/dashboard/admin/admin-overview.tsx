@@ -218,7 +218,7 @@ function Overview({ data }: { data: AdminOverview }) {
     <>
       {/* Headline numbers for the selected period */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
-        <KpiTile label="Post views" value={compact(traffic.views.period)} windowed={traffic.views} days={days} icon={Eye} trend={traffic.series.map((d) => d.views)} />
+        <KpiTile label="Page views" value={compact(traffic.views.period)} windowed={traffic.views} days={days} icon={Eye} trend={traffic.series.map((d) => d.views)} />
         <KpiTile label="Unique visitors" value={compact(traffic.visitors.period)} windowed={traffic.visitors} days={days} icon={Users} trend={traffic.series.map((d) => d.visitors)} />
         <KpiTile label="Song plays" value={compact(plays.period)} windowed={plays} days={days} icon={Music2} trend={plays.series.map((d) => d.plays)} />
         <KpiTile label="Downloads" value={compact(downloads.period)} windowed={downloads} days={days} icon={Download} trend={downloads.series.map((d) => d.downloads)} />
@@ -236,7 +236,7 @@ function Overview({ data }: { data: AdminOverview }) {
 
       {/* Traffic */}
       <div className="grid gap-4 xl:grid-cols-3">
-        <Card title="Traffic" subtitle={`Post page views and unique visitors per day, last ${days} days`} className="xl:col-span-2">
+        <Card title="Traffic" subtitle={`Page views and unique visitors per day, whole site except the dashboard, last ${days} days`} className="xl:col-span-2">
           <LineChart
             label={`Traffic: views and unique visitors per day, last ${days} days`}
             data={traffic.series}
@@ -252,6 +252,33 @@ function Overview({ data }: { data: AdminOverview }) {
           />
         </Card>
       </div>
+
+      {/* Where the traffic goes and comes from */}
+      {traffic.top_pages && (
+        <div className="grid gap-4 lg:grid-cols-3">
+          <Card title="Top pages" subtitle={`Every page of the site, last ${days} days`}>
+            <BarList rows={traffic.top_pages.map((p) => ({ label: p.label, sublabel: p.label === p.path ? undefined : p.path, value: p.views, href: p.path }))} />
+          </Card>
+          <Card title="Where visitors come from" subtitle={`The site or app they came from, last ${days} days`}>
+            <BarList rows={(traffic.sources ?? []).map((s) => ({ label: s.source, value: s.views }))} />
+            <p className="mt-3 text-xs text-[var(--viz-muted)]">
+              &quot;Direct &amp; apps&quot; includes typed-in links, bookmarks and most links opened from WhatsApp.
+            </p>
+          </Card>
+          <Card title="Devices & countries" subtitle={`Page views, last ${days} days`}>
+            <SplitBar
+              empty="No device data for this period yet."
+              parts={[
+                { key: "phones", label: "Phones & tablets", color: s1, value: (traffic.devices?.mobile ?? 0) + (traffic.devices?.tablet ?? 0) },
+                { key: "computers", label: "Computers", color: s2, value: traffic.devices?.desktop ?? 0 },
+              ]}
+            />
+            <div className="mt-6">
+              <BarList rows={(traffic.top_countries ?? []).map((c) => ({ label: c.country, value: c.views }))} empty="No locations for this period yet." />
+            </div>
+          </Card>
+        </div>
+      )}
 
       {/* Plays */}
       <div className="grid gap-4 xl:grid-cols-3">
