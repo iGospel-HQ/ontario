@@ -1,272 +1,263 @@
-// app/sign-up/SignUpClient.tsx
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
-import { useMutation } from "@tanstack/react-query";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { AlertCircleIcon, Eye, EyeOff } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import api from "@/lib/api-client";
 import { useRouter } from "next/navigation";
-import { Alert, AlertTitle } from "@/components/ui/alert";
+import { useMutation } from "@tanstack/react-query";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, useWatch } from "react-hook-form";
+import { z } from "zod";
+import { Check, Loader2 } from "lucide-react";
 
-// Zod Schema
+import { AuthCard, FormNotice, PasswordInput, primaryButton } from "@/components/auth/auth-ui";
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import api from "@/lib/api-client";
+import { readApiError } from "@/lib/api-errors";
+import { cn } from "@/lib/utils";
+
+const PASSWORD_RULES = [
+  { label: "8+ characters", test: (v: string) => v.length >= 8 },
+  { label: "A capital letter", test: (v: string) => /[A-Z]/.test(v) },
+  { label: "A small letter", test: (v: string) => /[a-z]/.test(v) },
+  { label: "A number", test: (v: string) => /\d/.test(v) },
+];
+
 const signUpSchema = z.object({
-  first_name: z.string().min(2, "First name must be at least 2 characters"),
-  last_name: z.string().min(2, "Last name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  phone: z.string().length(11, "Phone number must be 11 digits"),
+  first_name: z.string().trim().min(2, "Enter your first name"),
+  last_name: z.string().trim().min(2, "Enter your last name"),
+  email: z.string().trim().email("Enter a valid email address"),
+  phone: z
+    .string()
+    .transform((v) => v.replace(/[\s-]/g, ""))
+    .refine((v) => /^0\d{10}$/.test(v), "Enter an 11-digit phone number, e.g. 08012345678"),
   password: z
     .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      "Password must contain at least one uppercase letter, one lowercase letter, and one number"
-    ),
+    .refine((v) => PASSWORD_RULES.every((rule) => rule.test(v)), "Your password needs all four of the items below"),
 });
 
-type SignUpFormData = z.infer<typeof signUpSchema>;
+type SignUpFormInput = z.input<typeof signUpSchema>;
+type SignUpFormData = z.output<typeof signUpSchema>;
+const FIELDS = ["first_name", "last_name", "email", "phone", "password"] as const;
 
 export default function SignUpClient() {
-  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
+  const [resending, setResending] = useState(false);
 
-  const form = useForm<SignUpFormData>({
+  const form = useForm<SignUpFormInput, unknown, SignUpFormData>({
     resolver: zodResolver(signUpSchema),
-    defaultValues: {
-      first_name: "",
-      last_name: "",
-      email: "",
-      password: "",
-    },
+    defaultValues: { first_name: "", last_name: "", email: "", phone: "", password: "" },
   });
+  const password = useWatch({ control: form.control, name: "password" }) ?? "";
 
   const registerMutation = useMutation({
     mutationFn: async (data: SignUpFormData) => {
-      // Replace with your actual signup endpoint
       const res = await api.post("/account/register/", data);
       return res.data;
     },
-    onSuccess: (res) => {
-      router.push("/verify?email=" + encodeURIComponent(res.data.email));
-      // Redirect to sign-in or dashboard
+    onSuccess: (res, variables) => {
+      const email = res?.data?.email ?? variables.email;
+      router.push(`/verify?email=${encodeURIComponent(email)}`);
     },
-    onError: (error: any) => {
-      console.error("Registration failed:", error);
-      const msg =
-        error.response?.data?.detail ||
-        error.response?.data?.email?.[0] ||
-        error.response?.data?.username?.[0] ||
-        "Something went wrong. Please try again.";
-      form.setError("root", { message: msg });
+    onError: (error, variables) => {
+      setUnverifiedEmail(null);
+      const info = readApiError(error, "We couldn't create your account. Please try again.");
+      // Already signed up but never verified: offer a new code instead of a dead end.
+      if (info.code === "email_not_verified") {
+        setUnverifiedEmail(variables.email);
+        return;
+      }
+      // Show each problem under its own field (e.g. email or phone already used).
+      let placed = 0;
+      for (const [field, message] of Object.entries(info.fields)) {
+        if ((FIELDS as readonly string[]).includes(field)) {
+          form.setError(field as (typeof FIELDS)[number], { message }, { shouldFocus: placed === 0 });
+          placed += 1;
+        }
+      }
+      const message =
+        info.message ??
+        (placed === 0 ? Object.values(info.fields)[0] : null) ??
+        (placed > 0 ? null : "We couldn't create your account. Please try again.");
+      if (message) form.setError("root", { message });
     },
   });
 
-  const onSubmit = (data: SignUpFormData) => {
-    registerMutation.mutate(data);
+  const resendCode = async () => {
+    if (!unverifiedEmail) return;
+    setResending(true);
+    try {
+      await api.post("/account/resend-verification/", { email: unverifiedEmail });
+    } catch {
+      // The verify page can resend again if this one didn't go through.
+    } finally {
+      router.push(`/verify?email=${encodeURIComponent(unverifiedEmail)}&sent=1`);
+    }
   };
 
-  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+  const errors = form.formState.errors;
+  const emailTaken = /already exists/i.test(errors.email?.message ?? "");
 
   return (
-    <div className="w-full max-w-md">
-      {/* Sign Up Card */}
-      <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-        <div className="p-8">
-          <h1 className="text-2xl font-bold text-center text-gray-900 mb-6">
-            Create an account
-          </h1>
+    <AuthCard
+      title="Create your account"
+      subtitle="Join iGospel to save your favourite songs, support artists and more. It's free."
+      footer={
+        <>
+          Already have an account?{" "}
+          <Link href="/login" className="font-semibold text-accent hover:underline">
+            Log in
+          </Link>
+        </>
+      }
+    >
+      {unverifiedEmail && (
+        <FormNotice
+          tone="info"
+          title="You've already signed up with this email"
+          action={
+            <Button type="button" size="sm" onClick={resendCode} disabled={resending} className="rounded-full">
+              {resending ? <Loader2 className="size-4 animate-spin" /> : null}
+              Send me a new code
+            </Button>
+          }
+        >
+          Your account just needs verifying. We&apos;ll email you a new code to finish signing up.
+        </FormNotice>
+      )}
+      {errors.root?.message && <FormNotice title={errors.root.message} />}
+      {emailTaken && (
+        <FormNotice tone="info" title="This email already has an account">
+          <Link href={`/login?email=${encodeURIComponent(form.getValues("email"))}`} className="font-semibold underline">
+            Log in
+          </Link>{" "}
+          or{" "}
+          <Link href="/forgot-password" className="font-semibold underline">
+            reset your password
+          </Link>
+          .
+        </FormNotice>
+      )}
 
-          {/* Social Buttons */}
-          {/* <div className="grid grid-cols-2 gap-4 mb-6">
-              <Button variant="outline" className="h-12" disabled>
-                <img src="/google-icon.png" alt="Google" className="w-5 h-5 mr-2" />
-                Continue with Google
-              </Button>
-              <Button variant="outline" className="h-12" disabled>
-                <img src="/facebook-icon.png" alt="Facebook" className="w-5 h-5 mr-2" />
-                Continue with Facebook
-              </Button>
-            </div> */}
-
-          {/* <div className="relative mb-6">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white text-gray-500">Or</span>
-              </div>
-            </div> */}
-
-          {/* Server Error */}
-          {form.formState.errors.root && (
-            <Alert variant="destructive" className="mb-4">
-              <AlertCircleIcon />
-              <AlertTitle>{form.formState.errors.root.message}</AlertTitle>
-            </Alert>
-          )}
-
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-              <FormField
-                control={form.control}
-                name="first_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>First Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter your first name"
-                        className="h-12"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="last_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Last Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter your last name"
-                        className="h-12"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="tel"
-                        placeholder="Enter your phone number"
-                        className="h-12"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="Enter your email"
-                        className="h-12"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Create a password"
-                          className="h-12 pr-10"
-                          {...field}
-                        />
-                        <button
-                          type="button"
-                          onClick={togglePasswordVisibility}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                        >
-                          {showPassword ? (
-                            <EyeOff size={20} />
-                          ) : (
-                            <Eye size={20} />
-                          )}
-                        </button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Terms */}
-              <p className="text-xs text-gray-600 text-center">
-                By clicking on sign up, you agree to iGospel music&apos;s{" "}
-                <Link href="/terms" className="text-red-600 hover:underline">
-                  Terms of Condition Of Use
-                </Link>
-                .<br />
-                Learn about how iGospel music collects, uses, shares and
-                protects your personal data{" "}
-                <Link href="/privacy" className="text-red-600 hover:underline">
-                  privacy policy
-                </Link>
-                .
-              </p>
-
-              {/* Submit */}
-              <Button
-                type="submit"
-                className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-semibold text-lg"
-                disabled={registerMutation.isPending}
-              >
-                {registerMutation.isPending
-                  ? "Creating account..."
-                  : "Continue"}
-              </Button>
-            </form>
-          </Form>
-
-          {/* Sign In Link */}
-          <div className="mt-8 text-center text-sm text-gray-600">
-            <p>
-              Already have an account?{" "}
-              <Link
-                href="/login"
-                className="text-red-600 hover:underline font-medium"
-              >
-                Sign In
-              </Link>
-            </p>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit((data) => registerMutation.mutate(data))} className="space-y-5" noValidate>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="first_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>First name</FormLabel>
+                  <FormControl>
+                    <Input autoComplete="given-name" placeholder="Ada" className="h-12" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="last_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Last name</FormLabel>
+                  <FormControl>
+                    <Input autoComplete="family-name" placeholder="Okafor" className="h-12" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
-        </div>
-      </div>
-    </div>
+
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input type="email" autoComplete="email" placeholder="you@example.com" className="h-12" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Phone number</FormLabel>
+                <FormControl>
+                  <Input
+                    type="tel"
+                    inputMode="numeric"
+                    autoComplete="tel"
+                    placeholder="08012345678"
+                    className="h-12"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <PasswordInput autoComplete="new-password" placeholder="Create a password" {...field} />
+                </FormControl>
+                <ul className="grid grid-cols-2 gap-x-4 gap-y-1 pt-1 text-xs" aria-label="Password requirements">
+                  {PASSWORD_RULES.map((rule) => {
+                    const ok = rule.test(password);
+                    return (
+                      <li
+                        key={rule.label}
+                        className={cn("flex items-center gap-1.5", ok ? "text-emerald-600" : "text-gray-500")}
+                      >
+                        <Check className={cn("size-3.5", ok ? "opacity-100" : "opacity-30")} aria-hidden="true" />
+                        {rule.label}
+                      </li>
+                    );
+                  })}
+                </ul>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button type="submit" className={primaryButton} disabled={registerMutation.isPending}>
+            {registerMutation.isPending ? (
+              <>
+                <Loader2 className="size-5 animate-spin" /> Creating your account…
+              </>
+            ) : (
+              "Create account"
+            )}
+          </Button>
+
+          <p className="text-center text-xs leading-relaxed text-gray-500">
+            By creating an account you agree to iGospel&apos;s{" "}
+            <Link href="/terms" className="font-medium text-gray-700 underline hover:text-accent">
+              Terms of Use
+            </Link>{" "}
+            and{" "}
+            <Link href="/privacy" className="font-medium text-gray-700 underline hover:text-accent">
+              Privacy Policy
+            </Link>
+            .
+          </p>
+        </form>
+      </Form>
+    </AuthCard>
   );
 }
