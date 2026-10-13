@@ -76,10 +76,6 @@ export default async function BlogDetailPage({ params }: Props) {
   const readingMinutes = Math.max(1, Math.round(words / 200));
   // The editor leaves empty paragraphs (<p><br></p>, <p>&nbsp;</p>) as spacers.
   const content = post.content.replace(/<p[^>]*>(?:\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, "");
-  // The intro line under the title, unless the article starts with the same words
-  // (excerpts are often made from the opening paragraph).
-  const letters = (text: string) => text.replace(/<[^>]+>|&[a-z#0-9]+;/gi, "").replace(/[^a-z0-9]/gi, "").toLowerCase();
-  const showExcerpt = Boolean(post.excerpt) && !letters(content).startsWith(letters(post.excerpt).slice(0, 60));
   const engagement = (
     <PostEngagement
       artistId={post.artists[0]?.id}
@@ -175,10 +171,6 @@ export default async function BlogDetailPage({ params }: Props) {
               <h1 className="mt-4 font-serif text-3xl font-bold leading-[1.15] tracking-tight md:text-[44px]">
                 {post.title}
               </h1>
-
-              {showExcerpt && (
-                <p className="mt-4 text-lg leading-relaxed text-[#555] md:text-xl">{post.excerpt}</p>
-              )}
 
               {/* Byline */}
               <div className="mt-6 flex flex-col items-start gap-4 border-y border-rule py-4">
