@@ -80,6 +80,13 @@ export default async function BlogDetailPage({ params }: Props) {
   // (excerpts are often made from the opening paragraph).
   const letters = (text: string) => text.replace(/<[^>]+>|&[a-z#0-9]+;/gi, "").replace(/[^a-z0-9]/gi, "").toLowerCase();
   const showExcerpt = Boolean(post.excerpt) && !letters(content).startsWith(letters(post.excerpt).slice(0, 60));
+  const engagement = (
+    <PostEngagement
+      artistId={post.artists[0]?.id}
+      creatorId={support?.creator_id ?? post.creator_id}
+      supportLabel={support?.message}
+    />
+  );
 
   return (
     <div className="min-h-screen">
@@ -174,7 +181,7 @@ export default async function BlogDetailPage({ params }: Props) {
               )}
 
               {/* Byline */}
-              <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-y border-rule py-4">
+              <div className="mt-6 flex flex-col items-start gap-4 border-y border-rule py-4">
                 <div className="flex items-center gap-3">
                   <span
                     aria-hidden="true"
@@ -211,26 +218,31 @@ export default async function BlogDetailPage({ params }: Props) {
               </div>
             </header>
 
-            {/* Music posts open with the player (it shows the cover);
-                other posts with a wide featured image. */}
-            {isMusicPost ? (
-              <div className="[&>section]:my-8">
-                <PostTracks tracks={post.tracks ?? []} albums={post.albums ?? []} />
+            {/* Featured image: shown whole (album covers carry their title), on a
+                blurred copy of itself that fills the wide frame. */}
+            {post.featured_image && (
+              <div className="relative mt-8 aspect-[4/3] overflow-hidden rounded-2xl bg-[#0c0c0c] sm:aspect-[16/10]">
+                <Image
+                  src={post.featured_image}
+                  alt=""
+                  aria-hidden="true"
+                  fill
+                  sizes="(min-width: 1024px) 66vw, 100vw"
+                  className="scale-110 object-cover opacity-60 blur-2xl"
+                />
+                <Image
+                  src={post.featured_image}
+                  alt={post.title}
+                  fill
+                  sizes="(min-width: 1280px) 820px, (min-width: 1024px) 66vw, 100vw"
+                  className="object-contain drop-shadow-2xl"
+                  priority
+                />
               </div>
-            ) : (
-              post.featured_image && (
-                <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-2xl bg-shade">
-                  <Image
-                    src={post.featured_image}
-                    alt={post.title}
-                    fill
-                    sizes="(min-width: 1280px) 820px, (min-width: 1024px) 66vw, 100vw"
-                    className="object-cover"
-                    priority
-                  />
-                </div>
-              )
             )}
+
+            {/* Support and Telegram: once before the article, and again after the player. */}
+            <div className="mt-8">{engagement}</div>
 
             {/* Post Content */}
             <FadeIn delay={0.1}>
@@ -248,13 +260,13 @@ export default async function BlogDetailPage({ params }: Props) {
               )}
             </FadeIn>
 
-            <div className="mt-10">
-              <PostEngagement
-                artistId={post.artists[0]?.id}
-                creatorId={support?.creator_id ?? post.creator_id}
-                supportLabel={support?.message}
-              />
-            </div>
+            {isMusicPost && (
+              <div className="[&>section]:my-8">
+                <PostTracks tracks={post.tracks ?? []} albums={post.albums ?? []} />
+              </div>
+            )}
+
+            <div className="mt-8">{engagement}</div>
 
             <ShareButtons
               url={url}

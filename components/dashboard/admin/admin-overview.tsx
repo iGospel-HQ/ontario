@@ -20,6 +20,7 @@ import { siteConfig } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import type { AdminOverview, Windowed } from "@/types/api";
 import { BarList, ColumnChart, LineChart, Sparkline, SplitBar, compact, full } from "./charts";
+import { VisitsTable } from "./visits-table";
 
 const RANGES = [7, 30, 90] as const;
 const DJANGO_ADMIN = `${new URL(siteConfig.apiUrl).origin}/admin/`;
@@ -279,6 +280,9 @@ function Overview({ data }: { data: AdminOverview }) {
           </Card>
         </div>
       )}
+
+      {/* Every visit, with filters */}
+      <VisitsTable days={days} />
 
       {/* Plays */}
       <div className="grid gap-4 xl:grid-cols-3">
