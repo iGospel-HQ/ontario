@@ -11,15 +11,36 @@ const links = [
   { name: "Playlists", href: "/music/playlists", icon: Disc3, comingSoon: false },
 ];
 
-/** Row of shortcut tiles under the homepage hero. */
+/** Shortcuts under the homepage hero: round icons on phones, tiles on larger screens. */
 export function QuickLinks() {
   return (
-    <section className="px-4 md:px-6 py-10">
-      <h2 className="section-title">
+    <section className="px-4 md:px-6 py-6 sm:py-10">
+      <h2 className="section-title hidden sm:block">
         <span>Quick Access</span>
       </h2>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+      {/* Phones: one row of round icons */}
+      <nav aria-label="Quick access" className="-mx-4 overflow-x-auto px-4 sm:hidden">
+        <ul className="flex gap-4">
+          {links
+            .filter((link) => !link.comingSoon)
+            .map((link) => {
+              const Icon = link.icon;
+              return (
+                <li key={link.href}>
+                  <Link href={link.href} className="flex w-16 flex-col items-center gap-1.5 text-center">
+                    <span className="flex size-14 items-center justify-center rounded-full bg-accent/10 text-accent">
+                      <Icon className="size-6" aria-hidden="true" />
+                    </span>
+                    <span className="text-[11px] font-semibold leading-tight text-text">{link.name}</span>
+                  </Link>
+                </li>
+              );
+            })}
+        </ul>
+      </nav>
+
+      <div className="hidden grid-cols-2 gap-3 sm:grid sm:grid-cols-3 lg:grid-cols-5">
         {links.map((link) => {
           const Icon = link.icon;
           const tile = (

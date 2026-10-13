@@ -182,6 +182,13 @@ export const getChartReport = cache((month?: string) =>
   apiGet<ChartReport>("/music/charts/report/", { query: { month }, revalidate: 3600 }),
 );
 
+/** Today's Bible verse (BibleGateway, KJV; the API caches it for the day). */
+export const getVerseOfTheDay = cache(() =>
+  apiGet<{ reference: string; text: string; url: string; version: string; date: string }>("/blog/verse-of-the-day/", {
+    revalidate: 3600,
+  }),
+);
+
 export async function getLatestTracks() {
   return asList(
     await apiGet<MusicTrack[] | { results?: MusicTrack[] }>("/music/latest-tracks/", {
