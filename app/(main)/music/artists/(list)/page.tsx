@@ -29,6 +29,14 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   );
 }
 
+/** "1 album · 12 songs", "3 songs", or "Artist" when there's nothing yet. */
+function artistLine(tracks: number, albums: number) {
+  const parts = [];
+  if (albums) parts.push(`${albums} ${albums === 1 ? "album" : "albums"}`);
+  if (tracks) parts.push(`${tracks} ${tracks === 1 ? "song" : "songs"}`);
+  return parts.join(" · ") || "Artist";
+}
+
 export default async function ArtistsPage({ searchParams }: Props) {
   const params = await searchParams;
   const page = parsePage(params.page);
@@ -40,47 +48,36 @@ export default async function ArtistsPage({ searchParams }: Props) {
   return (
     <>
       <PageHeader title="Artists" description="Discover amazing creators, musicians, and performers." crumbs={[{ name: "Music", href: "/music" }]} />
-      <div className="px-4 md:px-6 py-10">
-        <FadeIn y={0} className="mb-12 max-w-md">
-          <SearchInput
-            placeholder="Search artists..."
-            showIcon={false}
-            inputClassName="bg-secondary/50 backdrop-blur border border-border/40"
-          />
+      <div className="px-4 md:px-6 py-6 sm:py-10">
+        <FadeIn y={0} className="mb-8 max-w-md sm:mb-10 [&_input]:h-11 [&_input]:rounded-full">
+          <SearchInput placeholder="Search artists..." inputClassName="pl-12 border-black/10 bg-white shadow-sm" />
         </FadeIn>
 
         {artists.length === 0 ? (
           <p className="text-center text-muted-foreground py-16">No artists found.</p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          // Music-app style grid: 3 across on phones, up to 6 on wide screens.
+          <ul className="grid grid-cols-3 gap-x-3 gap-y-6 sm:grid-cols-4 sm:gap-x-5 md:grid-cols-5 lg:grid-cols-6 lg:gap-y-8">
             {artists.map((artist, i) => (
-              <FadeIn key={artist.id} y={15} delay={i * 0.08}>
-                <Link href={`/music/artists/${artist.slug}`}>
-                  <div className="group cursor-pointer text-center p-6 rounded-2xl border bg-card hover:shadow-xl hover:border-primary/30 transition-all duration-300">
-                    <div className="relative mb-5 overflow-hidden rounded-full w-44 h-44 mx-auto shadow-md">
-                      <Image
-                        src={artist.image || "/placeholder.svg"}
-                        alt={artist.name}
-                        fill
-                        sizes="176px"
-                        className="object-cover rounded-full transition-transform duration-500 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-
-                    <h2 className="font-semibold text-xl group-hover:text-primary transition-colors line-clamp-1">
-                      {artist.name}
-                    </h2>
-
-                    <div className="flex justify-center gap-4 mt-3 text-sm text-muted-foreground">
-                      <span>{artist.album_count} Albums</span>
-                      <span>{artist.track_count} Tracks</span>
-                    </div>
+              <FadeIn as="li" key={artist.id} y={10} delay={Math.min(i, 12) * 0.03} className="min-w-0">
+                <Link href={`/music/artists/${artist.slug}`} className="group block text-center">
+                  <div className="relative mx-auto aspect-square w-full overflow-hidden rounded-full bg-shade shadow-sm ring-1 ring-black/5 transition group-hover:shadow-lg group-hover:ring-accent/40">
+                    <Image
+                      src={artist.image || "/placeholder.svg"}
+                      alt={artist.name}
+                      fill
+                      sizes="(min-width: 1024px) 160px, (min-width: 640px) 25vw, 33vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
                   </div>
+                  <h2 className="mt-2.5 truncate text-[13px] font-semibold leading-tight text-text group-hover:text-accent sm:text-[15px]">
+                    {artist.name}
+                  </h2>
+                  <p className="mt-0.5 truncate text-[11px] text-meta sm:text-xs">{artistLine(artist.track_count, artist.album_count)}</p>
                 </Link>
               </FadeIn>
             ))}
-          </div>
+          </ul>
         )}
 
         <div className="flex justify-center mt-12">
