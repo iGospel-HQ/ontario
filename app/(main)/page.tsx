@@ -46,7 +46,8 @@ export default async function HomePage() {
   // Hero: the featured posts first, topped up with the newest ones.
   const hero = unique([...(data?.featured_posts ?? []).map(fromHomepage), ...latest]).slice(0, 3);
   const heroSlugs = new Set(hero.map((s) => s.slug));
-  const newest = unique(latest, heroSlugs).slice(0, 10);
+  // Phones have no hero, so their list starts with the hero's posts (hidden on larger screens).
+  const newest = [...hero, ...unique(latest, heroSlugs).slice(0, 10)];
   const music = unique((musicPosts?.results ?? []).map(fromSummary)).slice(0, 6);
   const musicSlugs = new Set((musicPosts?.results ?? []).map((p) => p.slug));
 
@@ -87,17 +88,17 @@ export default async function HomePage() {
 
       <HomeHero stories={hero} />
       <QuickLinks />
-      <div className="mb-8 px-4 md:px-6 lg:hidden">
-        <VerseOfTheDay verse={verse} />
-      </div>
 
       {/* Newest posts + sidebar (verse of the day, chart, playlist) */}
-      <div className="grid gap-10 px-4 md:px-6 lg:grid-cols-3">
-        <section className="lg:col-span-2">
+      <div className="grid grid-cols-1 gap-10 px-4 md:px-6 lg:grid-cols-3">
+        <section className="min-w-0 lg:col-span-2">
           <SectionHeading title="Newest Posts" href="/blog" />
-          <NewestList stories={newest} musicSlugs={musicSlugs} />
+          <NewestList stories={newest} musicSlugs={musicSlugs} phoneOnly={heroSlugs} />
+          <div className="mt-8 lg:hidden">
+            <VerseOfTheDay verse={verse} />
+          </div>
         </section>
-        <aside className="space-y-8">
+        <aside className="min-w-0 space-y-8">
           <div className="hidden lg:block">
             <VerseOfTheDay verse={verse} />
           </div>

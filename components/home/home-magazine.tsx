@@ -98,7 +98,7 @@ export function HomeHero({ stories }: { stories: HomeStory[] }) {
   if (!lead) return null;
   const side = rest.slice(0, 2);
   return (
-    <section className="grid gap-3 px-4 pt-6 md:px-6 lg:grid-cols-3" aria-label="Top stories">
+    <section className="hidden grid-cols-1 gap-3 px-4 pt-6 sm:grid md:px-6 lg:grid-cols-3" aria-label="Top stories">
       <OverlayTile story={lead} large priority className={cn("h-72 md:h-[460px]", side.length ? "lg:col-span-2" : "lg:col-span-3")} />
       {side.length > 0 && (
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
@@ -132,13 +132,22 @@ function ListRow({ story, dark }: { story: HomeStory; dark?: boolean }) {
  * CeeNaija-style list: two columns of square thumbnails with the title beside
  * them; posts with songs get a play icon on the thumbnail.
  */
-export function NewestList({ stories, musicSlugs }: { stories: HomeStory[]; musicSlugs: Set<string> }) {
+export function NewestList({
+  stories,
+  musicSlugs,
+  phoneOnly = new Set(),
+}: {
+  stories: HomeStory[];
+  musicSlugs: Set<string>;
+  /** Shown on phones only (on larger screens these posts are in the hero). */
+  phoneOnly?: Set<string>;
+}) {
   return (
-    <ul className="grid gap-x-6 gap-y-5 sm:grid-cols-2">
+    <ul className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 sm:gap-y-5">
       {stories.map((story) => (
-        <li key={story.id}>
-          <Link href={`/blog/${story.slug}`} className="group flex items-start gap-4">
-            <div className="relative size-24 shrink-0 overflow-hidden rounded-lg bg-shade sm:size-[104px]">
+        <li key={story.id} className={cn(phoneOnly.has(story.slug) && "sm:hidden")}>
+          <Link href={`/blog/${story.slug}`} className="group flex min-w-0 items-start gap-4">
+            <div className="relative h-[92px] w-[124px] shrink-0 overflow-hidden rounded-lg bg-shade sm:size-[104px]">
               <Image
                 src={story.image || "/placeholder.svg"}
                 alt=""
@@ -154,8 +163,10 @@ export function NewestList({ stories, musicSlugs }: { stories: HomeStory[]; musi
                 </span>
               )}
             </div>
-            <div className="min-w-0 pt-1">
-              <h3 className="font-semibold leading-snug text-text line-clamp-3 group-hover:text-accent">{story.title}</h3>
+            <div className="min-w-0 flex-1 pt-1">
+              <h3 className="break-words text-[15px] font-semibold leading-snug text-text line-clamp-3 group-hover:text-accent sm:text-base">
+                {story.title}
+              </h3>
               <p className="mt-1.5 text-xs text-meta">
                 {story.label} · {shortDate(story.date)}
               </p>
@@ -199,7 +210,7 @@ export function NewMusicBlock({ stories }: { stories: HomeStory[] }) {
   return (
     <section className="mx-4 rounded-3xl bg-[#0c0c0c] p-5 text-white md:mx-6 md:p-8">
       <SectionHeading title="New Music" href="/music" dark />
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Link href={`/blog/${lead.slug}`} className="group block">
           <div className="relative aspect-[4/3] overflow-hidden rounded-2xl sm:aspect-[16/10]">
             <Image src={lead.image || "/placeholder.svg"} alt="" fill sizes="(min-width: 1024px) 560px, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -227,11 +238,11 @@ export function GenreSections({ stories }: { stories: HomeStory[] }) {
   const sections = [...byGenre.entries()].filter(([, list]) => list.length >= 2).sort((a, b) => b[1].length - a[1].length).slice(0, 4);
   if (!sections.length) return null;
   return (
-    <div className="grid gap-10 px-4 md:px-6 lg:grid-cols-2">
+    <div className="grid grid-cols-1 gap-10 px-4 md:px-6 lg:grid-cols-2">
       {sections.map(([genre, list]) => (
         <section key={genre}>
           <SectionHeading title={genre} href={`/search?q=${encodeURIComponent(genre)}`} />
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <StoryCard story={list[0]} />
             <div className="flex flex-col gap-4">
               {list.slice(1, 4).map((s) => (
