@@ -20,42 +20,55 @@ type BlogSidebarProps = {
 };
 
 /** WordPress-style sidebar widgets: recent posts, subscribe box, ads. */
-export function BlogSidebar({ latestPosts, relatedPosts = [], ads }: BlogSidebarProps) {
+export function BlogSidebar({
+  latestPosts,
+  relatedPosts = [],
+  ads,
+}: BlogSidebarProps) {
   const postsToShow = relatedPosts.length > 0 ? relatedPosts : latestPosts;
 
   return (
     <aside className="space-y-10">
-      {/* Recent posts */}
-      <section>
-        <h2 className="widget-title">
-          <span>{relatedPosts.length > 0 ? "Related Articles" : "Latest Posts"}</span>
-        </h2>
-        <ul className="divide-y divide-rule">
-          {postsToShow.slice(0, 5).map((post) => (
-            <li key={post.id}>
-              <Link href={`/blog/${post.slug}`} className="group flex gap-3 py-3 first:pt-0">
-                <div className="relative h-16 w-20 flex-shrink-0 overflow-hidden bg-shade">
-                  <Image
-                    src={post.featured_image || "/placeholder.svg"}
-                    alt=""
-                    fill
-                    sizes="80px"
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="entry-title text-[14px] font-bold leading-snug line-clamp-2 transition-colors">
-                    {post.title}
-                  </h3>
-                  <p className="entry-meta mt-1">
-                    <time dateTime={post.publish_date}>{formatDate(post.publish_date, "MMMM d, yyyy")}</time>
-                  </p>
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {/* Recent posts (hidden when there are none to show) */}
+      {postsToShow.length > 0 && (
+        <section>
+          <h2 className="widget-title">
+            <span>
+              {relatedPosts.length > 0 ? "Related Articles" : "Latest Posts"}
+            </span>
+          </h2>
+          <ul className="divide-y divide-rule">
+            {postsToShow.slice(0, 5).map((post) => (
+              <li key={post.id}>
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="group flex gap-3 py-3 first:pt-0"
+                >
+                  <div className="relative h-16 w-20 flex-shrink-0 overflow-hidden bg-shade">
+                    <Image
+                      src={post.featured_image || "/placeholder.svg"}
+                      alt=""
+                      fill
+                      sizes="80px"
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="entry-title text-[14px] font-bold leading-snug line-clamp-2 transition-colors">
+                      {post.title}
+                    </h3>
+                    <p className="entry-meta mt-1">
+                      <time dateTime={post.publish_date}>
+                        {formatDate(post.publish_date, "MMMM d, yyyy")}
+                      </time>
+                    </p>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Subscribe */}
       <section>
@@ -63,7 +76,9 @@ export function BlogSidebar({ latestPosts, relatedPosts = [], ads }: BlogSidebar
           <span>Stay in the Fire</span>
         </h2>
         <div className="border border-rule bg-shade p-5">
-          <p className="mb-4 text-sm text-[#555]">Get fresh gospel insights delivered weekly.</p>
+          <p className="mb-4 text-sm text-[#555]">
+            Get fresh gospel insights delivered weekly.
+          </p>
           <a
             href={siteConfig.social.telegram}
             target="_blank"
@@ -88,7 +103,12 @@ export function BlogSidebar({ latestPosts, relatedPosts = [], ads }: BlogSidebar
               rel="noopener noreferrer sponsored"
               className="relative block h-[400px]"
             >
-              <Image src={ad.image} alt={ad.title} fill sizes="(min-width: 1024px) 33vw, 100vw" />
+              <Image
+                src={ad.image}
+                alt={ad.title}
+                fill
+                sizes="(min-width: 1024px) 33vw, 100vw"
+              />
             </a>
           ))}
         </section>

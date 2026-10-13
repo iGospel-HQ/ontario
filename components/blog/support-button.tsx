@@ -42,10 +42,13 @@ export function SupportButton({
   artistId,
   creatorId,
   label,
+  className,
 }: {
   artistId?: string;
   creatorId?: string | null;
   label?: string;
+  /** Replaces the default full-width banner look of the button. */
+  className?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -115,7 +118,10 @@ export function SupportButton({
     <>
       <Button
         onClick={() => setOpen(true)}
-        className="flex w-full items-center gap-2 rounded-none bg-accent text-[13px] font-bold uppercase tracking-wider text-white hover:bg-topbar"
+        className={
+          className ??
+          "flex w-full items-center gap-2 rounded-none bg-accent text-[13px] font-bold uppercase tracking-wider text-white hover:bg-topbar"
+        }
         size="lg"
       >
         <Heart className="w-5 h-5" />

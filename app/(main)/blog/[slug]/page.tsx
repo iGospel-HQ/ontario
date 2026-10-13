@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, MessageCircle } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { notFoundMetadata } from "@/components/shared/not-found-content";
@@ -9,14 +9,14 @@ import { pageMetadata, toDescription } from "@/lib/seo";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 import { formatDate } from "@/lib/format";
 import { BlogSidebar } from "@/components/blog/blog-sidebar";
+import { PostCard } from "@/components/blog/post-card";
 import { CommentSection } from "@/components/blog/comment-section";
 import { PostTracks } from "@/components/blog/post-tracks";
 import { FeaturedBadge } from "@/components/blog/featured-badge";
 import { PostTraffic } from "@/components/blog/post-traffic";
-import { SupportButton } from "@/components/blog/support-button";
+import { PostEngagement } from "@/components/blog/post-engagement";
 import { FadeIn } from "@/components/shared/fade-in";
 import { JsonLd } from "@/components/shared/json-ld";
-import { TelegramCTA } from "@/components/shared/telegram-cta";
 import { ShareButtons } from "@/components/shared/share-buttons";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -70,6 +70,16 @@ export default async function BlogDetailPage({ params }: Props) {
   const sidebarAds = ads.filter((ad) => ad.position === "sidebar");
   const support = post.support_status;
   const url = absoluteUrl(`/blog/${post.slug}`);
+  const isMusicPost = (post.tracks?.length ?? 0) > 0 || (post.albums?.length ?? 0) > 0;
+  // ~200 words a minute.
+  const words = post.content.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
+  const readingMinutes = Math.max(1, Math.round(words / 200));
+  // The editor leaves empty paragraphs (<p><br></p>, <p>&nbsp;</p>) as spacers.
+  const content = post.content.replace(/<p[^>]*>(?:\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, "");
+  // The intro line under the title, unless the article starts with the same words
+  // (excerpts are often made from the opening paragraph).
+  const letters = (text: string) => text.replace(/<[^>]+>|&[a-z#0-9]+;/gi, "").replace(/[^a-z0-9]/gi, "").toLowerCase();
+  const showExcerpt = Boolean(post.excerpt) && !letters(content).startsWith(letters(post.excerpt).slice(0, 60));
 
   return (
     <div className="min-h-screen">
@@ -125,8 +135,8 @@ export default async function BlogDetailPage({ params }: Props) {
       <div className="px-4 md:px-6 py-8 lg:py-10">
         <div className="grid lg:grid-cols-3 gap-8 xl:gap-12">
           {/* Main Content */}
-          <article className="lg:col-span-2 space-y-8">
-            <header className="space-y-4">
+          <article className="min-w-0 lg:col-span-2">
+            <header>
               <nav aria-label="Breadcrumb" className="entry-meta">
                 <ol className="flex flex-wrap items-center gap-1.5">
                   <li>
@@ -151,91 +161,100 @@ export default async function BlogDetailPage({ params }: Props) {
                 </ol>
               </nav>
 
-              <span className="cat-label">{post.genres?.[0]?.name || "Gospel"}</span>
+              <span className="mt-6 inline-block rounded-full bg-accent/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-accent">
+                {post.genres?.[0]?.name || "Gospel"}
+              </span>
 
-              <h1 className="text-3xl md:text-[40px] font-bold leading-tight">{post.title}</h1>
+              <h1 className="mt-4 font-serif text-3xl font-bold leading-[1.15] tracking-tight md:text-[44px]">
+                {post.title}
+              </h1>
 
-              <p className="entry-meta border-b border-rule pb-4 text-[13px]">
-                By <span className="font-semibold text-text">{post.author_name}</span>
-                <span className="mx-2" aria-hidden="true">·</span>
-                <time dateTime={post.publish_date}>
-                  {formatDate(post.publish_date, "MMMM d, yyyy")}
-                </time>
-                <span className="mx-2" aria-hidden="true">·</span>
-                <a href="#comments-heading" className="hover:text-accent">
-                  {post.comments.length} Comment{post.comments.length === 1 ? "" : "s"}
-                </a>
-              </p>
+              {showExcerpt && (
+                <p className="mt-4 text-lg leading-relaxed text-[#555] md:text-xl">{post.excerpt}</p>
+              )}
 
-              <ShareButtons url={url} title={post.meta_title || post.title} variant="compact" />
-
-              {/* Featured Image */}
-              <div className="relative aspect-[1/1] overflow-hidden bg-shade">
-                <Image
-                  src={post.featured_image || "/placeholder.svg"}
-                  alt={post.title}
-                  fill
-                  sizes="(min-width: 1280px) 820px, (min-width: 1024px) 66vw, 100vw"
-                  className="object-cover"
-                  priority
-                />
+              {/* Byline */}
+              <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-y border-rule py-4">
+                <div className="flex items-center gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="flex size-10 items-center justify-center rounded-full bg-accent text-sm font-bold text-white"
+                  >
+                    {(post.author_name || "iGospel").trim().charAt(0).toUpperCase()}
+                  </span>
+                  <div className="text-[13px] leading-tight">
+                    <p className="font-semibold text-text">{post.author_name || "iGospel"}</p>
+                    <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-meta">
+                      <time dateTime={post.publish_date}>{formatDate(post.publish_date, "MMMM d, yyyy")}</time>
+                      <span aria-hidden="true">·</span>
+                      <span>{readingMinutes} min read</span>
+                      <span aria-hidden="true">·</span>
+                      <PostTraffic
+                        slug={post.slug}
+                        variant="inline"
+                        initial={{
+                          total_visitors: post.total_visitors,
+                          total_views: post.total_views,
+                          today_visitors: post.today_visitors,
+                          today_views: post.today_views,
+                        }}
+                      />
+                      <span aria-hidden="true">·</span>
+                      <a href="#comments-heading" className="inline-flex items-center gap-1 hover:text-accent">
+                        <MessageCircle className="size-3.5" aria-hidden="true" />
+                        {post.comments.length}
+                      </a>
+                    </p>
+                  </div>
+                </div>
+                <ShareButtons url={url} title={post.meta_title || post.title} variant="compact" />
               </div>
             </header>
 
-            {/* Support Button – Before Content */}
-            <div className="flex justify-center my-10">
-              <SupportButton
-                artistId={post.artists[0]?.id}
-                creatorId={support?.creator_id ?? post.creator_id}
-                label={support?.message}
-              />
-            </div>
+            {/* Music posts open with the player (it shows the cover);
+                other posts with a wide featured image. */}
+            {isMusicPost ? (
+              <div className="[&>section]:my-8">
+                <PostTracks tracks={post.tracks ?? []} albums={post.albums ?? []} />
+              </div>
+            ) : (
+              post.featured_image && (
+                <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-2xl bg-shade">
+                  <Image
+                    src={post.featured_image}
+                    alt={post.title}
+                    fill
+                    sizes="(min-width: 1280px) 820px, (min-width: 1024px) 66vw, 100vw"
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+              )
+            )}
 
             {/* Post Content */}
-            <FadeIn delay={0.2}>
-              <TelegramCTA />
-              <div
-                className="entry-content my-6"
-                dangerouslySetInnerHTML={{ __html: post.content }}
-              />
-              <PostTraffic
-                slug={post.slug}
-                initial={{
-                  total_visitors: post.total_visitors,
-                  total_views: post.total_views,
-                  today_visitors: post.today_visitors,
-                  today_views: post.today_views,
-                }}
-              />
-              <TelegramCTA />
+            <FadeIn delay={0.1}>
+              <div className="entry-content mt-8 text-[17px] leading-[1.8]" dangerouslySetInnerHTML={{ __html: content }} />
 
               {inPostAd && (
                 <a
                   href={inPostAd.link}
                   target="_blank"
                   rel="noopener noreferrer sponsored"
-                  className="relative block my-8 w-full h-28"
+                  className="relative my-10 block h-28 w-full overflow-hidden rounded-xl"
                 >
-                  <Image
-                    src={inPostAd.image}
-                    alt={inPostAd.title}
-                    fill
-                    sizes="(min-width: 1024px) 66vw, 100vw"
-                  />
+                  <Image src={inPostAd.image} alt={inPostAd.title} fill sizes="(min-width: 1024px) 66vw, 100vw" />
                 </a>
               )}
             </FadeIn>
 
-            {/* Support Button – After Content */}
-            <div className="flex justify-center my-12">
-              <SupportButton
+            <div className="mt-10">
+              <PostEngagement
                 artistId={post.artists[0]?.id}
                 creatorId={support?.creator_id ?? post.creator_id}
-                label={support?.message}
+                supportLabel={support?.message}
               />
             </div>
-
-            <PostTracks tracks={post.tracks ?? []} albums={post.albums ?? []} />
 
             <ShareButtons
               url={url}
@@ -245,9 +264,7 @@ export default async function BlogDetailPage({ params }: Props) {
             />
 
             {/* Music posts: badge code for the artist to put on their website (backlinks). */}
-            {((post.tracks?.length ?? 0) > 0 || (post.albums?.length ?? 0) > 0) && (
-              <FeaturedBadge slug={post.slug} title={post.title} />
-            )}
+            {isMusicPost && <FeaturedBadge slug={post.slug} title={post.title} />}
 
             <CommentSection comments={post.comments} postId={post.id} />
           </article>
@@ -259,6 +276,25 @@ export default async function BlogDetailPage({ params }: Props) {
             </div>
           </div>
         </div>
+
+        {/* More posts */}
+        {latestPosts.length > 0 && (
+          <section className="mt-16 border-t border-rule pt-10" aria-labelledby="more-posts-heading">
+            <div className="mb-6 flex items-end justify-between gap-4">
+              <h2 id="more-posts-heading" className="font-serif text-2xl font-bold md:text-3xl">
+                More from iGospel
+              </h2>
+              <Link href="/blog" className="text-sm font-semibold text-accent hover:underline">
+                All posts →
+              </Link>
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {latestPosts.slice(0, 3).map((p, i) => (
+                <PostCard key={p.id} post={p} index={i} headingLevel="h3" />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Mobile Sidebar */}
         <div className="lg:hidden mt-12 border-t border-rule pt-8">

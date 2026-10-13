@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { BlogSidebar } from "@/components/blog/blog-sidebar";
 import { getSiteWideAds } from "@/lib/api/queries";
-import { PostCard } from "@/components/blog/post-card";
+import { FeaturedPostCard, PostCard } from "@/components/blog/post-card";
 import { PageHeader } from "@/components/shared/page-header";
 import { PagePagination } from "@/components/shared/page-pagination";
 import { SearchInput } from "@/components/shared/search-input";
@@ -40,6 +40,9 @@ export async function PostsListing({
   controls?: ReactNode;
 }) {
   const posts = data?.results ?? [];
+  // First page without a search: the newest post gets the big featured card.
+  const featured = page === 1 && !query && posts.length > 0 ? posts[0] : null;
+  const gridPosts = featured ? posts.slice(1) : posts;
   const totalPages = data ? Math.ceil(data.count / POSTS_PAGE_SIZE) : 1;
   // "Whole site" sidebar ads (post pages get theirs with the post).
   const sidebarAds = (await getSiteWideAds()).filter((ad) => ad.position === "sidebar");
@@ -50,11 +53,11 @@ export async function PostsListing({
 
       <div className="grid gap-10 px-4 md:px-6 py-10 lg:grid-cols-3">
         <section className="lg:col-span-2" aria-label="Posts">
-          <div className="mb-8 flex flex-col sm:flex-row gap-3 [&_input]:h-11 [&_input]:rounded-none">
+          <div className="mb-8 flex flex-col sm:flex-row gap-3 [&_input]:h-12 [&_input]:rounded-full">
             <SearchInput
               placeholder={searchPlaceholder}
               className="flex-1"
-              inputClassName="pl-12 border-rule bg-white"
+              inputClassName="pl-12 border-black/10 bg-white shadow-sm"
             />
             {controls}
           </div>
@@ -65,8 +68,13 @@ export async function PostsListing({
             <p className="py-20 text-center text-xl text-meta">{emptyMessage}</p>
           ) : (
             <>
-              <div className="grid gap-x-8 gap-y-12 md:grid-cols-2">
-                {posts.map((post, i) => (
+              {featured && (
+                <div className="mb-8">
+                  <FeaturedPostCard post={featured} fallbackGenre={fallbackGenre} />
+                </div>
+              )}
+              <div className="grid gap-6 md:grid-cols-2">
+                {gridPosts.map((post, i) => (
                   <PostCard key={post.id} post={post} index={i} fallbackGenre={fallbackGenre} />
                 ))}
               </div>
