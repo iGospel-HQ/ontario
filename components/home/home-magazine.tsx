@@ -71,20 +71,20 @@ function OverlayTile({ story, className, large, priority }: { story: HomeStory; 
         className="object-cover transition-transform duration-700 group-hover:scale-105"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
-      <div className={cn("absolute inset-x-0 bottom-0 text-white", large ? "p-6 md:p-8" : "p-4 md:p-5")}>
-        <span className="inline-block rounded-full bg-accent px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+      <div className={cn("absolute inset-x-0 bottom-0 text-white", large ? "p-5 md:p-8" : "p-3 md:p-5")}>
+        <span className={cn("rounded-full bg-accent px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider", large ? "inline-block" : "hidden sm:inline-block")}>
           {story.label}
         </span>
         <h3
           className={cn(
             "mt-2 font-serif font-bold leading-tight transition-colors group-hover:text-white/90",
-            large ? "text-2xl md:text-4xl" : "text-lg line-clamp-2",
+            large ? "text-2xl md:text-4xl" : "text-sm line-clamp-3 sm:text-lg sm:line-clamp-2",
           )}
         >
           {story.title}
         </h3>
         {large && story.excerpt && <p className="mt-2 hidden max-w-2xl text-[15px] text-white/75 line-clamp-2 md:block">{story.excerpt}</p>}
-        <p className="mt-2 text-xs text-white/70">
+        <p className={cn("mt-2 text-xs text-white/70", !large && "hidden sm:block")}>
           {story.author} · {shortDate(story.date)}
         </p>
       </div>
@@ -99,11 +99,11 @@ export function HomeHero({ stories }: { stories: HomeStory[] }) {
   const side = rest.slice(0, 2);
   return (
     <section className="grid gap-3 px-4 pt-6 md:px-6 lg:grid-cols-3" aria-label="Top stories">
-      <OverlayTile story={lead} large priority className={cn("h-80 md:h-[460px]", side.length ? "lg:col-span-2" : "lg:col-span-3")} />
+      <OverlayTile story={lead} large priority className={cn("h-72 md:h-[460px]", side.length ? "lg:col-span-2" : "lg:col-span-3")} />
       {side.length > 0 && (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
           {side.map((s) => (
-            <OverlayTile key={s.id} story={s} className="h-56 md:h-[224px]" />
+            <OverlayTile key={s.id} story={s} className="h-44 sm:h-56 md:h-[224px]" />
           ))}
         </div>
       )}
@@ -201,7 +201,7 @@ export function NewMusicBlock({ stories }: { stories: HomeStory[] }) {
       <SectionHeading title="New Music" href="/music" dark />
       <div className="grid gap-6 lg:grid-cols-2">
         <Link href={`/blog/${lead.slug}`} className="group block">
-          <div className="relative aspect-square overflow-hidden rounded-2xl sm:aspect-[16/10]">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl sm:aspect-[16/10]">
             <Image src={lead.image || "/placeholder.svg"} alt="" fill sizes="(min-width: 1024px) 560px, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
             <span className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-xs font-bold">
               <Headphones className="size-3.5" aria-hidden="true" /> Listen &amp; download

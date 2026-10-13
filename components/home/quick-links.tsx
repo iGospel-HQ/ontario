@@ -20,19 +20,19 @@ export function QuickLinks() {
       </h2>
 
       {/* Phones: one row of round icons */}
-      <nav aria-label="Quick access" className="-mx-4 overflow-x-auto px-4 sm:hidden">
-        <ul className="flex gap-4">
+      <nav aria-label="Quick access" className="sm:hidden">
+        <ul className="grid grid-cols-5 gap-1">
           {links
             .filter((link) => !link.comingSoon)
             .map((link) => {
               const Icon = link.icon;
               return (
                 <li key={link.href}>
-                  <Link href={link.href} className="flex w-16 flex-col items-center gap-1.5 text-center">
-                    <span className="flex size-14 items-center justify-center rounded-full bg-accent/10 text-accent">
-                      <Icon className="size-6" aria-hidden="true" />
+                  <Link href={link.href} className="flex flex-col items-center gap-1.5 text-center">
+                    <span className="flex size-12 items-center justify-center rounded-full bg-accent/10 text-accent">
+                      <Icon className="size-5" aria-hidden="true" />
                     </span>
-                    <span className="text-[11px] font-semibold leading-tight text-text">{link.name}</span>
+                    <span className="text-[10.5px] font-semibold leading-tight text-text">{link.name}</span>
                   </Link>
                 </li>
               );
