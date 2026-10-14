@@ -22,7 +22,14 @@ import type { AdminOverview, Windowed } from "@/types/api";
 import { BarList, ColumnChart, LineChart, Sparkline, SplitBar, compact, full } from "./charts";
 import { VisitsTable } from "./visits-table";
 
-const RANGES = [7, 30, 90] as const;
+const RANGES = [
+  { key: "today", label: "Today" },
+  { key: "yesterday", label: "Yesterday" },
+  { key: "7", label: "Last 7 days" },
+  { key: "30", label: "Last 30 days" },
+  { key: "90", label: "Last 90 days" },
+] as const;
+type RangeKey = (typeof RANGES)[number]["key"];
 const DJANGO_ADMIN = `${new URL(siteConfig.apiUrl).origin}/admin/`;
 
 const naira = (n: number) =>
@@ -48,9 +55,9 @@ function Card({ title, subtitle, action, children, className }: { title: string;
 }
 
 /** Signed change vs the previous period; arrow + text, never colour alone. */
-function Delta({ current, previous, days }: { current: number; previous: number; days: number }) {
+function Delta({ current, previous, versus }: { current: number; previous: number; versus: string }) {
   if (previous === 0) {
-    return <p className="text-xs text-[var(--viz-muted)]">{current > 0 ? `No data for the ${days} days before` : "—"}</p>;
+    return <p className="text-xs text-[var(--viz-muted)]">{current > 0 ? `No data for ${versus}` : "—"}</p>;
   }
   const change = ((current - previous) / previous) * 100;
   const up = change >= 0;
@@ -62,7 +69,7 @@ function Delta({ current, previous, days }: { current: number; previous: number;
         {up ? "+" : "−"}
         {Math.abs(change) >= 100 ? Math.round(Math.abs(change)) : Math.abs(change).toFixed(1)}%
       </span>
-      <span className="text-[var(--viz-muted)]">vs previous {days} days</span>
+      <span className="text-[var(--viz-muted)]">vs {versus}</span>
     </p>
   );
 }
@@ -71,7 +78,7 @@ function KpiTile({
   label,
   value,
   windowed,
-  days,
+  versus,
   trend,
   icon: Icon,
   previous,
@@ -82,7 +89,8 @@ function KpiTile({
   windowed?: Windowed;
   current?: number;
   previous?: number;
-  days: number;
+  /** What the change is measured against, e.g. "the previous 7 days". */
+  versus: string;
   trend?: number[];
   icon: typeof Eye;
 }) {
@@ -99,7 +107,7 @@ function KpiTile({
         {trend && <Sparkline values={trend} label={`${label} trend`} />}
       </div>
       <div className="mt-1.5">
-        <Delta current={cur} previous={prev} days={days} />
+        <Delta current={cur} previous={prev} versus={versus} />
       </div>
       {windowed && (
         <p className="mt-1 text-xs text-[var(--viz-muted)]">
@@ -132,10 +140,10 @@ function Stat({ label, value, hint, href }: { label: string; value: string | num
 
 /** Site-wide statistics for staff accounts (API: /stats/overview/, staff only). */
 export function AdminOverviewDashboard() {
-  const [days, setDays] = useState<(typeof RANGES)[number]>(30);
+  const [period, setPeriod] = useState<RangeKey>("30");
   const { data, error, isFetching, isPending, refetch, dataUpdatedAt } = useQuery({
-    queryKey: ["admin-overview", days],
-    queryFn: async () => (await api.get<AdminOverview>("/stats/overview/", { params: { days } })).data,
+    queryKey: ["admin-overview", period],
+    queryFn: async () => (await api.get<AdminOverview>("/stats/overview/", { params: { period } })).data,
     placeholderData: keepPreviousData,
     staleTime: 60_000,
   });
@@ -153,20 +161,20 @@ export function AdminOverviewDashboard() {
     <div className="viz-root space-y-6">
       {/* One filter row: scopes every number below it. */}
       <div className="flex flex-wrap items-center gap-3">
-        <div role="radiogroup" aria-label="Time range" className="inline-flex rounded-lg border border-[var(--viz-border)] p-0.5 text-sm">
+        <div role="radiogroup" aria-label="Time range" className="inline-flex max-w-full overflow-x-auto rounded-lg border border-[var(--viz-border)] p-0.5 text-sm">
           {RANGES.map((r) => (
             <button
-              key={r}
+              key={r.key}
               type="button"
               role="radio"
-              aria-checked={days === r}
-              onClick={() => setDays(r)}
+              aria-checked={period === r.key}
+              onClick={() => setPeriod(r.key)}
               className={cn(
                 "rounded-md px-3 py-1.5 font-medium transition-colors",
-                days === r ? "bg-[var(--viz-ink)] text-white" : "text-[var(--viz-ink-2)] hover:bg-black/[0.04]",
+                period === r.key ? "bg-[var(--viz-ink)] text-white" : "text-[var(--viz-ink-2)] hover:bg-black/[0.04]",
               )}
             >
-              Last {r} days
+              {r.label}
             </button>
           ))}
         </div>
@@ -208,6 +216,11 @@ export function AdminOverviewDashboard() {
 
 function Overview({ data }: { data: AdminOverview }) {
   const { days, traffic, plays, downloads, shares, users, artists, music, content, money } = data;
+  // "today" / "yesterday" / "last 7 days" (older APIs only send days).
+  const span = data.label ?? `last ${days} days`;
+  const versus = data.previous_label ?? `the previous ${days} days`;
+  const per = data.bucket === "hour" ? "hour" : "day";
+  const within = data.bucket === "hour" ? span : `in the ${span}`;
   // Older APIs send one "sponsor" (on all songs) instead of the "sponsors" list.
   const sponsors =
     shares?.sponsors ??
@@ -219,17 +232,17 @@ function Overview({ data }: { data: AdminOverview }) {
     <>
       {/* Headline numbers for the selected period */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
-        <KpiTile label="Page views" value={compact(traffic.views.period)} windowed={traffic.views} days={days} icon={Eye} trend={traffic.series.map((d) => d.views)} />
-        <KpiTile label="Unique visitors" value={compact(traffic.visitors.period)} windowed={traffic.visitors} days={days} icon={Users} trend={traffic.series.map((d) => d.visitors)} />
-        <KpiTile label="Song plays" value={compact(plays.period)} windowed={plays} days={days} icon={Music2} trend={plays.series.map((d) => d.plays)} />
-        <KpiTile label="Downloads" value={compact(downloads.period)} windowed={downloads} days={days} icon={Download} trend={downloads.series.map((d) => d.downloads)} />
-        <KpiTile label="New users" value={compact(users.period)} windowed={users} days={days} icon={UserPlus} trend={users.series.map((d) => d.signups)} />
+        <KpiTile label="Page views" value={compact(traffic.views.period)} windowed={traffic.views} versus={versus} icon={Eye} trend={traffic.series.map((d) => d.views)} />
+        <KpiTile label="Unique visitors" value={compact(traffic.visitors.period)} windowed={traffic.visitors} versus={versus} icon={Users} trend={traffic.series.map((d) => d.visitors)} />
+        <KpiTile label="Song plays" value={compact(plays.period)} windowed={plays} versus={versus} icon={Music2} trend={plays.series.map((d) => d.plays)} />
+        <KpiTile label="Downloads" value={compact(downloads.period)} windowed={downloads} versus={versus} icon={Download} trend={downloads.series.map((d) => d.downloads)} />
+        <KpiTile label="New users" value={compact(users.period)} windowed={users} versus={versus} icon={UserPlus} trend={users.series.map((d) => d.signups)} />
         <KpiTile
           label="Donations"
           value={nairaCompact(money.donations_period)}
           current={money.donations_period}
           previous={money.donations_previous}
-          days={days}
+          versus={versus}
           icon={HandCoins}
           trend={money.series.map((d) => d.donations)}
         />
@@ -237,9 +250,9 @@ function Overview({ data }: { data: AdminOverview }) {
 
       {/* Traffic */}
       <div className="grid gap-4 xl:grid-cols-3">
-        <Card title="Traffic" subtitle={`Page views and unique visitors per day, whole site except the dashboard, last ${days} days`} className="xl:col-span-2">
+        <Card title="Traffic" subtitle={`Page views and unique visitors per day, whole site except the dashboard, ${span}`} className="xl:col-span-2">
           <LineChart
-            label={`Traffic: views and unique visitors per day, last ${days} days`}
+            label={`Traffic: views and unique visitors per ${per}, ${span}`}
             data={traffic.series}
             series={[
               { key: "views", label: "Views", color: s1 },
@@ -247,7 +260,7 @@ function Overview({ data }: { data: AdminOverview }) {
             ]}
           />
         </Card>
-        <Card title="Top posts" subtitle={`By views, last ${days} days`}>
+        <Card title="Top posts" subtitle={`By views, ${span}`}>
           <BarList
             rows={traffic.top_posts.map((p) => ({ label: p.title, value: p.views, href: `/blog/${p.slug}` }))}
           />
@@ -257,16 +270,16 @@ function Overview({ data }: { data: AdminOverview }) {
       {/* Where the traffic goes and comes from */}
       {traffic.top_pages && (
         <div className="grid gap-4 lg:grid-cols-3">
-          <Card title="Top pages" subtitle={`Every page of the site, last ${days} days`}>
+          <Card title="Top pages" subtitle={`Every page of the site, ${span}`}>
             <BarList rows={traffic.top_pages.map((p) => ({ label: p.label, sublabel: p.label === p.path ? undefined : p.path, value: p.views, href: p.path }))} />
           </Card>
-          <Card title="Where visitors come from" subtitle={`The site or app they came from, last ${days} days`}>
+          <Card title="Where visitors come from" subtitle={`The site or app they came from, ${span}`}>
             <BarList rows={(traffic.sources ?? []).map((s) => ({ label: s.source, value: s.views }))} />
             <p className="mt-3 text-xs text-[var(--viz-muted)]">
               &quot;Direct &amp; apps&quot; includes typed-in links, bookmarks and most links opened from WhatsApp.
             </p>
           </Card>
-          <Card title="Devices & countries" subtitle={`Page views, last ${days} days`}>
+          <Card title="Devices & countries" subtitle={`Page views, ${span}`}>
             <SplitBar
               empty="No device data for this period yet."
               parts={[
@@ -282,25 +295,25 @@ function Overview({ data }: { data: AdminOverview }) {
       )}
 
       {/* Every visit, with filters */}
-      <VisitsTable days={days} />
+      <VisitsTable period={data.period ?? String(days)} span={span} />
 
       {/* Plays */}
       <div className="grid gap-4 xl:grid-cols-3">
-        <Card title="Song plays" subtitle={`Plays per day, last ${days} days · ${compact(plays.all_time)} all time`} className="xl:col-span-2">
-          <ColumnChart label={`Song plays per day, last ${days} days`} data={plays.series} series={{ key: "plays", label: "Plays", color: s1 }} />
+        <Card title="Song plays" subtitle={`Plays per ${per}, ${span} · ${compact(plays.all_time)} all time`} className="xl:col-span-2">
+          <ColumnChart label={`Song plays per ${per}, ${span}`} data={plays.series} series={{ key: "plays", label: "Plays", color: s1 }} />
           <div className="mt-6 border-t border-[var(--viz-grid)] pt-5">
             <h3 className="font-sans text-sm font-semibold text-[var(--viz-ink)]">Listeners by country</h3>
             <p className="mb-4 mt-0.5 text-xs text-[var(--viz-muted)]">
-              Plays, last {days} days{plays.unknown_country ? ` · ${full(plays.unknown_country)} with unknown location` : ""}
+              Plays, {span}{plays.unknown_country ? ` · ${full(plays.unknown_country)} with unknown location` : ""}
             </p>
             <BarList rows={plays.top_countries.map((c) => ({ label: c.country, value: c.plays }))} />
           </div>
         </Card>
         <div className="grid min-w-0 content-start gap-4">
-          <Card title="Top songs" subtitle={`By plays (30s+ listens), last ${days} days`}>
+          <Card title="Top songs" subtitle={`By plays (30s+ listens), ${span}`}>
             <BarList rows={plays.top_tracks.map((t) => ({ label: t.title, sublabel: t.artist, value: t.plays }))} />
           </Card>
-          <Card title="Top downloads" subtitle={`Last ${days} days · ${compact(downloads.all_time)} all time`}>
+          <Card title="Top downloads" subtitle={`${span.charAt(0).toUpperCase() + span.slice(1)} · ${compact(downloads.all_time)} all time`}>
             <BarList rows={downloads.top_tracks.map((t) => ({ label: t.title, sublabel: t.artist, value: t.downloads }))} />
           </Card>
         </div>
@@ -311,13 +324,13 @@ function Overview({ data }: { data: AdminOverview }) {
         <div className="grid gap-4 xl:grid-cols-3">
           <Card
             title="Song video shares"
-            subtitle={`Videos shared to Status, Stories, TikTok... per day, last ${days} days · ${compact(shares.all_time)} all time`}
+            subtitle={`Videos shared to Status, Stories, TikTok... per ${per}, ${span} · ${compact(shares.all_time)} all time`}
             className="xl:col-span-2"
           >
-            <ColumnChart label={`Song video shares per day, last ${days} days`} data={shares.series} series={{ key: "shares", label: "Shares", color: s2 }} />
+            <ColumnChart label={`Song video shares per ${per}, ${span}`} data={shares.series} series={{ key: "shares", label: "Shares", color: s2 }} />
             <div className="mt-6 border-t border-[var(--viz-grid)] pt-5">
               <h3 className="font-sans text-sm font-semibold text-[var(--viz-ink)]">Shared to</h3>
-              <p className="mb-4 mt-0.5 text-xs text-[var(--viz-muted)]">The app picked on the post page, last {days} days</p>
+              <p className="mb-4 mt-0.5 text-xs text-[var(--viz-muted)]">The app picked on the post page, {span}</p>
               <BarList rows={shares.by_platform.map((p) => ({ label: p.platform, value: p.shares }))} />
             </div>
           </Card>
@@ -346,7 +359,7 @@ function Overview({ data }: { data: AdminOverview }) {
                 </p>
               )}
             </Card>
-            <Card title="Most shared songs" subtitle={`Last ${days} days`}>
+            <Card title="Most shared songs" subtitle={span.charAt(0).toUpperCase() + span.slice(1)}>
               <BarList rows={shares.top_tracks.map((t) => ({ label: t.title, sublabel: t.artist, value: t.shares }))} />
             </Card>
           </div>
@@ -359,7 +372,7 @@ function Overview({ data }: { data: AdminOverview }) {
           <div className="grid grid-cols-2 gap-4">
             <Stat label="Artists" value={artists.total} hint={`${full(artists.active)} active · ${full(artists.new_period)} new`} />
             <Stat label="Artists with accounts" value={artists.with_account} hint="Can receive support" />
-            <Stat label="Songs" value={music.tracks} hint={`${full(music.new_tracks_period)} added in ${days} days`} />
+            <Stat label="Songs" value={music.tracks} hint={`${full(music.new_tracks_period)} added ${within}`} />
             <Stat label="Albums" value={music.albums} />
             <Stat label="Downloadable" value={music.downloadable} hint={`of ${full(music.tracks)} songs`} />
             <Stat label="Playlists · Genres" value={`${full(music.playlists)} · ${full(music.genres)}`} />
@@ -378,8 +391,8 @@ function Overview({ data }: { data: AdminOverview }) {
         <Card title="Community & content" subtitle={`Users, posts and messages`}>
           <div className="grid grid-cols-2 gap-4">
             <Stat label="Users" value={users.all_time} hint={`${full(users.active)} active · ${full(users.staff)} staff`} />
-            <Stat label="New users" value={users.period} hint={`last ${days} days`} />
-            <Stat label="Published posts" value={content.published} hint={`${full(content.published_period)} in ${days} days`} />
+            <Stat label="New users" value={users.period} hint={span} />
+            <Stat label="Published posts" value={content.published} hint={`${full(content.published_period)} ${within}`} />
             <Stat
               label="Drafts · Scheduled"
               value={`${full(content.drafts)} · ${full(content.scheduled)}`}
@@ -395,7 +408,7 @@ function Overview({ data }: { data: AdminOverview }) {
             <Stat
               label="Contact messages"
               value={content.contact_messages}
-              hint={`${full(content.contact_messages_period)} in ${days} days`}
+              hint={`${full(content.contact_messages_period)} ${within}`}
               href={content.contact_messages ? `${DJANGO_ADMIN}support/contact/` : undefined}
             />
           </div>
@@ -404,7 +417,7 @@ function Overview({ data }: { data: AdminOverview }) {
         <Card title="Money" subtitle="Donations and payouts (NGN)">
           <div className="grid grid-cols-2 gap-4">
             <Stat label="Donations, all time" value={naira(money.donations_total)} />
-            <Stat label={`Donations, ${days} days`} value={naira(money.donations_period)} hint={`${full(money.donations_count_period)} donations`} />
+            <Stat label={`Donations, ${span}`} value={naira(money.donations_period)} hint={`${full(money.donations_count_period)} donations`} />
             <Stat label="Platform commission" value={naira(money.commission_total)} hint="all time" />
             <Stat
               label="Pending withdrawals"
@@ -416,7 +429,7 @@ function Overview({ data }: { data: AdminOverview }) {
           <div className="mt-5">
             <p className="mb-2 text-xs font-medium text-[var(--viz-ink-2)]">Recent donations</p>
             {money.recent_donations.length === 0 ? (
-              <p className="text-sm text-[var(--viz-muted)]">No donations in the last {days} days.</p>
+              <p className="text-sm text-[var(--viz-muted)]">No donations {within}.</p>
             ) : (
               <ul className="divide-y divide-[var(--viz-grid)] text-sm">
                 {money.recent_donations.map((d, i) => (

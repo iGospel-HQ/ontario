@@ -175,10 +175,17 @@ export interface Windowed {
   all_time: number;
 }
 
-/** `/stats/overview/?days=` (staff only). */
+/** `/stats/overview/?period=today|yesterday|7|30|90` (staff only). */
 export interface AdminOverview {
   generated_at: string;
   days: number;
+  period?: string;
+  /** "today", "yesterday", "last 7 days" */
+  label?: string;
+  /** What changes are measured against: "the same time yesterday", "the previous 7 days" */
+  previous_label?: string;
+  /** Series rows are per hour (one-day periods; date = ISO datetime) or per day. */
+  bucket?: "hour" | "day";
   /** Visits to every page of the site except the dashboard. */
   traffic: {
     views: Windowed;

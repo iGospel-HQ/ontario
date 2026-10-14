@@ -24,14 +24,20 @@ const compactFormat = new Intl.NumberFormat("en", { notation: "compact", maximum
 export const compact = (n: number) => compactFormat.format(n);
 export const full = (n: number) => n.toLocaleString("en");
 
-/** "2026-10-03" -> Date at local midnight (no timezone shift). */
+/** "2026-10-03" -> Date at local midnight (no timezone shift); hourly rows are full ISO datetimes. */
 function parseDay(iso: string) {
+  if (iso.includes("T")) return new Date(iso);
   const [y, m, d] = iso.split("-").map(Number);
   return new Date(y, m - 1, d);
 }
-export const shortDate = (iso: string) => parseDay(iso).toLocaleDateString("en", { month: "short", day: "numeric" });
+const hour = (iso: string) => parseDay(iso).toLocaleTimeString("en", { hour: "numeric", hour12: true });
+/** Axis label: "Oct 3", or "3 PM" for hourly rows. */
+export const shortDate = (iso: string) =>
+  iso.includes("T") ? hour(iso) : parseDay(iso).toLocaleDateString("en", { month: "short", day: "numeric" });
+/** Tooltip/table label: "Sat, Oct 3", or "Sat, Oct 3, 3 PM" for hourly rows. */
 const longDate = (iso: string) =>
-  parseDay(iso).toLocaleDateString("en", { weekday: "short", month: "short", day: "numeric" });
+  parseDay(iso).toLocaleDateString("en", { weekday: "short", month: "short", day: "numeric" }) +
+  (iso.includes("T") ? `, ${hour(iso)}` : "");
 
 /** Clean axis: ticks 0..top in round steps (counts: whole-number steps). */
 function niceScale(maxValue: number, count = 4) {

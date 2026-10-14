@@ -59,7 +59,7 @@ const selectClass =
  * when, which page, where the visitor came from, device, country, IP and the
  * visitor (click to see their whole journey). Filters and paging run on the API.
  */
-export function VisitsTable({ days }: { days: number }) {
+export function VisitsTable({ period, span }: { period: string; span: string }) {
   const [source, setSource] = useState("");
   const [device, setDevice] = useState("");
   const [country, setCountry] = useState("");
@@ -74,7 +74,7 @@ export function VisitsTable({ days }: { days: number }) {
     return () => clearTimeout(timer);
   }, [search]);
 
-  const filtersKey = [days, source, device, country, visitor, q].join("|");
+  const filtersKey = [period, source, device, country, visitor, q].join("|");
   const [prevKey, setPrevKey] = useState(filtersKey);
   if (prevKey !== filtersKey) {
     // A filter changed: back to the first page.
@@ -83,11 +83,11 @@ export function VisitsTable({ days }: { days: number }) {
   }
 
   const { data, isFetching, isError, refetch } = useQuery({
-    queryKey: ["admin-visits", days, source, device, country, visitor, q, page],
+    queryKey: ["admin-visits", period, source, device, country, visitor, q, page],
     queryFn: async () =>
       (
         await api.get<VisitsResponse>("/stats/visits/", {
-          params: { days, source: source || undefined, device: device || undefined, country: country || undefined, visitor: visitor || undefined, q: q || undefined, page, page_size: 25 },
+          params: { period, source: source || undefined, device: device || undefined, country: country || undefined, visitor: visitor || undefined, q: q || undefined, page, page_size: 25 },
         })
       ).data,
     placeholderData: keepPreviousData,
@@ -109,7 +109,7 @@ export function VisitsTable({ days }: { days: number }) {
         <div>
           <h2 className="font-sans text-base font-semibold text-[var(--viz-ink)]">Visits</h2>
           <p className="mt-0.5 text-xs text-[var(--viz-muted)]">
-            Every page visit, last {days} days{data ? ` · ${data.count.toLocaleString("en")} ${filtering ? "matching" : "in total"}` : ""}
+            Every page visit, {span}{data ? ` · ${data.count.toLocaleString("en")} ${filtering ? "matching" : "in total"}` : ""}
           </p>
         </div>
       </header>
