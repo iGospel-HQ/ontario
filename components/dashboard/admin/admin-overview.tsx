@@ -250,7 +250,7 @@ function Overview({ data }: { data: AdminOverview }) {
 
       {/* Traffic */}
       <div className="grid gap-4 xl:grid-cols-3">
-        <Card title="Traffic" subtitle={`Page views and unique visitors per day, whole site except the dashboard, ${span}`} className="xl:col-span-2">
+        <Card title="Traffic" subtitle={`Page views and unique visitors per ${per}, whole site except the dashboard, ${span}`} className="xl:col-span-2">
           <LineChart
             label={`Traffic: views and unique visitors per ${per}, ${span}`}
             data={traffic.series}
