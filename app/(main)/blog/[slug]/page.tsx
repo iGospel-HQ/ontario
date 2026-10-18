@@ -18,6 +18,9 @@ import { PostEngagement } from "@/components/blog/post-engagement";
 import { FadeIn } from "@/components/shared/fade-in";
 import { JsonLd } from "@/components/shared/json-ld";
 import { ShareButtons } from "@/components/shared/share-buttons";
+import { AdSlot, BannerAd } from "@/components/shared/banner-ad";
+import type { AdBanner } from "@/types/api";
+import { Fragment } from "react";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -65,9 +68,10 @@ export default async function BlogDetailPage({ params }: Props) {
 
   const latestPosts = (latest?.results ?? []).filter((p) => p.slug !== post.slug);
   const ads = post.ads?.content_ads ?? [];
-  const headerAd = ads.find((ad) => ad.position === "header");
-  const inPostAd = ads.find((ad) => ad.position === "in_post");
-  const sidebarAds = ads.filter((ad) => ad.position === "sidebar");
+  // Ads by spot on the page (admin: Blog → Ad banners → Position).
+  const at = (position: string) => ads.filter((ad) => ad.position === position);
+  const headerAd = at("header")[0];
+  const sidebarAds = at("sidebar");
   const support = post.support_status;
   const url = absoluteUrl(`/blog/${post.slug}`);
   const isMusicPost = (post.tracks?.length ?? 0) > 0 || (post.albums?.length ?? 0) > 0;
@@ -76,6 +80,7 @@ export default async function BlogDetailPage({ params }: Props) {
   const readingMinutes = Math.max(1, Math.round(words / 200));
   // The editor leaves empty paragraphs (<p><br></p>, <p>&nbsp;</p>) as spacers.
   const content = post.content.replace(/<p[^>]*>(?:\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, "");
+  const articlePieces = splitAfterParagraphs(content, at("after_paragraph"));
   const engagement = (
     <PostEngagement
       artistId={post.artists[0]?.id}
@@ -118,22 +123,7 @@ export default async function BlogDetailPage({ params }: Props) {
       />
 
       {/* Header Ad */}
-      {headerAd && (
-        <a
-          href={headerAd.link}
-          target="_blank"
-          rel="noopener noreferrer sponsored"
-          className="relative block w-full h-24 md:h-32"
-        >
-          <Image
-            src={headerAd.image}
-            alt={headerAd.title}
-            fill
-            sizes="100vw"
-            className="object-cover"
-          />
-        </a>
-      )}
+      {headerAd && <BannerAd ad={headerAd} sizes="100vw" />}
 
       <div className="px-4 md:px-6 py-8 lg:py-10">
         <div className="grid lg:grid-cols-3 gap-8 xl:gap-12">
@@ -164,6 +154,8 @@ export default async function BlogDetailPage({ params }: Props) {
                 </ol>
               </nav>
 
+              <AdSlot ads={at("before_title")} className="mt-6" />
+
               <span className="mt-6 inline-block rounded-full bg-accent/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-accent">
                 {post.genres?.[0]?.name || "Gospel"}
               </span>
@@ -171,6 +163,8 @@ export default async function BlogDetailPage({ params }: Props) {
               <h1 className="mt-4 font-serif text-3xl font-bold leading-[1.15] tracking-tight md:text-[44px]">
                 {post.title}
               </h1>
+
+              <AdSlot ads={at("after_title")} className="mt-6" />
 
               {/* Byline */}
               <div className="mt-6 flex flex-col items-start gap-4 border-y border-rule py-4">
@@ -208,6 +202,7 @@ export default async function BlogDetailPage({ params }: Props) {
                 </div>
                 <ShareButtons url={url} title={post.meta_title || post.title} variant="compact" />
               </div>
+              <AdSlot ads={at("after_byline")} className="mt-8" />
             </header>
 
             {/* Featured image: shown whole (album covers carry their title), on a
@@ -233,23 +228,26 @@ export default async function BlogDetailPage({ params }: Props) {
               </div>
             )}
 
+            <AdSlot ads={at("after_image")} className="mt-8" />
+
             {/* Support and Telegram: once before the article, and again after the player. */}
             <div className="mt-8">{engagement}</div>
 
+            <AdSlot ads={at("before_content")} className="mt-8" />
+
             {/* Post Content */}
             <FadeIn delay={0.1}>
-              <div className="entry-content mt-8 text-[17px] leading-[1.8]" dangerouslySetInnerHTML={{ __html: content }} />
+              {/* The article, with any "after paragraph N" ads between its pieces. */}
+              {articlePieces.map((piece, i) => (
+                <Fragment key={i}>
+                  {piece.html.trim() && (
+                    <div className="entry-content mt-8 text-[17px] leading-[1.8]" dangerouslySetInnerHTML={{ __html: piece.html }} />
+                  )}
+                  <AdSlot ads={piece.ads} className="mt-8" />
+                </Fragment>
+              ))}
 
-              {inPostAd && (
-                <a
-                  href={inPostAd.link}
-                  target="_blank"
-                  rel="noopener noreferrer sponsored"
-                  className="relative my-10 block h-28 w-full overflow-hidden rounded-xl"
-                >
-                  <Image src={inPostAd.image} alt={inPostAd.title} fill sizes="(min-width: 1024px) 66vw, 100vw" />
-                </a>
-              )}
+              <AdSlot ads={at("in_post")} className="my-10" />
             </FadeIn>
 
             {isMusicPost && (
@@ -257,6 +255,8 @@ export default async function BlogDetailPage({ params }: Props) {
                 <PostTracks tracks={post.tracks ?? []} albums={post.albums ?? []} />
               </div>
             )}
+
+            <AdSlot ads={at("after_player")} className="mt-8" />
 
             <div className="mt-8">{engagement}</div>
 
@@ -269,6 +269,8 @@ export default async function BlogDetailPage({ params }: Props) {
 
             {/* Music posts: badge code for the artist to put on their website (backlinks). */}
             {isMusicPost && <FeaturedBadge slug={post.slug} title={post.title} />}
+
+            <AdSlot ads={at("before_comments")} className="mb-10" />
 
             <CommentSection comments={post.comments} postId={post.id} />
           </article>
@@ -307,4 +309,29 @@ export default async function BlogDetailPage({ params }: Props) {
       </div>
     </div>
   );
+}
+
+/**
+ * The article cut after the paragraphs that "after paragraph N" ads follow:
+ * [{html, ads}] where each piece's ads come right after it. N past the last
+ * paragraph puts the ad after the last one.
+ */
+function splitAfterParagraphs(html: string, paragraphAds: AdBanner[]) {
+  if (!paragraphAds.length) return [{ html, ads: [] as AdBanner[] }];
+  const ends: number[] = [];
+  for (const match of html.matchAll(/<\/p>/gi)) ends.push((match.index ?? 0) + match[0].length);
+  if (!ends.length) return [{ html, ads: paragraphAds }];
+  const byEnd = new Map<number, AdBanner[]>();
+  for (const ad of paragraphAds) {
+    const n = Math.min(Math.max(ad.paragraph ?? 2, 1), ends.length);
+    byEnd.set(ends[n - 1], [...(byEnd.get(ends[n - 1]) ?? []), ad]);
+  }
+  const pieces: { html: string; ads: AdBanner[] }[] = [];
+  let from = 0;
+  for (const end of [...byEnd.keys()].sort((a, b) => a - b)) {
+    pieces.push({ html: html.slice(from, end), ads: byEnd.get(end) ?? [] });
+    from = end;
+  }
+  pieces.push({ html: html.slice(from), ads: [] });
+  return pieces;
 }

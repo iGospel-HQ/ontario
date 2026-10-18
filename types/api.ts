@@ -146,7 +146,12 @@ export interface AdBanner {
   title: string;
   image: string;
   link: string;
-  position: "header" | "in_post" | "sidebar" | "footer" | string;
+  /** header, footer, sidebar, background, or a spot on the post page: before_title, after_title,
+   *  after_byline, after_image, before_content, after_paragraph (see `paragraph`), in_post
+   *  (after the article), after_player, before_comments. */
+  position: string;
+  /** With after_paragraph: the ad goes after this paragraph (1 = the first). */
+  paragraph?: number | null;
   /** site_wide (every page), all_posts, selected_posts */
   placement?: string;
 }
