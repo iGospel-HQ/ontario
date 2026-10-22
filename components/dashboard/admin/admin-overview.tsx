@@ -5,6 +5,8 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import {
   ArrowDownRight,
+  ChartColumn,
+  ChartLine,
   Download,
   ArrowUpRight,
   ExternalLink,
@@ -214,8 +216,56 @@ export function AdminOverviewDashboard() {
   );
 }
 
+/** Two small tabs: line graph or bar chart (the choice is remembered on this browser). */
+function ChartViewTabs({ value, onChange }: { value: "line" | "bar"; onChange: (v: "line" | "bar") => void }) {
+  const options = [
+    { id: "line" as const, label: "Graph", Icon: ChartLine },
+    { id: "bar" as const, label: "Bar chart", Icon: ChartColumn },
+  ];
+  return (
+    <div role="radiogroup" aria-label="Chart type" className="inline-flex shrink-0 rounded-lg border border-[var(--viz-border)] p-0.5 text-xs">
+      {options.map(({ id, label, Icon }) => (
+        <button
+          key={id}
+          type="button"
+          role="radio"
+          aria-checked={value === id}
+          onClick={() => onChange(id)}
+          className={cn(
+            "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 font-medium transition-colors",
+            value === id ? "bg-[var(--viz-ink)] text-white" : "text-[var(--viz-ink-2)] hover:bg-black/[0.04]",
+          )}
+        >
+          <Icon className="size-3.5" aria-hidden="true" />
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function useChartView(key: string): ["line" | "bar", (v: "line" | "bar") => void] {
+  const [view, setView] = useState<"line" | "bar">(() => {
+    try {
+      return typeof window !== "undefined" && window.localStorage.getItem(key) === "bar" ? "bar" : "line";
+    } catch {
+      return "line";
+    }
+  });
+  const change = (v: "line" | "bar") => {
+    setView(v);
+    try {
+      window.localStorage.setItem(key, v);
+    } catch {
+      /* private mode: just don't remember */
+    }
+  };
+  return [view, change];
+}
+
 function Overview({ data }: { data: AdminOverview }) {
   const { days, traffic, plays, downloads, shares, users, artists, music, content, money } = data;
+  const [trafficView, setTrafficView] = useChartView("igospel-traffic-chart");
   // "today" / "yesterday" / "last 7 days" (older APIs only send days).
   const span = data.label ?? `last ${days} days`;
   const versus = data.previous_label ?? `the previous ${days} days`;
@@ -250,15 +300,31 @@ function Overview({ data }: { data: AdminOverview }) {
 
       {/* Traffic */}
       <div className="grid gap-4 xl:grid-cols-3">
-        <Card title="Traffic" subtitle={`Page views and unique visitors per ${per}, whole site except the dashboard, ${span}`} className="xl:col-span-2">
-          <LineChart
-            label={`Traffic: views and unique visitors per ${per}, ${span}`}
-            data={traffic.series}
-            series={[
-              { key: "views", label: "Views", color: s1 },
-              { key: "visitors", label: "Unique visitors", color: s2 },
-            ]}
-          />
+        <Card
+          title="Traffic"
+          subtitle={`Page views and unique visitors per ${per}, whole site except the dashboard, ${span}`}
+          className="xl:col-span-2"
+          action={<ChartViewTabs value={trafficView} onChange={setTrafficView} />}
+        >
+          {trafficView === "bar" ? (
+            <ColumnChart
+              label={`Traffic: views and unique visitors per ${per}, ${span}`}
+              data={traffic.series}
+              series={[
+                { key: "views", label: "Views", color: s1 },
+                { key: "visitors", label: "Unique visitors", color: s2 },
+              ]}
+            />
+          ) : (
+            <LineChart
+              label={`Traffic: views and unique visitors per ${per}, ${span}`}
+              data={traffic.series}
+              series={[
+                { key: "views", label: "Views", color: s1 },
+                { key: "visitors", label: "Unique visitors", color: s2 },
+              ]}
+            />
+          )}
         </Card>
         <Card title="Top posts" subtitle={`By views, ${span}`}>
           <BarList

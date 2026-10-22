@@ -276,7 +276,10 @@ export function LineChart({
   );
 }
 
-/** One value per day as columns (single series), per-column hover tooltip. */
+/**
+ * One value per day (or hour) as columns, per-column hover tooltip. With
+ * several series, each day gets a group of side-by-side columns and a legend.
+ */
 export function ColumnChart({
   data,
   series,
@@ -285,38 +288,46 @@ export function ColumnChart({
   label,
 }: {
   data: Row[];
-  series: Series;
+  series: Series | Series[];
   height?: number;
   format?: (n: number) => string;
   label: string;
 }) {
   const [ref, width] = useWidth<HTMLDivElement>();
   const [hover, setHover] = useState<number | null>(null);
+  const list = Array.isArray(series) ? series : [series];
+  const m = list.length;
   const n = data.length;
   const margin = { ...MARGIN, right: 12 };
   const w = Math.max(width - margin.left - margin.right, 10);
   const h = height - margin.top - margin.bottom;
-  const vals = data.map((d) => Number(d[series.key]) || 0);
-  const { top, ticks } = niceScale(Math.max(0, ...vals));
+  const valsOf = (s: Series) => data.map((d) => Number(d[s.key]) || 0);
+  const all = list.map(valsOf);
+  const vals = all[0];
+  const { top, ticks } = niceScale(Math.max(0, ...all.flat()));
   const y = (v: number) => margin.top + h - (v / top) * h;
   const base = margin.top + h;
   const band = w / Math.max(n, 1);
-  const barW = Math.max(1, Math.min(24, band - 2)); // 2px surface gap between columns
-  const barX = (i: number) => margin.left + i * band + (band - barW) / 2;
+  const gap = m > 1 ? 2 : 0; // between the columns of one group
+  const groupW = Math.max(m, Math.min(24 * m, band - 2)); // 2px surface gap between groups
+  const barW = Math.max(1, (groupW - gap * (m - 1)) / m);
+  const groupX = (i: number) => margin.left + i * band + (band - groupW) / 2;
+  const barX = (i: number, j = 0) => groupX(i) + j * (barW + gap);
   const peak = vals.indexOf(Math.max(...vals));
   const last = n - 1;
 
-  const column = (i: number) => {
-    const bh = base - y(vals[i]);
+  const column = (i: number, j: number) => {
+    const bh = base - y(all[j][i]);
     if (bh <= 0) return null;
     const r = Math.min(4, barW / 2, bh);
-    const x0 = barX(i);
+    const x0 = barX(i, j);
     const yt = base - bh;
     return `M${x0},${base}V${yt + r}Q${x0},${yt} ${x0 + r},${yt}H${x0 + barW - r}Q${x0 + barW},${yt} ${x0 + barW},${yt + r}V${base}Z`;
   };
 
   return (
     <div className="space-y-2">
+      {m > 1 && <Legend series={list} shape="rect" />}
       <div ref={ref} className="relative" style={{ height }}>
         {width > 0 && n > 0 && (
           <svg
@@ -343,15 +354,17 @@ export function ColumnChart({
               </g>
             ))}
             {xTickIndices(n).map((i) => (
-              <text key={i} x={barX(i) + barW / 2} y={height - 6} textAnchor={i === 0 ? "start" : i === last ? "end" : "middle"} className="fill-[var(--viz-muted)] text-[11px]">
+              <text key={i} x={groupX(i) + groupW / 2} y={height - 6} textAnchor={i === 0 ? "start" : i === last ? "end" : "middle"} className="fill-[var(--viz-muted)] text-[11px]">
                 {shortDate(data[i].date)}
               </text>
             ))}
             {data.map((d, i) => {
-              const path = column(i);
               return (
                 <g key={d.date}>
-                  {path && <path d={path} fill={series.color} opacity={hover === null || hover === i ? 1 : 0.55} />}
+                  {list.map((s, j) => {
+                    const path = column(i, j);
+                    return path && <path key={s.key} d={path} fill={s.color} opacity={hover === null || hover === i ? 1 : 0.55} />;
+                  })}
                   {/* Hit target: the whole band, taller than the mark. */}
                   <rect x={margin.left + i * band} y={margin.top} width={band} height={h} fill="transparent" onPointerMove={() => setHover(i)} />
                 </g>
@@ -366,14 +379,14 @@ export function ColumnChart({
         )}
         {hover !== null && data[hover] && (
           <Tooltip
-            left={barX(hover) + barW / 2}
+            left={groupX(hover) + groupW / 2}
             width={width}
             title={longDate(data[hover].date)}
-            rows={[{ color: series.color, label: series.label, value: format(vals[hover]) }]}
+            rows={list.map((s, j) => ({ color: s.color, label: s.label, value: format(all[j][hover]) }))}
           />
         )}
       </div>
-      <DataTable data={data} series={[series]} format={format} />
+      <DataTable data={data} series={list} format={format} />
     </div>
   );
 }
