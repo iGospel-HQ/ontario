@@ -293,12 +293,18 @@ export function ColumnChart({
   format?: (n: number) => string;
   label: string;
 }) {
-  const [ref, width] = useWidth<HTMLDivElement>();
+  const [ref, boxWidth] = useWidth<HTMLDivElement>();
+  const scroller = useRef<HTMLDivElement>(null);
   const [hover, setHover] = useState<number | null>(null);
   const list = Array.isArray(series) ? series : [series];
   const m = list.length;
   const n = data.length;
   const margin = { ...MARGIN, right: 12 };
+  // Each day needs room for its columns plus a clear gap; if the days don't
+  // fit, the chart gets wider and scrolls sideways (the scale stays put).
+  const minBand = m * 10 + (m - 1) * 2 + 8;
+  const width = Math.max(boxWidth, margin.left + margin.right + n * minBand);
+  const scrolls = boxWidth > 0 && width > boxWidth;
   const w = Math.max(width - margin.left - margin.right, 10);
   const h = height - margin.top - margin.bottom;
   const valsOf = (s: Series) => data.map((d) => Number(d[s.key]) || 0);
@@ -309,12 +315,18 @@ export function ColumnChart({
   const base = margin.top + h;
   const band = w / Math.max(n, 1);
   const gap = m > 1 ? 2 : 0; // between the columns of one group
-  const groupW = Math.max(m, Math.min(24 * m, band - 2)); // 2px surface gap between groups
+  const groupW = Math.max(m, Math.min(24 * m, band - Math.max(6, band * 0.3))); // clear gap between days
   const barW = Math.max(1, (groupW - gap * (m - 1)) / m);
   const groupX = (i: number) => margin.left + i * band + (band - groupW) / 2;
   const barX = (i: number, j = 0) => groupX(i) + j * (barW + gap);
   const peak = vals.indexOf(Math.max(...vals));
   const last = n - 1;
+
+  // Open on the newest days.
+  useEffect(() => {
+    const el = scroller.current;
+    if (el && scrolls) el.scrollLeft = el.scrollWidth;
+  }, [scrolls, width, n]);
 
   const column = (i: number, j: number) => {
     const bh = base - y(all[j][i]);
@@ -329,7 +341,9 @@ export function ColumnChart({
     <div className="space-y-2">
       {m > 1 && <Legend series={list} shape="rect" />}
       <div ref={ref} className="relative" style={{ height }}>
-        {width > 0 && n > 0 && (
+       <div ref={scroller} className={scrolls ? "h-full overflow-x-auto overflow-y-hidden" : "h-full"}>
+       <div className="relative" style={{ width: boxWidth > 0 ? width : undefined, height }}>
+        {boxWidth > 0 && n > 0 && (
           <svg
             width={width}
             height={height}
@@ -346,14 +360,9 @@ export function ColumnChart({
             className="overflow-visible outline-none focus-visible:ring-2 focus-visible:ring-[var(--viz-series-1)] focus-visible:ring-offset-2"
           >
             {ticks.map((t) => (
-              <g key={t}>
-                <line x1={margin.left} x2={margin.left + w} y1={y(t)} y2={y(t)} stroke={t === 0 ? "var(--viz-axis)" : "var(--viz-grid)"} strokeWidth={1} />
-                <text x={margin.left - 8} y={y(t) + 4} textAnchor="end" className="fill-[var(--viz-muted)] text-[11px] tabular-nums">
-                  {compact(t)}
-                </text>
-              </g>
+              <line key={t} x1={margin.left} x2={margin.left + w} y1={y(t)} y2={y(t)} stroke={t === 0 ? "var(--viz-axis)" : "var(--viz-grid)"} strokeWidth={1} />
             ))}
-            {xTickIndices(n).map((i) => (
+            {xTickIndices(n, Math.max(5, Math.floor(w / 80))).map((i) => (
               <text key={i} x={groupX(i) + groupW / 2} y={height - 6} textAnchor={i === 0 ? "start" : i === last ? "end" : "middle"} className="fill-[var(--viz-muted)] text-[11px]">
                 {shortDate(data[i].date)}
               </text>
@@ -385,7 +394,20 @@ export function ColumnChart({
             rows={list.map((s, j) => ({ color: s.color, label: s.label, value: format(all[j][hover]) }))}
           />
         )}
+       </div>
+       </div>
+        {/* The scale sits outside the scroller so it stays visible while scrolling. */}
+        {boxWidth > 0 && n > 0 && (
+          <svg width={margin.left} height={height} aria-hidden="true" className="pointer-events-none absolute left-0 top-0 bg-[var(--viz-surface)]">
+            {ticks.map((t) => (
+              <text key={t} x={margin.left - 8} y={y(t) + 4} textAnchor="end" className="fill-[var(--viz-muted)] text-[11px] tabular-nums">
+                {compact(t)}
+              </text>
+            ))}
+          </svg>
+        )}
       </div>
+      {scrolls && <p className="text-[11px] text-[var(--viz-muted)]">Scroll sideways to see earlier days.</p>}
       <DataTable data={data} series={list} format={format} />
     </div>
   );
