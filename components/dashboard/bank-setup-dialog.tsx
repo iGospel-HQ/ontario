@@ -109,8 +109,9 @@ export function BankSetupDialog({ open, onOpenChange }: BankSetupDialogProps) {
         const bank = banks?.find((b: any) => b.code === bankCode);
         if (bank) form.setValue("bank_name", bank.name);
         toast.success("Account validated successfully");
-      } catch (error) {
-        toast.error("Could not validate account number");
+      } catch (error: any) {
+        form.setValue("account_name", "");
+        toast.error(error?.response?.data?.message || "Could not validate account number");
       } finally {
         setIsValidating(false);
       }
@@ -192,7 +193,11 @@ export function BankSetupDialog({ open, onOpenChange }: BankSetupDialogProps) {
                     <FormLabel>Account Name</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input placeholder="Loading..." {...field} readOnly />
+                        <Input
+                          placeholder={isValidating ? "Checking account..." : "Shows after you enter the account number"}
+                          {...field}
+                          readOnly
+                        />
                         {isValidating && (
                           <Loader2 className="absolute right-3 top-2.5 h-4 w-4 animate-spin text-muted-foreground" />
                         )}
