@@ -21,9 +21,11 @@ import { JsonLd } from "@/components/shared/json-ld";
 export const revalidate = 60;
 
 export const metadata = pageMetadata({
-  title: "iGospel - Blog & Music Platform",
+  // What Google shows for "iGospel": say plainly what the site is, in the words people search with.
+  title: "iGospel | Download Latest Nigerian Gospel Songs & Music",
   absoluteTitle: true,
-  description: "Discover curated music, artists, and editorial content all in one place",
+  description:
+    "Listen to and download the latest Nigerian gospel songs, praise and worship music free on iGospel. New songs daily, artists, charts and gospel news.",
   path: "/",
 });
 

@@ -5,8 +5,8 @@ export const siteConfig = {
   legalName: "iGospel Media Connect",
   tagline: "Listen. Share. Support Gospel Voices.",
   description:
-    "Discover curated gospel music, artists, and editorial content all in one place.",
-  url: trimSlash(process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.igospel.com.ng"),
+    "Listen to and download the latest Nigerian gospel songs, praise and worship music free on iGospel.",
+  url: trimSlash(process.env.NEXT_PUBLIC_SITE_URL ?? "https://igospel.ng"),
   apiUrl: trimSlash(process.env.NEXT_PUBLIC_API_URL ?? "https://api.igospel.ng/v1"),
   locale: "en_US",
   logo: "/logo.png",

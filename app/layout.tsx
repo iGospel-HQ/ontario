@@ -36,8 +36,15 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   applicationName: siteConfig.name,
+  // Google shows the site icon next to results only if it's at least 48x48 (a multiple of 48).
   icons: {
-    icon: [{ url: "/icon-32x32.png" }],
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48 32x32 16x16" },
+      { url: "/icon-48.png", sizes: "48x48", type: "image/png" },
+      { url: "/icon-96.png", sizes: "96x96", type: "image/png" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
     apple: "/apple-icon.png",
   },
   appleWebApp: {
