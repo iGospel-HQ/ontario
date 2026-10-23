@@ -237,6 +237,23 @@
 }
 /* Embeds (YouTube, Audiomack) keep the height the CMS gives them. */
 .entry-content iframe { max-width: 100%; }
+/* YouTube links on their own line (blog/[slug]/page.tsx embedYouTube). */
+.entry-content .video-embed {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 1.75em 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #000;
+}
+.entry-content .video-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
 .entry-content strong { color: var(--text); }
 .entry-content hr { border-color: var(--rule); }
 

@@ -79,7 +79,7 @@ export default async function BlogDetailPage({ params }: Props) {
   const words = post.content.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
   const readingMinutes = Math.max(1, Math.round(words / 200));
   // The editor leaves empty paragraphs (<p><br></p>, <p>&nbsp;</p>) as spacers.
-  const content = post.content.replace(/<p[^>]*>(?:\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, "");
+  const content = embedYouTube(post.content.replace(/<p[^>]*>(?:\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, ""));
   const articlePieces = splitAfterParagraphs(content, at("after_paragraph"));
   const engagement = (
     <PostEngagement
@@ -308,6 +308,34 @@ export default async function BlogDetailPage({ params }: Props) {
         </div>
       </div>
     </div>
+  );
+}
+
+/** The 11-character video id of a YouTube watch, youtu.be, shorts or embed link. */
+function youTubeId(url: string) {
+  const match = url
+    .replace(/&amp;/g, "&")
+    .match(/^https?:\/\/(?:www\.|m\.|music\.)?(?:youtube\.com\/(?:watch\?(?:[^#]*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([\w-]{11})/i);
+  return match?.[1] ?? null;
+}
+
+/**
+ * A paragraph that is only a YouTube link (as text or a link) becomes the
+ * video player, so pasting the link on its own line embeds the video.
+ */
+function embedYouTube(html: string) {
+  return html.replace(
+    /<p[^>]*>\s*(?:<a\s[^>]*href="([^"]+)"[^>]*>[^<]*<\/a>|(https?:\/\/[^\s<]+))\s*<\/p>/gi,
+    (whole, href?: string, bare?: string) => {
+      const id = youTubeId(href ?? bare ?? "");
+      if (!id) return whole;
+      return (
+        `<div class="video-embed"><iframe src="https://www.youtube-nocookie.com/embed/${id}" ` +
+        `title="YouTube video" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" ` +
+        `allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" ` +
+        `allowfullscreen></iframe></div>`
+      );
+    },
   );
 }
 
