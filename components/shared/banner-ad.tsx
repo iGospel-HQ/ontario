@@ -15,7 +15,16 @@ export function BannerAd({ ad, className, sizes = "(min-width: 1200px) 1200px, 1
       rel="noopener noreferrer sponsored"
       className={cn("block w-full overflow-hidden", className)}
     >
-      <Image src={ad.image} alt={ad.title} width={0} height={0} sizes={sizes} className="h-auto w-full" />
+      {/* <Image src={ad.image} alt={ad.title} width={0} height={0} sizes={sizes} className="h-auto w-full" /> */}
+      <Image
+        src={ad.image}
+        alt={ad.title}
+        width={0}
+        height={0}
+        sizes={sizes}
+        className="h-auto w-full"
+        unoptimized
+      />
     </a>
   );
 }
