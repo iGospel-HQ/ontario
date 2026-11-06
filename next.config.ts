@@ -6,6 +6,11 @@ const isLocalApi = ["127.0.0.1", "localhost"].includes(apiUrl.hostname);
 
 const nextConfig: NextConfig = {
   images: {
+    // Images load straight from the API's media (nginx, cached by Cloudflare) instead of
+    // Vercel's Image Optimization: once the plan's allowance is used up, Vercel answers
+    // 402 (Payment Required) for every image it hasn't optimized yet, so new posts and
+    // ads showed no picture. Most uploads are small JPEGs (~60 KB); keep large PNGs out.
+    unoptimized: true,
     formats: ["image/avif", "image/webp"],
     // Media is uploaded to S3 with unique keys (file_overwrite = False),
     // so optimized variants can be cached for a long time.
