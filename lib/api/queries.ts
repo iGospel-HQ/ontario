@@ -75,6 +75,15 @@ export async function getMusicPosts({
   return data ?? emptyPage<PostSummary>();
 }
 
+/** Sermon posts (a sermon attached, or in the Sermons category), newest first. */
+export async function getSermonPosts({ page = 1, q }: { page?: number; q?: string } = {}) {
+  const data = await apiGet<Paginated<PostSummary>>("/blog/posts/sermons/", {
+    query: { view: "summary", page, page_size: POSTS_PAGE_SIZE, search: q },
+    tags: [POSTS_TAG],
+  });
+  return data ?? emptyPage<PostSummary>();
+}
+
 /** Album posts (posts with an album attached), newest first. */
 export async function getAlbumPosts({
   page = 1,

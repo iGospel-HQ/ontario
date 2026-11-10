@@ -21,6 +21,7 @@ export const mainMenu: MenuItem[] = [
       { name: "Top Charts", href: "/charts" },
     ],
   },
+  { name: "Sermons", href: "/sermons" },
   { name: "Explore", href: "/blog" },
   { name: "Upload", href: "/upload" },
   { name: "About", href: "/about" },

@@ -261,6 +261,25 @@ export interface AdminOverview {
   };
 }
 
+/** Sermon attached to a post (ministry app). */
+export interface PostSermon {
+  id: string;
+  title: string;
+  slug: string;
+  mp3_file: string | null;
+  /** "HH:MM:SS" */
+  duration: string | null;
+  image: string | null;
+  release_date: string | null;
+  is_downloadable: boolean;
+  /** The MP3 as an attachment (?download=1), or null when downloads are off. */
+  download_url: string | null;
+  minister_name: string;
+  minister_slug: string;
+  minister_image: string | null;
+  series_title: string | null;
+}
+
 /** Album attached to a post, with its tracks in album order. */
 export interface PostAlbum {
   id: string;
@@ -289,6 +308,8 @@ export interface PostDetail {
   artists: { id: string; name: string; slug: string }[];
   tracks: PostTrack[];
   albums: PostAlbum[];
+  /** Missing from older API versions. */
+  sermons?: PostSermon[];
   genres: Genre[];
   support_status?: SupportStatus;
   creator_id?: string | null;

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  BookOpen,
   ChevronRight,
   FileText,
   Home,
@@ -48,6 +49,10 @@ const SHEET_GROUPS: { title: string; links: SheetLink[] }[] = [
       { name: "Albums", href: "/music/albums", icon: Disc3 },
       { name: "Playlists", href: "/music/playlists", icon: ListMusic },
     ],
+  },
+  {
+    title: "Word",
+    links: [{ name: "Sermons", href: "/sermons", icon: BookOpen }],
   },
   {
     title: "iGospel",

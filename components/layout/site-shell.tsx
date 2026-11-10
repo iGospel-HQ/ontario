@@ -9,20 +9,19 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { MobileAppBar } from "@/components/layout/mobile/mobile-app-bar";
 import { MobileTabBar } from "@/components/layout/mobile/mobile-tab-bar";
 
-// Widths the Next image optimizer accepts (default deviceSizes).
-const OPTIMIZER_WIDTHS = [640, 750, 828, 1080, 1200, 1920, 2048, 3840];
-
-/** Image optimizer URL at the smallest allowed width covering `minWidth` px. */
-function optimized(src: string, minWidth: number) {
-  const width = OPTIMIZER_WIDTHS.find((w) => w >= minWidth) ?? 3840;
-  return `/_next/image?url=${encodeURIComponent(src)}&w=${width}&q=75`;
+/**
+ * The background image as uploaded. It used to go through Vercel's image
+ * optimizer (/_next/image), which answers 402 once the plan's allowance is
+ * used up (see images.unoptimized in next.config.ts), so the file is served
+ * straight from the API's media instead.
+ */
+function optimized(src: string, _minWidth: number) {
+  return src;
 }
 
 /**
- * Inline styles for an admin-scheduled background. Scaled images ("cover" and
- * tiles with a column count) go through the Next image optimizer (resized,
- * WebP/AVIF); "natural" and plain tiles keep the original pixels because their
- * size on screen is the image's own size.
+ * Inline styles for an admin-scheduled background ("cover", "natural", or
+ * tiles, optionally a set number of columns across the screen).
  */
 function backgroundStyle(bg: BlogBackground): React.CSSProperties {
   const color = bg.background_color || undefined;

@@ -12,6 +12,7 @@ import { BlogSidebar } from "@/components/blog/blog-sidebar";
 import { PostCard } from "@/components/blog/post-card";
 import { CommentSection } from "@/components/blog/comment-section";
 import { PostTracks } from "@/components/blog/post-tracks";
+import { PostSermons } from "@/components/blog/post-sermons";
 import { FeaturedBadge } from "@/components/blog/featured-badge";
 import { PostTraffic } from "@/components/blog/post-traffic";
 import { PostEngagement } from "@/components/blog/post-engagement";
@@ -253,6 +254,12 @@ export default async function BlogDetailPage({ params }: Props) {
             {isMusicPost && (
               <div className="[&>section]:my-8">
                 <PostTracks tracks={post.tracks ?? []} albums={post.albums ?? []} />
+              </div>
+            )}
+
+            {(post.sermons?.length ?? 0) > 0 && (
+              <div className="[&>section]:my-8">
+                <PostSermons sermons={post.sermons ?? []} />
               </div>
             )}
 
