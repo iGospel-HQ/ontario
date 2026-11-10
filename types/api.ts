@@ -280,6 +280,69 @@ export interface PostSermon {
   series_title: string | null;
 }
 
+/** A sermon in a minister, series or playlist list, with the post it's on. */
+export interface SermonItem extends PostSermon {
+  sermon_number: number | null;
+  /** Slug of the newest live post with this sermon, if any. */
+  post_slug: string | null;
+}
+
+/** `/ministry/ministers/` */
+export interface Minister {
+  id: string;
+  name: string;
+  slug: string;
+  image: string | null;
+  sermon_count: number;
+  series_count: number;
+}
+
+/** `/ministry/series/` */
+export interface SermonSeries {
+  id: string;
+  title: string;
+  slug: string;
+  cover_image: string | null;
+  release_date: string | null;
+  minister_name: string;
+  minister_slug: string;
+  sermon_count: number;
+}
+
+/** `/ministry/ministers/<slug>/` */
+export interface MinisterDetail extends Minister {
+  /** Sanitized HTML. */
+  bio: string;
+  website: string;
+  twitter: string;
+  instagram: string;
+  facebook: string;
+  tiktok: string;
+  sermons: SermonItem[];
+  series: SermonSeries[];
+}
+
+/** `/ministry/series/<slug>/` */
+export interface SermonSeriesDetail extends SermonSeries {
+  minister_image: string | null;
+  sermons: SermonItem[];
+}
+
+/** `/ministry/playlists/` */
+export interface SermonPlaylist {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  cover_image: string | null;
+  sermon_count: number;
+}
+
+/** `/ministry/playlists/<slug>/`: sermons in playlist order. */
+export interface SermonPlaylistDetail extends SermonPlaylist {
+  sermons: SermonItem[];
+}
+
 /** Album attached to a post, with its tracks in album order. */
 export interface PostAlbum {
   id: string;

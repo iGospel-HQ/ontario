@@ -21,7 +21,16 @@ export const mainMenu: MenuItem[] = [
       { name: "Top Charts", href: "/charts" },
     ],
   },
-  { name: "Sermons", href: "/sermons" },
+  {
+    name: "Sermons",
+    href: "/sermons",
+    children: [
+      { name: "All Sermons", href: "/sermons" },
+      { name: "Ministers", href: "/sermons/ministers" },
+      { name: "Series", href: "/sermons/series" },
+      { name: "Playlists", href: "/sermons/playlists" },
+    ],
+  },
   { name: "Explore", href: "/blog" },
   { name: "Upload", href: "/upload" },
   { name: "About", href: "/about" },

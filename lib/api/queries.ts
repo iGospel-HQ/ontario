@@ -10,11 +10,17 @@ import type {
   BlogBackground,
   Genre,
   HomepageData,
+  Minister,
+  MinisterDetail,
   MusicTrack,
   Paginated,
   Playlist,
   PostDetail,
   PostSummary,
+  SermonPlaylist,
+  SermonPlaylistDetail,
+  SermonSeries,
+  SermonSeriesDetail,
   SitemapIndex,
 } from "@/types/api";
 
@@ -83,6 +89,46 @@ export async function getSermonPosts({ page = 1, q }: { page?: number; q?: strin
   });
   return data ?? emptyPage<PostSummary>();
 }
+
+// --- Sermons (ministry app): ministers, series and sermon playlists ---------------
+/** Ministry content isn't revalidated on demand yet, so it refreshes every 5 minutes. */
+const SERMONS_REVALIDATE = 300;
+
+export async function getMinisters({ page = 1, q }: { page?: number; q?: string } = {}) {
+  const data = await apiGet<Paginated<Minister>>("/ministry/ministers/", {
+    query: { page, search: q },
+    revalidate: SERMONS_REVALIDATE,
+  });
+  return data ?? emptyPage<Minister>();
+}
+
+export const getMinister = cache((slug: string) =>
+  apiGet<MinisterDetail>(`/ministry/ministers/${encodeURIComponent(slug)}/`, { revalidate: SERMONS_REVALIDATE }),
+);
+
+export async function getSermonSeriesList({ page = 1, q }: { page?: number; q?: string } = {}) {
+  const data = await apiGet<Paginated<SermonSeries>>("/ministry/series/", {
+    query: { page, search: q },
+    revalidate: SERMONS_REVALIDATE,
+  });
+  return data ?? emptyPage<SermonSeries>();
+}
+
+export const getSermonSeries = cache((slug: string) =>
+  apiGet<SermonSeriesDetail>(`/ministry/series/${encodeURIComponent(slug)}/`, { revalidate: SERMONS_REVALIDATE }),
+);
+
+export async function getSermonPlaylists({ page = 1, q }: { page?: number; q?: string } = {}) {
+  const data = await apiGet<Paginated<SermonPlaylist>>("/ministry/playlists/", {
+    query: { page, search: q },
+    revalidate: SERMONS_REVALIDATE,
+  });
+  return data ?? emptyPage<SermonPlaylist>();
+}
+
+export const getSermonPlaylist = cache((slug: string) =>
+  apiGet<SermonPlaylistDetail>(`/ministry/playlists/${encodeURIComponent(slug)}/`, { revalidate: SERMONS_REVALIDATE }),
+);
 
 /** Album posts (posts with an album attached), newest first. */
 export async function getAlbumPosts({

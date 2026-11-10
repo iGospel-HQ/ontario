@@ -10,6 +10,7 @@ import {
   Home,
   Info,
   LayoutDashboard,
+  Library,
   LogIn,
   Mail,
   Menu,
@@ -52,7 +53,12 @@ const SHEET_GROUPS: { title: string; links: SheetLink[] }[] = [
   },
   {
     title: "Word",
-    links: [{ name: "Sermons", href: "/sermons", icon: BookOpen }],
+    links: [
+      { name: "Sermons", href: "/sermons", icon: BookOpen },
+      { name: "Ministers", href: "/sermons/ministers", icon: Mic2 },
+      { name: "Sermon Series", href: "/sermons/series", icon: Library },
+      { name: "Sermon Playlists", href: "/sermons/playlists", icon: ListMusic },
+    ],
   },
   {
     title: "iGospel",
